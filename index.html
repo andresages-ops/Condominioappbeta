@@ -10,7 +10,7 @@
     <meta name="apple-mobile-web-app-title" content="Condominio">
     <meta name="theme-color" content="#0f172a">
     
-    <title>Condominio Master v83</title>
+    <title>Condominio Master v84</title>
     
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -91,9 +91,7 @@
         .balance-amount { font-size: 2.2rem; font-weight: 800; }
         .balance-card.compact { padding: 15px; margin-bottom: 15px; margin-top: 10px; } .balance-card.compact .balance-amount { font-size: 1.8rem; }
         
-        /* GRID HEADER (MODIFICADO: Sin uppercase) */
         .grid-header-title { font-size: 1.1rem; font-weight: 600; color: var(--text-light); letter-spacing: 0.5px; margin: 30px 0 10px 0; }
-
         .seg-control { display: flex; background: var(--bg-input); border-radius: 10px; padding: 3px; border: 1px solid var(--border); width: fit-content; }
         .seg-control.full-width { width: 100%; margin-bottom: 15px; } 
         .seg-btn { flex: 1; padding: 6px 15px; text-align: center; cursor: pointer; border-radius: 7px; font-size: 0.8rem; font-weight: 600; color: var(--text-sec); border: none; background: transparent; }
@@ -137,6 +135,7 @@
         .unit-selector-card { aspect-ratio: 1/1; background: var(--bg-input); border: 1px solid var(--primary); border-radius: 14px; display: flex; justify-content: center; align-items: center; font-weight: bold; font-size: 1.1rem; color: var(--primary); cursor: pointer; transition: transform 0.2s; }
         .unit-selector-card:active { transform: scale(0.90); background: var(--primary); color: white; }
         
+        /* DIRECTORIO ESTILOS V84 */
         .contact-card { display: flex; align-items: center; background: var(--bg-card); padding: 15px; border-radius: 16px; margin-bottom: 10px; border: 1px solid var(--border); position: relative; transition: transform 0.1s; }
         .contact-card:active { transform: scale(0.98); background: var(--bg-input); }
         .contact-card.empty { opacity: 0.8; }
@@ -169,6 +168,10 @@
         .receipt-container { background: #fff !important; color: #000 !important; padding: 20px; border: none; margin-bottom: 15px; border-radius: 12px; width: 100%; max-width: 320px; margin: 0 auto 15px auto; font-size: 0.9rem; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
         .receipt-row { display: flex; justify-content: space-between; margin-bottom: 8px; }
         #qrcode { display: flex; justify-content: center; margin-top: 20px; }
+        
+        /* CORRECCIÓN BOTONES RECIBO */
+        .input-row-equal { display: flex; gap: 10px; width: 100%; }
+        .input-row-equal > button { flex: 1; margin-top: 0; }
     </style>
 </head>
 <body>
@@ -191,7 +194,7 @@
         
         <div id="view-home" class="container">
             <div class="header-top">
-                <h2 style="margin:0;">Panel de Control <span class="version-tag">v83 Beta</span></h2>
+                <h2 style="margin:0;">Panel de Control <span class="version-tag">v84 Beta</span></h2>
                 <small id="sync-status" style="color:var(--success)">● Conectado</small>
             </div>
             
@@ -220,10 +223,15 @@
         </div>
 
         <div id="view-directory" class="container hidden">
-            <h2>Directorio</h2>
+            <div class="header-top">
+                <div style="display:flex; align-items:center; gap:15px;">
+                    <div class="btn-icon-inline" onclick="history.back()"><i class="fas fa-chevron-left"></i></div>
+                    <h2 style="margin:0;">Directorio</h2>
+                </div>
+            </div>
+            
             <div class="search-wrapper"><i class="fas fa-search"></i><input type="text" placeholder="Buscar vecino..." onkeyup="filtrarDirectorio(this.value)"></div>
             <div id="directory-list" style="padding-bottom: 70px;"></div>
-            <button class="btn btn-close" onclick="cambiarVista('home')" style="margin-top:20px">Regresar</button>
         </div>
 
         <div id="view-expenses" class="container hidden">
@@ -254,18 +262,21 @@
         </div>
 
         <div id="view-dev" class="container hidden">
-            <h2>Log de Cambios (v83)</h2>
+            <h2>Log de Cambios (v84)</h2>
             <div class="dev-log-container">
-1. COMPROBANTE OPTIMIZADO:
-- Botones Editar/Eliminar en la misma fila para ahorrar espacio.
-- Botón Cerrar más visible.
+1. DIRECTORIO (V84):
+- Header nativo con flecha atrás.
+- Integración con botón físico "Back".
+- Lógica de Badges Corregida:
+  * PAGADO: Mes actual
+  * PENDIENTE (●): 0-35 días
+  * VENCIDO (●): 36-65 días
+  * 60 DÍAS (●): 66-95 días
+  * 90 DÍAS (●): 96-125 días
+  * 90+ (●): >125 días
 
-2. ENCABEZADOS:
-- Texto "Estatus departamentos" y "Actividad reciente" (Capitalización corregida).
-- Login: "Admin Departamentos" con icono.
-
-3. ESTILOS:
-- Ajuste de márgenes en modal recibo.
+2. UI:
+- Botones de recibo alineados horizontalmente.
             </div>
         </div>
 
@@ -297,7 +308,6 @@
     </div></div>
 
     <div class="modal-overlay" id="modalReceipt"><div class="modal-content">
-        <div style="text-align:right"></div>
         <div class="receipt-container" id="printable-receipt">
             <div style="text-align:center; border-bottom:2px dashed #ccc; padding-bottom:10px"><h3>COMPROBANTE DE PAGO</h3><small>ADMINISTRACIÓN 2163</small><br><small id="rcpt-date"></small></div>
             <div class="receipt-row"><span>Folio:</span><span id="rcpt-id" style="font-family:monospace"></span></div>
@@ -310,14 +320,8 @@
             <div id="qrcode"></div>
             <div class="receipt-footer">Comprobante digital válido.<br>Departamentos 2163</div>
         </div>
-        
         <button class="btn btn-primary" onclick="descargarPDF()"><i class="fas fa-file-pdf"></i> PDF Ticket</button>
-        
-        <div class="input-row-equal" style="margin-top:10px; gap:8px;">
-            <button class="btn btn-update" style="margin-top:0;" onclick="solicitarEdicion()"><i class="fas fa-pencil-alt"></i> Editar</button>
-            <button class="btn btn-outline-danger" style="margin-top:0;" onclick="solicitarEliminacion()"><i class="fas fa-trash"></i> Eliminar</button>
-        </div>
-        
+        <div class="input-row-equal" style="margin-top:10px; gap:10px;"><button class="btn btn-update" style="margin-top:0;" onclick="solicitarEdicion()"><i class="fas fa-pencil-alt"></i> Editar</button><button class="btn btn-outline-danger" style="margin-top:0;" onclick="solicitarEliminacion()"><i class="fas fa-trash"></i> Eliminar</button></div>
         <button class="btn btn-close" onclick="history.back()" style="margin-top:15px">Cerrar</button>
     </div></div>
 
@@ -425,7 +429,7 @@
         try{ await fetch(API_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({movements,units:unitInfo,config:appConfig})}); document.getElementById('sync-status').innerText="● Conectado"; }catch(e){ document.getElementById('sync-status').innerText="⚠ Error"; }
     }
     
-    function descargarBackup() { const d = { date: new Date().toISOString(), movements, unitInfo, config: appConfig, version: "v83" }; const b = new Blob([JSON.stringify(d, null, 2)], {type : 'application/json'}); const l = document.createElement("a"); l.href = URL.createObjectURL(b); l.download = `Respaldo.json`; document.body.appendChild(l); l.click(); document.body.removeChild(l); }
+    function descargarBackup() { const d = { date: new Date().toISOString(), movements, unitInfo, config: appConfig, version: "v84" }; const b = new Blob([JSON.stringify(d, null, 2)], {type : 'application/json'}); const l = document.createElement("a"); l.href = URL.createObjectURL(b); l.download = `Respaldo.json`; document.body.appendChild(l); l.click(); document.body.removeChild(l); }
     function procesarArchivoBackup(event) { const f = event.target.files[0]; if(!f) return; const r = new FileReader(); r.onload = function(e) { try { const d = JSON.parse(e.target.result); if(d.movements){ movements=d.movements; unitInfo=d.unitInfo||{}; appConfig=d.config||appConfig; guardarEnNube(); renderAll(); alert("✅ Restaurado"); } } catch (err) { alert("Archivo inválido"); } }; r.readAsText(f); }
 
     function switchHomeView(view) {
@@ -459,7 +463,9 @@
         document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active')); 
         if(document.getElementById('nav-'+v)) document.getElementById('nav-'+v).classList.add('active'); 
         
-        if (v === 'directory') renderDirectory(); 
+        if (v === 'directory') {
+            renderDirectory(); 
+        }
         if (v === 'expenses') renderExpenses(); 
         if (v === 'receipts') renderReceiptsList();
         if (v === 'home') renderHome(); 
@@ -522,22 +528,48 @@
          });
     }
     
+    // --- LÓGICA DIRECTORIO V84 ---
     function renderDirectory() {
         const list = document.getElementById('directory-list'); list.innerHTML = '';
         const now = new Date(); const cm = now.getMonth(); const cy = now.getFullYear();
+
         for(let i=1; i<=TOTAL_UNITS; i++) {
             const info = unitInfo[i] || { name: '', phone: '', empty: false };
             const isEmpty = info.empty;
-            const lastPay = movements.filter(m => m.type === 'income' && m.unitId === i).sort((a,b) => new Date(b.date) - new Date(a.date))[0];
+            
+            // Buscar último pago (Sort por fecha real)
+            const lastPay = movements.filter(m => m.type === 'income' && m.unitId === i)
+                                     .sort((a,b) => new Date(b.date) - new Date(a.date))[0];
             const lastPayText = lastPay ? `Último: ${lastPay.date} • $${lastPay.amount}` : 'Sin historial';
+            
+            // Badge Logic (Strict Current Month)
             const isPaidCurrentMonth = movements.some(m => m.type === 'income' && m.unitId === i && new Date(m.date + 'T00:00').getMonth() === cm && new Date(m.date + 'T00:00').getFullYear() === cy);
             const days = calcularDiasAtraso(i);
+            
             let badgeHtml = '';
-            if (isEmpty) { badgeHtml = '<span class="badge badge-empty">VACÍO</span>'; } 
-            else if (isPaidCurrentMonth) { badgeHtml = '<span class="badge badge-success">PAGADO</span>'; } 
-            else if (days <= 30) { badgeHtml = '<span class="badge badge-warning">PENDIENTE</span>'; } 
-            else { let lateText = days > 90 ? '90+' : (days > 60 ? '90 DÍAS' : (days > 30 ? '60 DÍAS' : 'VENCIDO')); badgeHtml = `<span class="badge badge-danger">${lateText}</span>`; }
-            list.innerHTML += `<div class="contact-card ${isEmpty ? 'empty' : ''}" onclick="abrirModalEditar(${i})"><div class="contact-number-box">${i}</div><div class="contact-info"><div class="contact-header"><div class="contact-name">${info.name || 'Sin Inquilino'}</div>${badgeHtml}</div><div class="contact-last-pay ${!lastPay ? 'none' : ''}">${lastPayText}</div></div></div>`;
+            
+            if (isEmpty) {
+                badgeHtml = '<span class="badge badge-empty">● VACÍO</span>';
+            } else if (isPaidCurrentMonth) {
+                badgeHtml = '<span class="badge badge-success">● PAGADO</span>';
+            } else if (days <= 35) {
+                 badgeHtml = '<span class="badge badge-warning">● PENDIENTE</span>';
+            } else {
+                let lateText = days > 125 ? '90+' : (days > 95 ? '90 DÍAS' : (days > 65 ? '60 DÍAS' : 'VENCIDO'));
+                badgeHtml = `<span class="badge badge-danger">● ${lateText}</span>`;
+            }
+            
+            list.innerHTML += `
+            <div class="contact-card ${isEmpty ? 'empty' : ''}" onclick="abrirModalEditar(${i})">
+                <div class="contact-number-box">${i}</div>
+                <div class="contact-info">
+                    <div class="contact-header">
+                        <div class="contact-name">${info.name || 'Sin Inquilino'}</div>
+                        ${badgeHtml}
+                    </div>
+                    <div class="contact-last-pay ${!lastPay ? 'none' : ''}">${lastPayText}</div>
+                </div>
+            </div>`;
         }
     }
     function filtrarDirectorio(val) { const term=val.toLowerCase(); document.querySelectorAll('.contact-card').forEach(card => { card.style.display = card.innerText.toLowerCase().includes(term) ? 'flex' : 'none'; }); }
