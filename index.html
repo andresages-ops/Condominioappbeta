@@ -10,7 +10,7 @@
     <meta name="apple-mobile-web-app-title" content="Condominio">
     <meta name="theme-color" content="#0f172a">
     
-    <title>Condominio Master v81</title>
+    <title>Condominio Master v82</title>
     
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -114,7 +114,8 @@
         .nav-item.active { color: var(--primary); text-shadow: 0 0 10px rgba(var(--primary-rgb), 0.6); } 
         .nav-item i { font-size: 1.4rem; display: block; margin-bottom: 4px; }
         
-        .fab-bar { position: fixed; bottom: 85px; left: 20px; right: 20px; background: var(--danger); color: white; padding: 15px; border-radius: 14px; font-weight: bold; text-align: center; box-shadow: 0 4px 15px rgba(var(--danger-rgb), 0.4); z-index: 400; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 10px; border: 1px solid rgba(255,255,255,0.1); }
+        /* FAB BAR REPOSICIONADO */
+        .fab-bar { position: fixed; bottom: 70px; left: 20px; right: 20px; background: var(--danger); color: white; padding: 15px; border-radius: 14px; font-weight: bold; text-align: center; box-shadow: 0 4px 15px rgba(var(--danger-rgb), 0.4); z-index: 400; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 10px; border: 1px solid rgba(255,255,255,0.1); }
         .fab-bar:active { transform: scale(0.98); } .fab-success { background: var(--success); box-shadow: 0 4px 15px rgba(var(--success-rgb), 0.4); }
 
         .list-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 15px; margin-bottom: 8px; background: var(--bg-card); border-radius: 14px; border: 1px solid var(--border); cursor: pointer; transition: transform 0.1s; min-height: 60px; }
@@ -157,18 +158,16 @@
         
         .dev-log-container { background: #1e1e1e; padding: 15px; border-radius: 10px; border: 1px solid #333; font-family: monospace; font-size: 0.8rem; color: #00ff00; overflow-x: auto; white-space: pre-wrap; margin-bottom: 20px; }
         
-        /* CORRECCIÓN LUPA */
         .search-wrapper { position: relative; margin-bottom: 15px; }
         .search-wrapper i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--text-sec); font-size: 0.9rem; pointer-events: none; z-index: 2; }
         .search-wrapper input { padding-left: 40px; position: relative; z-index: 1; }
 
-        /* CORRECCIÓN ESPACIO SETTINGS */
         .setting-section + .setting-section { margin-top: 20px; }
         
-        /* CORRECCIÓN TOTAL MOSTRADO */
         .list-summary { background: var(--bg-card); border-radius: 12px; padding: 15px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border); }
-        
-        /* CORRECCIÓN RECIBO FORMATO */
+        /* TOTALES MAS GRANDES */
+        .list-summary span:last-child { font-size: 1.5rem; }
+
         .receipt-container { background: #fff !important; color: #000 !important; padding: 20px; border: none; margin-bottom: 15px; border-radius: 12px; width: 100%; max-width: 320px; margin: 0 auto 15px auto; font-size: 0.9rem; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
         .receipt-row { display: flex; justify-content: space-between; margin-bottom: 8px; }
         #qrcode { display: flex; justify-content: center; margin-top: 20px; }
@@ -194,7 +193,7 @@
         
         <div id="view-home" class="container">
             <div class="header-top">
-                <h2 style="margin:0;">Panel de Control <span class="version-tag">v81 Beta</span></h2>
+                <h2 style="margin:0;">Panel de Control <span class="version-tag">v82 Beta</span></h2>
                 <small id="sync-status" style="color:var(--success)">● Conectado</small>
             </div>
             
@@ -257,20 +256,17 @@
         </div>
 
         <div id="view-dev" class="container hidden">
-            <h2>Log de Cambios (v81)</h2>
+            <h2>Log de Cambios (v82)</h2>
             <div class="dev-log-container">
-1. COMPROBANTE:
-- Formato arreglado: Fondo blanco, texto justificado, QR centrado.
+1. TOAST INTELIGENTE:
+- Mensajes específicos: "Pago/Gasto registrado", "actualizado", "eliminado".
 
-2. DIRECTORIO (Lógica Corregida):
-- Estatus "Pagado" ahora valida mes/año actual.
-- Fecha de "Último pago" toma la fecha del registro (user input), no timestamp.
-- Ordenamiento correcto por fecha real.
+2. UI IMPROVEMENTS:
+- Botones FAB (Nuevo pago/Gasto) más abajo (bottom: 70px).
+- Totales en listas más grandes (1.5rem).
 
-3. ESTILOS:
-- Separación mejorada en Configuración y Listas.
-- Total mostrado alineado a la derecha.
-- Icono de lupa dentro del input.
+3. MANTENIMIENTO:
+- Todas las correcciones de lógica de v81 incluidas.
             </div>
         </div>
 
@@ -423,7 +419,7 @@
         try{ await fetch(API_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({movements,units:unitInfo,config:appConfig})}); document.getElementById('sync-status').innerText="● Conectado"; }catch(e){ document.getElementById('sync-status').innerText="⚠ Error"; }
     }
     
-    function descargarBackup() { const d = { date: new Date().toISOString(), movements, unitInfo, config: appConfig, version: "v81" }; const b = new Blob([JSON.stringify(d, null, 2)], {type : 'application/json'}); const l = document.createElement("a"); l.href = URL.createObjectURL(b); l.download = `Respaldo.json`; document.body.appendChild(l); l.click(); document.body.removeChild(l); }
+    function descargarBackup() { const d = { date: new Date().toISOString(), movements, unitInfo, config: appConfig, version: "v82" }; const b = new Blob([JSON.stringify(d, null, 2)], {type : 'application/json'}); const l = document.createElement("a"); l.href = URL.createObjectURL(b); l.download = `Respaldo.json`; document.body.appendChild(l); l.click(); document.body.removeChild(l); }
     function procesarArchivoBackup(event) { const f = event.target.files[0]; if(!f) return; const r = new FileReader(); r.onload = function(e) { try { const d = JSON.parse(e.target.result); if(d.movements){ movements=d.movements; unitInfo=d.unitInfo||{}; appConfig=d.config||appConfig; guardarEnNube(); renderAll(); alert("✅ Restaurado"); } } catch (err) { alert("Archivo inválido"); } }; r.readAsText(f); }
 
     function switchHomeView(view) {
@@ -465,7 +461,7 @@
         if (pushHistory && v !== 'home') { history.pushState({view: v}, null, ""); }
     }
 
-    function guardarConfiguracion() { appConfig.initialBalance=parseFloat(document.getElementById('conf-balance').value)||0; appConfig.rentPrice=parseFloat(document.getElementById('conf-rent').value)||600; appConfig.extraFeeAmount=parseFloat(document.getElementById('conf-extra').value)||0; guardarEnNube(); renderHome(); alert("Guardado"); }
+    function guardarConfiguracion() { appConfig.initialBalance=parseFloat(document.getElementById('conf-balance').value)||0; appConfig.rentPrice=parseFloat(document.getElementById('conf-rent').value)||600; appConfig.extraFeeAmount=parseFloat(document.getElementById('conf-extra').value)||0; guardarEnNube(); renderHome(); showToast('Configuración guardada'); }
     function exportarExcel() { if(movements.length===0) return alert("Sin datos"); let ti=0, tg=0; movements.forEach(m=>{ if(m.type==='income') ti+=m.amount; else tg+=m.amount; }); let csv = `REPORTE DEPARTAMENTOS 2163\nSaldo Inicial,"$${appConfig.initialBalance}"\nIngresos,"$${ti}"\nGastos,"$${tg}"\nBALANCE TOTAL,"$${(appConfig.initialBalance+ti-tg)}"\n\nID,Fecha,Depto,Concepto,TipoPago,Metodo,Ingreso,Gasto\n`; movements.sort((a,b)=>new Date(a.date)-new Date(b.date)).forEach(m=>{ let i=m.type==='income'?`"$${m.amount}"`:'"$0.00"'; let g=m.type==='expense'?`"$${m.amount}"`:'"$0.00"'; let cn=(m.type==='income'?m.note:m.description)||'-'; csv+=`${m.id},${m.date},${m.unitId||'-'},${cn},${m.paymentType==='extra'?'EXTRA':'REGULAR'},${m.method||'-'},${i},${g}\n`; }); const b=new Blob(["\ufeff"+csv],{type:'text/csv;charset=utf-8;'}); const l=document.createElement("a"); l.href=URL.createObjectURL(b); l.download=`Reporte.csv`; document.body.appendChild(l); l.click(); document.body.removeChild(l); }
     function calcularDiasAtraso(uid) { const ps=movements.filter(m=>m.type==='income'&&m.unitId===uid&&m.paymentType!=='extra'); if(ps.length===0) return 999; ps.sort((a,b)=>new Date(b.date)-new Date(a.date)); return Math.ceil(Math.abs(new Date()-new Date(ps[0].date))/86400000); }
     
@@ -520,7 +516,7 @@
          });
     }
     
-    // --- LÓGICA DIRECTORIO V81 (CORREGIDA) ---
+    // --- LÓGICA DIRECTORIO V82 ---
     function renderDirectory() {
         const list = document.getElementById('directory-list'); list.innerHTML = '';
         const now = new Date(); const cm = now.getMonth(); const cy = now.getFullYear();
@@ -528,42 +524,21 @@
         for(let i=1; i<=TOTAL_UNITS; i++) {
             const info = unitInfo[i] || { name: '', phone: '', empty: false };
             const isEmpty = info.empty;
-            
-            // Buscar último pago (Sort por fecha real)
-            const lastPay = movements.filter(m => m.type === 'income' && m.unitId === i)
-                                     .sort((a,b) => new Date(b.date) - new Date(a.date))[0];
+            const lastPay = movements.filter(m => m.type === 'income' && m.unitId === i).sort((a,b) => new Date(b.date) - new Date(a.date))[0];
             const lastPayText = lastPay ? `Último: ${lastPay.date} • $${lastPay.amount}` : 'Sin historial';
-            
-            // Badge Logic (Strict Current Month)
-            // Check if PAID this month
             const isPaidCurrentMonth = movements.some(m => m.type === 'income' && m.unitId === i && new Date(m.date + 'T00:00').getMonth() === cm && new Date(m.date + 'T00:00').getFullYear() === cy);
-
-            // Check days overdue
             const days = calcularDiasAtraso(i);
             let badgeHtml = '';
             
-            if (isEmpty) {
-                badgeHtml = '<span class="badge badge-empty">VACÍO</span>';
-            } else if (isPaidCurrentMonth) {
-                badgeHtml = '<span class="badge badge-success">PAGADO</span>';
-            } else if (days <= 30) {
-                 badgeHtml = '<span class="badge badge-warning">PENDIENTE</span>';
-            } else {
+            if (isEmpty) { badgeHtml = '<span class="badge badge-empty">VACÍO</span>'; } 
+            else if (isPaidCurrentMonth) { badgeHtml = '<span class="badge badge-success">PAGADO</span>'; } 
+            else if (days <= 30) { badgeHtml = '<span class="badge badge-warning">PENDIENTE</span>'; } 
+            else {
                 let lateText = days > 90 ? '90+' : (days > 60 ? '90 DÍAS' : (days > 30 ? '60 DÍAS' : 'VENCIDO'));
                 badgeHtml = `<span class="badge badge-danger">${lateText}</span>`;
             }
             
-            list.innerHTML += `
-            <div class="contact-card ${isEmpty ? 'empty' : ''}" onclick="abrirModalEditar(${i})">
-                <div class="contact-number-box">${i}</div>
-                <div class="contact-info">
-                    <div class="contact-header">
-                        <div class="contact-name">${info.name || 'Sin Inquilino'}</div>
-                        ${badgeHtml}
-                    </div>
-                    <div class="contact-last-pay ${!lastPay ? 'none' : ''}">${lastPayText}</div>
-                </div>
-            </div>`;
+            list.innerHTML += `<div class="contact-card ${isEmpty ? 'empty' : ''}" onclick="abrirModalEditar(${i})"><div class="contact-number-box">${i}</div><div class="contact-info"><div class="contact-header"><div class="contact-name">${info.name || 'Sin Inquilino'}</div>${badgeHtml}</div><div class="contact-last-pay ${!lastPay ? 'none' : ''}">${lastPayText}</div></div></div>`;
         }
     }
     function filtrarDirectorio(val) { const term=val.toLowerCase(); document.querySelectorAll('.contact-card').forEach(card => { card.style.display = card.innerText.toLowerCase().includes(term) ? 'flex' : 'none'; }); }
@@ -587,7 +562,8 @@
         let imageBase64 = null;
         try { if(fileInput.files.length > 0) { document.getElementById('btn-save-expense').innerText = "Comprimiendo..."; imageBase64 = await leerArchivo(fileInput.files[0]); } else if (editingExpenseId) { const old = movements.find(m => m.id === editingExpenseId); if(old) imageBase64 = old.image; } } catch(e) { console.log("Error img", e); }
         if(editingExpenseId){ const idx=movements.findIndex(x=>x.id===editingExpenseId); if(idx!==-1) movements[idx]={...movements[idx], description:de, amount:a, category:c, date:da, image: imageBase64}; } else { movements.push({id:Date.now(), type:'expense', description:de, amount:a, category:c, date:da, image: imageBase64}); } 
-        guardarEnNube(); renderAll(); showToast('Gasto registrado'); history.back(); 
+        const msg = editingExpenseId ? 'Gasto actualizado' : 'Gasto registrado';
+        guardarEnNube(); renderAll(); showToast(msg); history.back(); 
     }
 
     function prepararEdicionGasto(id) { 
@@ -646,7 +622,8 @@
         const m=document.getElementById('rent-method').value; const t=document.getElementById('rent-type').value; 
         if(!a)return alert("Monto?"); 
         if(editingId){const idx=movements.findIndex(x=>x.id===editingId); if(idx!==-1)movements[idx]={...movements[idx], amount:a, note:n, date:d, method:m, paymentType:t};}else{movements.push({id:Date.now(), type:'income', unitId:currentUnitId, amount:a, date:d, note:n, method:m, paymentType:t});} 
-        guardarEnNube(); renderAll(); showToast('Pago registrado'); history.back(); 
+        const msg = editingId ? 'Pago actualizado' : 'Pago registrado';
+        guardarEnNube(); renderAll(); showToast(msg); history.back(); 
     }
 
     function abrirModalGasto() { cancelarEdicionGasto(); document.getElementById('exp-date').value=new Date().toISOString().split('T')[0]; history.pushState({modal: true}, null, ""); document.getElementById('modalExpense').style.display='flex'; }
@@ -711,7 +688,13 @@
     function solicitarEdicion() { const id = ID_SELECCIONADO; if(id) { document.getElementById('modalReceipt').style.display = 'none'; prepararEdicionGlobal(id); } }
     function solicitarEliminacion() { if(!ID_SELECCIONADO) return; document.getElementById('modalConfirm').style.display = 'flex'; }
     function cerrarConfirmacion() { document.getElementById('modalConfirm').style.display = 'none'; }
-    function ejecutarEliminacionReal() { movements = movements.filter(m => m.id != ID_SELECCIONADO); guardarEnNube(); renderAll(); cerrarConfirmacion(); history.back(); }
+    
+    function ejecutarEliminacionReal() { 
+        const m = movements.find(m => m.id == ID_SELECCIONADO);
+        const typeMsg = m ? (m.type === 'income' ? 'Pago eliminado' : 'Gasto eliminado') : 'Eliminado';
+        movements = movements.filter(m => m.id != ID_SELECCIONADO); 
+        guardarEnNube(); renderAll(); showToast(typeMsg); cerrarConfirmacion(); history.back(); 
+    }
     
     function verRecibo(id) { 
         const m=movements.find(x=>x.id===Number(id)); if(!m)return; ID_SELECCIONADO=Number(id); const i=unitInfo[m.unitId]||{}; const fol=m.id.toString();
