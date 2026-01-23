@@ -4,13 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     
-    <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Condominio">
     <meta name="theme-color" content="#0f172a">
+    <link rel="manifest" id="my-manifest-placeholder">
     
-    <title>Condominio Master v78</title>
+    <title>Condominio Master v79</title>
     
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -35,7 +36,7 @@
             
             --text-main: #f8fafc; 
             --text-sec: #94a3b8; 
-            --text-light: #e2e8f0; /* Color claro para encabezados */
+            --text-light: #e2e8f0;
             --empty: #64748b; 
 
             --primary-rgb: 59, 130, 246;
@@ -99,6 +100,7 @@
         input, select { width: 100%; padding: 14px; margin: 5px 0; border: 1px solid var(--border); border-radius: 12px; background: var(--bg-darker); color: var(--text-main); outline: none; transition: border-color 0.3s; }
         input:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.15); }
         
+        /* HEADER TOP & VERSÍON */
         .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         
         .version-tag { font-size: 0.6rem; color: var(--danger); font-weight: 300; letter-spacing: 1px; margin-left: 8px; vertical-align: middle; border: 1px solid var(--danger); padding: 2px 4px; border-radius: 4px; }
@@ -120,7 +122,6 @@
         .balance-card.compact { padding: 15px; margin-bottom: 15px; margin-top: 10px; }
         .balance-card.compact .balance-amount { font-size: 1.8rem; }
         
-        /* HEADER MEJORADO - MAS GRANDE Y CLARO */
         .grid-header-title { font-size: 1.1rem; font-weight: 600; color: var(--text-light); letter-spacing: 0.5px; text-transform: uppercase; margin: 30px 0 10px 0; }
 
         .seg-control { display: flex; background: var(--bg-input); border-radius: 10px; padding: 3px; border: 1px solid var(--border); width: fit-content; }
@@ -173,22 +174,55 @@
         .confirm-title { font-size: 1.2rem; font-weight: bold; margin-bottom: 10px; color: var(--text-main); }
         .confirm-text { color: var(--text-sec); margin-bottom: 20px; font-size: 0.95rem; }
         
-        /* GRID SELECTOR 4x4 */
+        /* SWITCH ESTADO EDITAR INFO */
+        .toggle-container { display: flex; justify-content: space-between; background: var(--bg-input); padding: 15px; border-radius: 12px; align-items: center; border: 1px solid var(--border); margin-top: 10px;}
+        .switch { position: relative; display: inline-block; width: 50px; height: 26px; } .switch input { opacity: 0; width: 0; height: 0; } .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--bg-body); transition: .4s; border-radius: 34px; border: 1px solid var(--border); } .slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 2px; bottom: 2px; background-color: var(--text-sec); transition: .4s; border-radius: 50%; } input:checked + .slider { background-color: var(--primary); border-color: var(--primary); } input:checked + .slider:before { transform: translateX(24px); background-color: white; }
+
+        /* GRID SELECTOR 4x4 (SELECTOR UNIDADES) */
         .grid-selector-container { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; padding: 15px 5px; max-height: 60vh; overflow-y: auto; }
         .unit-selector-card { aspect-ratio: 1/1; background: var(--bg-input); border: 1px solid var(--primary); border-radius: 14px; display: flex; justify-content: center; align-items: center; font-weight: bold; font-size: 1.1rem; color: var(--primary); cursor: pointer; transition: transform 0.2s; }
         .unit-selector-card:active { transform: scale(0.90); background: var(--primary); color: white; }
         
-        /* DIRECTORIO ESTILOS MEJORADO */
-        .contact-card { display: flex; align-items: center; background: var(--bg-card); padding: 15px; border-radius: 16px; margin-bottom: 10px; border: 1px solid var(--border); position: relative; }
-        .contact-card.empty { opacity: 0.6; }
-        /* Numero en cajita */
-        .contact-number-box { width: 40px; height: 40px; background: var(--bg-input); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: bold; color: var(--primary); margin-right: 12px; flex-shrink: 0; border: 1px solid var(--border); }
-        .contact-info { flex: 1; overflow: hidden; }
-        .contact-name { font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 0.95rem; color: var(--text-main); }
-        .contact-phone { font-size: 0.85rem; color: var(--text-sec); margin-top: 2px; }
-        .contact-last-pay { font-size: 0.75rem; color: var(--success); margin-top: 2px; font-weight: 500; }
-        .contact-last-pay.none { color: var(--text-sec); opacity: 0.7; }
+        /* DIRECTORIO ESTILOS V79 */
+        .contact-card { display: flex; align-items: center; background: var(--bg-card); padding: 15px; border-radius: 16px; margin-bottom: 10px; border: 1px solid var(--border); position: relative; transition: transform 0.1s; }
+        .contact-card:active { transform: scale(0.98); background: var(--bg-input); }
+        .contact-card.empty { opacity: 0.8; }
         
+        /* Recuadro del numero */
+        .contact-number-box { 
+            width: 45px; height: 45px; 
+            background: var(--bg-input); 
+            border-radius: 12px; 
+            display: flex; align-items: center; justify-content: center; 
+            font-weight: 800; font-size: 1.1rem; 
+            color: var(--primary); 
+            margin-right: 15px; flex-shrink: 0; 
+            border: 1px solid var(--primary); 
+            box-shadow: 0 0 10px rgba(var(--primary-rgb), 0.2);
+        }
+        
+        /* Estilo para vacío */
+        .contact-card.empty .contact-number-box {
+            color: var(--empty);
+            border-color: var(--empty);
+            box-shadow: none;
+            background: transparent;
+        }
+
+        .contact-info { flex: 1; overflow: hidden; }
+        .contact-name { font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 1rem; color: var(--text-main); margin-bottom: 4px; }
+        .contact-last-pay { font-size: 0.75rem; color: var(--text-sec); display: block; }
+        
+        /* Botones de acción (ocultos visualmente, pero funcionales en lógica interna si se requiriera, aquí removidos visualmente) */
+        .contact-actions { display: flex; gap: 10px; }
+
+        /* BADGES NEON */
+        .badge { padding: 4px 8px; border-radius: 6px; font-size: 0.7rem; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; border: 1px solid transparent; white-space: nowrap; }
+        .badge-success { color: var(--success); border-color: var(--success); background: rgba(16, 185, 129, 0.1); box-shadow: 0 0 5px rgba(var(--success-rgb), 0.2); }
+        .badge-warning { color: var(--warning); border-color: var(--warning); background: rgba(245, 158, 11, 0.1); box-shadow: 0 0 5px rgba(var(--warning-rgb), 0.2); }
+        .badge-danger { color: var(--danger); border-color: var(--danger); background: rgba(239, 68, 68, 0.1); box-shadow: 0 0 5px rgba(var(--danger-rgb), 0.2); }
+        .badge-empty { color: var(--empty); border-color: var(--empty); background: rgba(100, 116, 139, 0.1); }
+
         #modalImageView { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 3000; justify-content: center; align-items: center; }
     </style>
 </head>
@@ -210,7 +244,7 @@
         
         <div id="view-home" class="container">
             <div class="header-top">
-                <h2 style="margin:0;">Panel de Control <span class="version-tag">v78 Beta</span></h2>
+                <h2 style="margin:0;">Panel de Control <span class="version-tag">v79 Beta</span></h2>
                 <small id="sync-status" style="color:var(--success)">● Conectado</small>
             </div>
             
@@ -340,17 +374,34 @@
     </div></div>
 
 <script>
+    // --- MANIFEST DINÁMICO (V79) ---
+    const manifestData = {
+        "name": "Condominio Master",
+        "short_name": "Condominio",
+        "start_url": ".",
+        "display": "standalone",
+        "background_color": "#0f172a",
+        "theme_color": "#0f172a",
+        "orientation": "portrait",
+        "id": "/condominio-v79/",
+        "icons": [
+            { "src": "https://cdn-icons-png.flaticon.com/512/5569/5569424.png", "sizes": "192x192", "type": "image/png" },
+            { "src": "https://cdn-icons-png.flaticon.com/512/5569/5569424.png", "sizes": "512x512", "type": "image/png" }
+        ]
+    };
+    const blob = new Blob([JSON.stringify(manifestData)], {type: 'application/json'});
+    document.getElementById('my-manifest-placeholder').href = URL.createObjectURL(blob);
+
     const API_URL = "https://script.google.com/macros/s/AKfycby7jl6wQCWO0xkelu0fIoMvWmO1eNpK2QnZuYqVD-h0NMrLTwumjz7AIrxGriYrMajI/exec"; 
     const SECRET_PIN = "2163";
     const TOTAL_UNITS = 16;
     let appConfig = { initialBalance: 0, rentPrice: 600, extraFeeAmount: 0 };
     let movements = []; let unitInfo = {}; 
-    let currentUnitId, editingId, editingExpenseId, pressTimer, isLongPress, currentPin = "";
+    let currentUnitId, editingId, editingExpenseId, currentPin = "";
     let currentHomeView = 'regular';
     let ID_SELECCIONADO = null; 
     let deferredPrompt; 
 
-    // --- EVENTOS PWA ---
     window.addEventListener('beforeinstallprompt', (e) => {
         e.preventDefault(); deferredPrompt = e;
         const installBtn = document.getElementById('pwa-install-container');
@@ -361,7 +412,7 @@
         });
     });
 
-    // --- MANEJO DE EVENTOS (CLICK VS LONG PRESS) ---
+    // --- CLICK HANDLERS ---
     let touchStartTime = 0; let isScrolling = false;
     function handleUnitStart() { touchStartTime = Date.now(); isScrolling = false; }
     function handleUnitMove() { isScrolling = true; }
@@ -410,7 +461,7 @@
         try{ await fetch(API_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({movements,units:unitInfo,config:appConfig})}); document.getElementById('sync-status').innerText="● Conectado"; }catch(e){ document.getElementById('sync-status').innerText="⚠ Error"; }
     }
     
-    function descargarBackup() { const d = { date: new Date().toISOString(), movements, unitInfo, config: appConfig, version: "v78" }; const b = new Blob([JSON.stringify(d, null, 2)], {type : 'application/json'}); const l = document.createElement("a"); l.href = URL.createObjectURL(b); l.download = `Respaldo.json`; document.body.appendChild(l); l.click(); document.body.removeChild(l); }
+    function descargarBackup() { const d = { date: new Date().toISOString(), movements, unitInfo, config: appConfig, version: "v79" }; const b = new Blob([JSON.stringify(d, null, 2)], {type : 'application/json'}); const l = document.createElement("a"); l.href = URL.createObjectURL(b); l.download = `Respaldo.json`; document.body.appendChild(l); l.click(); document.body.removeChild(l); }
     function procesarArchivoBackup(event) { const f = event.target.files[0]; if(!f) return; const r = new FileReader(); r.onload = function(e) { try { const d = JSON.parse(e.target.result); if(d.movements){ movements=d.movements; unitInfo=d.unitInfo||{}; appConfig=d.config||appConfig; guardarEnNube(); renderAll(); alert("✅ Restaurado"); } } catch (err) { alert("Archivo inválido"); } }; r.readAsText(f); }
 
     function switchHomeView(view) {
@@ -474,7 +525,9 @@
             if (info.empty) { cardClass = 'card-bg-empty'; } else {
                 occ++;
                 if (isPaid) { fullyPaid++; cardClass = 'card-bg-paid'; } else {
-                    if (currentHomeView === 'regular') { const days = calcularDiasAtraso(i); if (days <= 40) { pending++; cardClass = 'card-bg-pending'; } else { overdue++; cardClass = 'card-bg-due'; } } else { overdue++; cardClass = 'card-bg-due'; }
+                    // Logic fixed for Extra: apply same tolerance rule
+                    const days = calcularDiasAtraso(i); 
+                    if (days <= 40) { pending++; cardClass = 'card-bg-pending'; } else { overdue++; cardClass = 'card-bg-due'; }
                 }
             }
             const card = document.createElement('div'); card.className = `unit-card ${cardClass}`; card.innerHTML = `${i}`;
@@ -507,26 +560,45 @@
          });
     }
     
-    // --- LÓGICA DIRECTORIO MEJORADA ---
+    // --- LÓGICA DIRECTORIO REFINADA (V79) ---
     function renderDirectory() {
         const list = document.getElementById('directory-list'); list.innerHTML = '';
         for(let i=1; i<=TOTAL_UNITS; i++) {
             const info = unitInfo[i] || { name: '', phone: '', empty: false };
             const isEmpty = info.empty;
             
-            // Buscar último pago
+            // 1. Obtener último pago
             const lastPay = movements.filter(m => m.type === 'income' && m.unitId === i).sort((a,b) => new Date(b.date) - new Date(a.date))[0];
-            const lastPayText = lastPay ? `Último: ${lastPay.date} • $${lastPay.amount}` : 'Sin pagos recientes';
+            const lastPayText = lastPay ? `Último: ${lastPay.date} • $${lastPay.amount}` : 'Sin historial';
+            
+            // 2. Calcular estado (Badge)
+            const days = calcularDiasAtraso(i);
+            let badgeHtml = '';
+            
+            if (isEmpty) {
+                badgeHtml = '<span class="badge badge-empty">VACÍO</span>';
+            } else if (days <= 30) {
+                badgeHtml = '<span class="badge badge-success">AL CORRIENTE</span>';
+            } else if (days <= 45) {
+                badgeHtml = '<span class="badge badge-warning">PENDIENTE</span>';
+            } else {
+                let lateText = days > 90 ? '90+ DÍAS' : (days > 60 ? '60 DÍAS' : '30 DÍAS');
+                badgeHtml = `<span class="badge badge-danger">VENCIDO ${lateText}</span>`;
+            }
+            
+            // 3. Botones (Ocultos pero lógicos)
+            const phoneLink = info.phone ? `<a href="tel:${info.phone}" class="btn-call"><i class="fas fa-phone"></i></a>` : '';
+            const waLink = info.phone ? `<a href="https://wa.me/52${info.phone.replace(/\D/g,'')}" class="btn-call" style="background:#25D366"><i class="fab fa-whatsapp"></i></a>` : '';
             
             list.innerHTML += `
             <div class="contact-card ${isEmpty ? 'empty' : ''}" onclick="abrirModalEditar(${i})">
                 <div class="contact-number-box">${i}</div>
                 <div class="contact-info">
                     <div class="contact-name">${info.name || 'Sin Inquilino'}</div>
-                    <div class="contact-phone">${info.phone || 'Sin Teléfono'} ${isEmpty ? '• (Vacío)' : ''}</div>
                     <div class="contact-last-pay ${!lastPay ? 'none' : ''}">${lastPayText}</div>
                 </div>
-            </div>`;
+                ${badgeHtml}
+                <div style="display:none">${phoneLink}${waLink}</div> </div>`;
         }
     }
     function filtrarDirectorio(val) { const term=val.toLowerCase(); document.querySelectorAll('.contact-card').forEach(card => { card.style.display = card.innerText.toLowerCase().includes(term) ? 'flex' : 'none'; }); }
@@ -614,14 +686,15 @@
     function abrirModalGasto() { cancelarEdicionGasto(); document.getElementById('exp-date').value=new Date().toISOString().split('T')[0]; history.pushState({modal: true}, null, ""); document.getElementById('modalExpense').style.display='flex'; }
     function cancelarEdicionGasto() { editingExpenseId=null; ID_SELECCIONADO=null; document.getElementById('exp-desc').value=''; document.getElementById('exp-amount').value=''; document.getElementById('modal-expense-title').innerText="Nuevo"; document.getElementById('btn-save-expense').innerText="Guardar"; document.getElementById('btn-delete-expense-container').classList.add('hidden'); document.getElementById('file-name-display').innerText=''; document.getElementById('exp-receipt-input').value=''; }
 
-    // --- FUNCIONES EDICIÓN INFO DEPARTAMENTO ---
+    // --- FUNCIONES EDICIÓN INFO DEPARTAMENTO (V79 CORREGIDA) ---
     function abrirModalEditar(id) { 
         currentUnitId=id; 
         const i=unitInfo[id]||{}; 
         document.getElementById('edit-name').value=i.name||''; 
         document.getElementById('edit-phone').value=i.phone||''; 
         
-        // SET TOGGLE STATE
+        // SET TOGGLE STATE (Logica inversa: empty=true significa DESHABITADO)
+        // isHabitado = !empty
         const isHabitado = !i.empty;
         setHabitado(isHabitado, isHabitado ? document.querySelector('#seg-habitado .seg-btn:first-child') : document.querySelector('#seg-habitado .seg-btn:last-child'));
         
@@ -630,10 +703,9 @@
     }
 
     function setHabitado(val, btn) {
-        document.getElementById('edit-status-val').value = val;
+        document.getElementById('edit-status-val').value = val; // "true" or "false" string
         document.querySelectorAll('#seg-habitado .seg-btn').forEach(b => b.classList.remove('active'));
         if(btn) btn.classList.add('active');
-        // Si no hay botón (carga inicial), buscar el correcto
         else {
              const index = val ? 0 : 1;
              document.querySelectorAll('#seg-habitado .seg-btn')[index].classList.add('active');
@@ -647,7 +719,7 @@
         unitInfo[currentUnitId].name = document.getElementById('edit-name').value; 
         unitInfo[currentUnitId].phone = document.getElementById('edit-phone').value; 
         
-        // Leer del hidden input convertido a booleano
+        // Leer del hidden input. Si value es "true", entonces habitado (empty=false).
         const isHabitado = document.getElementById('edit-status-val').value === 'true';
         unitInfo[currentUnitId].empty = !isHabitado; 
         
