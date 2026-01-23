@@ -10,7 +10,7 @@
     <meta name="apple-mobile-web-app-title" content="Condominio">
     <meta name="theme-color" content="#0f172a">
     
-    <title>Condominio Master v86</title>
+    <title>Condominio Master v87</title>
     
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -135,7 +135,7 @@
         .unit-selector-card { aspect-ratio: 1/1; background: var(--bg-input); border: 1px solid var(--primary); border-radius: 14px; display: flex; justify-content: center; align-items: center; font-weight: bold; font-size: 1.1rem; color: var(--primary); cursor: pointer; transition: transform 0.2s; }
         .unit-selector-card:active { transform: scale(0.90); background: var(--primary); color: white; }
         
-        /* DIRECTORIO ESTILOS V86 */
+        /* DIRECTORIO ESTILOS V87 */
         .contact-card { display: flex; align-items: center; background: var(--bg-card); padding: 15px; border-radius: 16px; margin-bottom: 10px; border: 1px solid var(--border); position: relative; transition: transform 0.1s; }
         .contact-card:active { transform: scale(0.98); background: var(--bg-input); }
         .contact-card.empty { opacity: 0.8; }
@@ -193,7 +193,7 @@
         
         <div id="view-home" class="container">
             <div class="header-top">
-                <h2 style="margin:0;">Panel de Control <span class="version-tag">v86 Beta</span></h2>
+                <h2 style="margin:0;">Panel de Control <span class="version-tag">v87 Beta</span></h2>
                 <small id="sync-status" style="color:var(--success)">● Conectado</small>
             </div>
             
@@ -261,17 +261,16 @@
         </div>
 
         <div id="view-dev" class="container hidden">
-            <h2>Log de Cambios (v86)</h2>
+            <h2>Log de Cambios (v87)</h2>
             <div class="dev-log-container">
-1. LÓGICA VISTA EXTRA:
-- Corregido: Ahora usa el historial de pagos para determinar si es Pendiente (Amarillo) o Vencido (Rojo), en lugar de marcar todo como rojo si falta.
+1. LÓGICA VISTA EXTRA (REPARADA):
+- Ahora distingue correctamente pagos Regulares vs Extra.
+- No marca como "Pendiente" si pagaste Regular pero debes Extra.
 
-2. LÓGICA DIRECTORIO:
-- Rangos ajustados:
-  * 0-30 días: Pendiente
-  * 31-60 días: Vencido (Rojo)
-  * 61-90 días: 60 Días
-  * 91+ días: 90 Días
+2. DIRECTORIO:
+- VENCIDO intermedio recuperado (31-60 días).
+- PENDIENTE solo 0-30 días.
+- Etiqueta 90 DÍAS actualizada.
             </div>
         </div>
 
@@ -424,7 +423,7 @@
         try{ await fetch(API_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({movements,units:unitInfo,config:appConfig})}); document.getElementById('sync-status').innerText="● Conectado"; }catch(e){ document.getElementById('sync-status').innerText="⚠ Error"; }
     }
     
-    function descargarBackup() { const d = { date: new Date().toISOString(), movements, unitInfo, config: appConfig, version: "v86" }; const b = new Blob([JSON.stringify(d, null, 2)], {type : 'application/json'}); const l = document.createElement("a"); l.href = URL.createObjectURL(b); l.download = `Respaldo.json`; document.body.appendChild(l); l.click(); document.body.removeChild(l); }
+    function descargarBackup() { const d = { date: new Date().toISOString(), movements, unitInfo, config: appConfig, version: "v87" }; const b = new Blob([JSON.stringify(d, null, 2)], {type : 'application/json'}); const l = document.createElement("a"); l.href = URL.createObjectURL(b); l.download = `Respaldo.json`; document.body.appendChild(l); l.click(); document.body.removeChild(l); }
     function procesarArchivoBackup(event) { const f = event.target.files[0]; if(!f) return; const r = new FileReader(); r.onload = function(e) { try { const d = JSON.parse(e.target.result); if(d.movements){ movements=d.movements; unitInfo=d.unitInfo||{}; appConfig=d.config||appConfig; guardarEnNube(); renderAll(); alert("✅ Restaurado"); } } catch (err) { alert("Archivo inválido"); } }; r.readAsText(f); }
 
     function switchHomeView(view) {
@@ -468,7 +467,18 @@
 
     function guardarConfiguracion() { appConfig.initialBalance=parseFloat(document.getElementById('conf-balance').value)||0; appConfig.rentPrice=parseFloat(document.getElementById('conf-rent').value)||600; appConfig.extraFeeAmount=parseFloat(document.getElementById('conf-extra').value)||0; guardarEnNube(); renderHome(); showToast('Configuración guardada'); }
     function exportarExcel() { if(movements.length===0) return alert("Sin datos"); let ti=0, tg=0; movements.forEach(m=>{ if(m.type==='income') ti+=m.amount; else tg+=m.amount; }); let csv = `REPORTE DEPARTAMENTOS 2163\nSaldo Inicial,"$${appConfig.initialBalance}"\nIngresos,"$${ti}"\nGastos,"$${tg}"\nBALANCE TOTAL,"$${(appConfig.initialBalance+ti-tg)}"\n\nID,Fecha,Depto,Concepto,TipoPago,Metodo,Ingreso,Gasto\n`; movements.sort((a,b)=>new Date(a.date)-new Date(b.date)).forEach(m=>{ let i=m.type==='income'?`"$${m.amount}"`:'"$0.00"'; let g=m.type==='expense'?`"$${m.amount}"`:'"$0.00"'; let cn=(m.type==='income'?m.note:m.description)||'-'; csv+=`${m.id},${m.date},${m.unitId||'-'},${cn},${m.paymentType==='extra'?'EXTRA':'REGULAR'},${m.method||'-'},${i},${g}\n`; }); const b=new Blob(["\ufeff"+csv],{type:'text/csv;charset=utf-8;'}); const l=document.createElement("a"); l.href=URL.createObjectURL(b); l.download=`Reporte.csv`; document.body.appendChild(l); l.click(); document.body.removeChild(l); }
-    function calcularDiasAtraso(uid) { const ps=movements.filter(m=>m.type==='income'&&m.unitId===uid&&m.paymentType!=='extra'); if(ps.length===0) return 999; ps.sort((a,b)=>new Date(b.date)-new Date(a.date)); return Math.ceil(Math.abs(new Date()-new Date(ps[0].date))/86400000); }
+    
+    // CALCULAR DIAS ATRASO (MEJORADA PARA EXTRA)
+    function calcularDiasAtraso(uid, esExtra) {
+        const ps = movements.filter(m => 
+            m.type === 'income' && 
+            m.unitId === uid && 
+            (esExtra ? m.paymentType === 'extra' : m.paymentType !== 'extra')
+        );
+        if(ps.length === 0) return 999; 
+        ps.sort((a,b) => new Date(b.date) - new Date(a.date)); 
+        return Math.ceil(Math.abs(new Date() - new Date(ps[0].date)) / 86400000); 
+    }
     
     function renderHome() {
         const g=document.getElementById('grid-units'); g.innerHTML=''; 
@@ -478,17 +488,28 @@
         document.getElementById('expense-month-total').innerText = `$${moExp.toLocaleString('en-US',{minimumFractionDigits:2})}`;
         document.getElementById('income-month-total').innerText = `$${moInc.toLocaleString('en-US',{minimumFractionDigits:2})}`;
         const targetAmount = currentHomeView === 'extra' ? (appConfig.extraFeeAmount || 0) : appConfig.rentPrice;
+        
         for(let i=1; i<=TOTAL_UNITS; i++){
             const info=unitInfo[i]||{name:'',empty:false}; 
             let totalPaidCurrentView = 0;
-            if (currentHomeView === 'regular') { totalPaidCurrentView = movements.filter(m => m.type==='income' && m.unitId===i && (m.paymentType === 'regular' || !m.paymentType) && new Date(m.date+'T00:00').getMonth()===cm && new Date(m.date+'T00:00').getFullYear()===cy).reduce((s,m)=>s+m.amount,0); } 
-            else { totalPaidCurrentView = movements.filter(m => m.type==='income' && m.unitId===i && m.paymentType === 'extra' && new Date(m.date+'T00:00').getMonth()===cm && new Date(m.date+'T00:00').getFullYear()===cy).reduce((s,m)=>s+m.amount,0); }
+            
+            // FILTRO DE PAGO: Extra solo suma Extra, Regular solo Regular
+            if (currentHomeView === 'regular') { 
+                totalPaidCurrentView = movements.filter(m => m.type==='income' && m.unitId===i && (m.paymentType === 'regular' || !m.paymentType) && new Date(m.date+'T00:00').getMonth()===cm && new Date(m.date+'T00:00').getFullYear()===cy).reduce((s,m)=>s+m.amount,0); 
+            } else { 
+                totalPaidCurrentView = movements.filter(m => m.type==='income' && m.unitId===i && m.paymentType === 'extra' && new Date(m.date+'T00:00').getMonth()===cm && new Date(m.date+'T00:00').getFullYear()===cy).reduce((s,m)=>s+m.amount,0); 
+            }
+            
             const isPaid = totalPaidCurrentView >= targetAmount;
             let cardClass = ''; 
+            
             if (info.empty) { cardClass = 'card-bg-empty'; } else {
                 occ++;
                 if (isPaid) { fullyPaid++; cardClass = 'card-bg-paid'; } else {
-                    const days = calcularDiasAtraso(i); if (days <= 40) { pending++; cardClass = 'card-bg-pending'; } else { overdue++; cardClass = 'card-bg-due'; }
+                    // LOGICA DE VENCIDO
+                    const isExtraView = currentHomeView === 'extra';
+                    const days = calcularDiasAtraso(i, isExtraView); 
+                    if (days <= 40) { pending++; cardClass = 'card-bg-pending'; } else { overdue++; cardClass = 'card-bg-due'; }
                 }
             }
             const card = document.createElement('div'); card.className = `unit-card ${cardClass}`; card.innerHTML = `${i}`;
@@ -530,11 +551,13 @@
             const info = unitInfo[i] || { name: '', phone: '', empty: false };
             const isEmpty = info.empty;
             
+            // Buscar último pago (Sort por fecha real)
             const lastPay = movements.filter(m => m.type === 'income' && m.unitId === i).sort((a,b) => new Date(b.date) - new Date(a.date))[0];
             const lastPayText = lastPay ? `Último: ${lastPay.date} • $${lastPay.amount}` : 'Sin historial';
             
+            // Badge Logic (Strict Current Month)
             const isPaidCurrentMonth = movements.some(m => m.type === 'income' && m.unitId === i && new Date(m.date + 'T00:00').getMonth() === cm && new Date(m.date + 'T00:00').getFullYear() === cy);
-            const days = calcularDiasAtraso(i);
+            const days = calcularDiasAtraso(i, false); // Siempre regular para el directorio
             
             let badgeHtml = '';
             
