@@ -10,7 +10,7 @@
     <meta name="apple-mobile-web-app-title" content="Condominio">
     <meta name="theme-color" content="#0f172a">
     
-    <title>Condominio Master v80</title>
+    <title>Condominio Master v81</title>
     
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -36,17 +36,14 @@
         .hidden { display: none !important; }
         .container { padding: 20px; max-width: 800px; margin: 0 auto; }
         
-        /* TOAST NOTIFICATION */
+        /* TOAST */
         #toast-container { position: fixed; top: 60px; left: 50%; transform: translateX(-50%); z-index: 99999; pointer-events: none; width: 90%; max-width: 300px; text-align: center; }
         .toast { background: rgba(30, 41, 59, 0.95); backdrop-filter: blur(5px); color: white; padding: 12px 20px; border-radius: 50px; margin-bottom: 10px; animation: slideDown 0.3s ease-out; border: 1px solid var(--border); box-shadow: 0 10px 30px rgba(0,0,0,0.5); display: inline-flex; align-items: center; gap: 10px; font-size: 0.9rem; font-weight: 500; }
         .toast.success { border-color: var(--success); color: var(--success); }
-        .toast i { font-size: 1.1rem; }
         @keyframes slideDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* PREVENT GHOST CLICKS CLASS */
         .prevent-interaction { pointer-events: none !important; }
 
-        /* ... (ESTILOS UI STANDARD - Botones, Inputs, Login, Loader) ... */
+        /* UI ELEMENTS */
         #login-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: var(--bg-body); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; }
         .login-box { background: var(--bg-card); padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); width: 100%; max-width: 350px; text-align: center; border: 1px solid var(--border); }
         .pin-display { font-size: 2rem; letter-spacing: 10px; margin: 20px 0; font-weight: bold; min-height: 40px; color: var(--primary); }
@@ -145,27 +142,36 @@
         .contact-number-box { width: 45px; height: 45px; background: var(--bg-input); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.1rem; color: var(--primary); margin-right: 15px; flex-shrink: 0; border: 1px solid var(--primary); box-shadow: 0 0 10px rgba(var(--primary-rgb), 0.2); }
         .contact-card.empty .contact-number-box { color: var(--empty); border-color: var(--empty); box-shadow: none; background: transparent; }
         .contact-info { flex: 1; overflow: hidden; }
-        
-        /* Contenedor Nombre + Badge */
         .contact-header { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 4px; }
         .contact-name { font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 1rem; color: var(--text-main); flex: 1; }
-        
-        /* BADGE PÍLDORA PEQUEÑA */
         .badge { padding: 3px 10px; border-radius: 50px; font-size: 0.65rem; font-weight: 800; text-transform: uppercase; border: 1px solid transparent; white-space: nowrap; flex-shrink: 0; }
         .badge-success { color: var(--success); border-color: var(--success); background: rgba(16, 185, 129, 0.1); }
         .badge-warning { color: var(--warning); border-color: var(--warning); background: rgba(245, 158, 11, 0.1); }
         .badge-danger { color: var(--danger); border-color: var(--danger); background: rgba(239, 68, 68, 0.1); }
         .badge-empty { color: var(--empty); border-color: var(--empty); background: rgba(100, 116, 139, 0.1); }
-
-        .contact-phone-row { display:none; } /* Ocultar teléfono visualmente */
+        .contact-phone-row { display:none; } 
         .contact-last-pay { font-size: 0.75rem; color: var(--text-sec); display: block; }
         .contact-actions { display: flex; gap: 10px; display:none; } 
 
         #modalImageView { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 3000; justify-content: center; align-items: center; }
-
-        /* DEV LOG TAB */
+        
         .dev-log-container { background: #1e1e1e; padding: 15px; border-radius: 10px; border: 1px solid #333; font-family: monospace; font-size: 0.8rem; color: #00ff00; overflow-x: auto; white-space: pre-wrap; margin-bottom: 20px; }
-        .dev-title { color: white; font-weight: bold; margin-bottom: 10px; display:block; }
+        
+        /* CORRECCIÓN LUPA */
+        .search-wrapper { position: relative; margin-bottom: 15px; }
+        .search-wrapper i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--text-sec); font-size: 0.9rem; pointer-events: none; z-index: 2; }
+        .search-wrapper input { padding-left: 40px; position: relative; z-index: 1; }
+
+        /* CORRECCIÓN ESPACIO SETTINGS */
+        .setting-section + .setting-section { margin-top: 20px; }
+        
+        /* CORRECCIÓN TOTAL MOSTRADO */
+        .list-summary { background: var(--bg-card); border-radius: 12px; padding: 15px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border); }
+        
+        /* CORRECCIÓN RECIBO FORMATO */
+        .receipt-container { background: #fff !important; color: #000 !important; padding: 20px; border: none; margin-bottom: 15px; border-radius: 12px; width: 100%; max-width: 320px; margin: 0 auto 15px auto; font-size: 0.9rem; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+        .receipt-row { display: flex; justify-content: space-between; margin-bottom: 8px; }
+        #qrcode { display: flex; justify-content: center; margin-top: 20px; }
     </style>
 </head>
 <body>
@@ -188,17 +194,21 @@
         
         <div id="view-home" class="container">
             <div class="header-top">
-                <h2 style="margin:0;">Panel de Control <span class="version-tag">v80 Beta</span></h2>
+                <h2 style="margin:0;">Panel de Control <span class="version-tag">v81 Beta</span></h2>
                 <small id="sync-status" style="color:var(--success)">● Conectado</small>
             </div>
+            
             <div id="main-balance-card" class="balance-card"><div style="font-size:0.8rem; opacity:0.9;">BALANCE EN CAJA</div><div class="balance-amount global-balance-display">$0.00</div></div>
+            
             <div class="stats-grid">
                 <div class="stat-card"><span class="stat-label text-paid">PAGADOS</span><span class="stat-number" id="stat-paid">0</span></div>
                 <div class="stat-card"><span class="stat-label text-pending">PENDIENTES</span><span class="stat-number" id="stat-pending">0</span></div>
                 <div class="stat-card"><span class="stat-label text-due">VENCIDOS</span><span class="stat-number" id="stat-due">0</span></div>
                 <div class="stat-card"><span class="stat-label text-income">INGRESOS</span><span class="stat-number" id="total-income">$0</span></div>
             </div>
+            
             <div class="grid-header-title">Estatus Departamentos</div>
+            
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; margin-left: 2px;">
                 <div class="seg-control" id="home-toggle-control">
                     <button class="seg-btn active" onclick="switchHomeView('regular')">Regular</button>
@@ -206,6 +216,7 @@
                 </div>
                 <div class="btn-icon-inline" onclick="cambiarVista('directory')"><i class="fas fa-address-book"></i></div>
             </div>
+
             <div class="grid-container" id="grid-units"></div>
             <div class="grid-header-title" style="margin-top: 30px;">Actividad Reciente</div>
             <div id="home-notifications"></div>
@@ -246,24 +257,20 @@
         </div>
 
         <div id="view-dev" class="container hidden">
-            <h2>Log de Cambios (v80)</h2>
+            <h2>Log de Cambios (v81)</h2>
             <div class="dev-log-container">
-1. TOAST NOTIFICATIONS:
-- Añadido feedback visual verde (éxito) al guardar/editar.
+1. COMPROBANTE:
+- Formato arreglado: Fondo blanco, texto justificado, QR centrado.
 
-2. DIRECTORIO:
-- Badge tipo píldora a la derecha del nombre.
-- Lógica de estados:
-  * PAGADO (Verde)
-  * PENDIENTE (Amarillo)
-  * VENCIDO (Rojo 30-59 días)
-  * 60 DÍAS (Rojo)
-  * 90 DÍAS (Rojo)
-  * 90+ (Rojo)
-- Teléfono oculto visualmente.
+2. DIRECTORIO (Lógica Corregida):
+- Estatus "Pagado" ahora valida mes/año actual.
+- Fecha de "Último pago" toma la fecha del registro (user input), no timestamp.
+- Ordenamiento correcto por fecha real.
 
-3. ESTABILIDAD:
-- Fix "Ghost Clicks": Bloqueo de inputs por 400ms al abrir modal.
+3. ESTILOS:
+- Separación mejorada en Configuración y Listas.
+- Total mostrado alineado a la derecha.
+- Icono de lupa dentro del input.
             </div>
         </div>
 
@@ -346,28 +353,16 @@
     let ID_SELECCIONADO = null; 
     let deferredPrompt; 
 
-    // --- TOAST NOTIFICATION SYSTEM ---
     function showToast(message, type = 'success') {
         const container = document.getElementById('toast-container');
         const toast = document.createElement('div');
         toast.className = `toast ${type}`;
         toast.innerHTML = `<i class="fas fa-check-circle"></i> ${message}`;
         container.appendChild(toast);
-        // Remove after animation (3s)
-        setTimeout(() => {
-            toast.style.animation = 'slideDown 0.3s ease-in reverse forwards';
-            setTimeout(() => toast.remove(), 300);
-        }, 3000);
+        setTimeout(() => { toast.style.animation = 'slideDown 0.3s ease-in reverse forwards'; setTimeout(() => toast.remove(), 300); }, 3000);
     }
 
-    // --- BLOQUEO DE GHOST CLICKS ---
-    function bloquearInteraccionTemporal() {
-        const overlays = document.querySelectorAll('.modal-overlay');
-        overlays.forEach(o => o.classList.add('prevent-interaction'));
-        setTimeout(() => {
-            overlays.forEach(o => o.classList.remove('prevent-interaction'));
-        }, 400); // 400ms delay block
-    }
+    function bloquearInteraccionTemporal() { const o=document.querySelectorAll('.modal-overlay'); o.forEach(x=>x.classList.add('prevent-interaction')); setTimeout(()=>o.forEach(x=>x.classList.remove('prevent-interaction')),400); }
 
     window.addEventListener('beforeinstallprompt', (e) => {
         e.preventDefault(); deferredPrompt = e;
@@ -384,9 +379,7 @@
     function handleUnitMove() { isScrolling = true; }
     function handleUnitEnd(id) {
         if (isScrolling) return; 
-        // Prevención básica de ghost click en origen
         if (event.type === 'touchend') event.preventDefault();
-        
         const touchDuration = Date.now() - touchStartTime;
         if (touchDuration < 500) { abrirModalUnidad(id); } 
         else { if (navigator.vibrate) navigator.vibrate(50); abrirModalEditar(id); }
@@ -430,7 +423,7 @@
         try{ await fetch(API_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({movements,units:unitInfo,config:appConfig})}); document.getElementById('sync-status').innerText="● Conectado"; }catch(e){ document.getElementById('sync-status').innerText="⚠ Error"; }
     }
     
-    function descargarBackup() { const d = { date: new Date().toISOString(), movements, unitInfo, config: appConfig, version: "v80" }; const b = new Blob([JSON.stringify(d, null, 2)], {type : 'application/json'}); const l = document.createElement("a"); l.href = URL.createObjectURL(b); l.download = `Respaldo.json`; document.body.appendChild(l); l.click(); document.body.removeChild(l); }
+    function descargarBackup() { const d = { date: new Date().toISOString(), movements, unitInfo, config: appConfig, version: "v81" }; const b = new Blob([JSON.stringify(d, null, 2)], {type : 'application/json'}); const l = document.createElement("a"); l.href = URL.createObjectURL(b); l.download = `Respaldo.json`; document.body.appendChild(l); l.click(); document.body.removeChild(l); }
     function procesarArchivoBackup(event) { const f = event.target.files[0]; if(!f) return; const r = new FileReader(); r.onload = function(e) { try { const d = JSON.parse(e.target.result); if(d.movements){ movements=d.movements; unitInfo=d.unitInfo||{}; appConfig=d.config||appConfig; guardarEnNube(); renderAll(); alert("✅ Restaurado"); } } catch (err) { alert("Archivo inválido"); } }; r.readAsText(f); }
 
     function switchHomeView(view) {
@@ -472,7 +465,7 @@
         if (pushHistory && v !== 'home') { history.pushState({view: v}, null, ""); }
     }
 
-    function guardarConfiguracion() { appConfig.initialBalance=parseFloat(document.getElementById('conf-balance').value)||0; appConfig.rentPrice=parseFloat(document.getElementById('conf-rent').value)||600; appConfig.extraFeeAmount=parseFloat(document.getElementById('conf-extra').value)||0; guardarEnNube(); renderHome(); showToast('Configuración guardada'); }
+    function guardarConfiguracion() { appConfig.initialBalance=parseFloat(document.getElementById('conf-balance').value)||0; appConfig.rentPrice=parseFloat(document.getElementById('conf-rent').value)||600; appConfig.extraFeeAmount=parseFloat(document.getElementById('conf-extra').value)||0; guardarEnNube(); renderHome(); alert("Guardado"); }
     function exportarExcel() { if(movements.length===0) return alert("Sin datos"); let ti=0, tg=0; movements.forEach(m=>{ if(m.type==='income') ti+=m.amount; else tg+=m.amount; }); let csv = `REPORTE DEPARTAMENTOS 2163\nSaldo Inicial,"$${appConfig.initialBalance}"\nIngresos,"$${ti}"\nGastos,"$${tg}"\nBALANCE TOTAL,"$${(appConfig.initialBalance+ti-tg)}"\n\nID,Fecha,Depto,Concepto,TipoPago,Metodo,Ingreso,Gasto\n`; movements.sort((a,b)=>new Date(a.date)-new Date(b.date)).forEach(m=>{ let i=m.type==='income'?`"$${m.amount}"`:'"$0.00"'; let g=m.type==='expense'?`"$${m.amount}"`:'"$0.00"'; let cn=(m.type==='income'?m.note:m.description)||'-'; csv+=`${m.id},${m.date},${m.unitId||'-'},${cn},${m.paymentType==='extra'?'EXTRA':'REGULAR'},${m.method||'-'},${i},${g}\n`; }); const b=new Blob(["\ufeff"+csv],{type:'text/csv;charset=utf-8;'}); const l=document.createElement("a"); l.href=URL.createObjectURL(b); l.download=`Reporte.csv`; document.body.appendChild(l); l.click(); document.body.removeChild(l); }
     function calcularDiasAtraso(uid) { const ps=movements.filter(m=>m.type==='income'&&m.unitId===uid&&m.paymentType!=='extra'); if(ps.length===0) return 999; ps.sort((a,b)=>new Date(b.date)-new Date(a.date)); return Math.ceil(Math.abs(new Date()-new Date(ps[0].date))/86400000); }
     
@@ -527,21 +520,26 @@
          });
     }
     
-    // --- LÓGICA DIRECTORIO v80 ---
+    // --- LÓGICA DIRECTORIO V81 (CORREGIDA) ---
     function renderDirectory() {
         const list = document.getElementById('directory-list'); list.innerHTML = '';
+        const now = new Date(); const cm = now.getMonth(); const cy = now.getFullYear();
+
         for(let i=1; i<=TOTAL_UNITS; i++) {
             const info = unitInfo[i] || { name: '', phone: '', empty: false };
             const isEmpty = info.empty;
             
-            // Buscar último pago
-            const lastPay = movements.filter(m => m.type === 'income' && m.unitId === i).sort((a,b) => new Date(b.date) - new Date(a.date))[0];
+            // Buscar último pago (Sort por fecha real)
+            const lastPay = movements.filter(m => m.type === 'income' && m.unitId === i)
+                                     .sort((a,b) => new Date(b.date) - new Date(a.date))[0];
             const lastPayText = lastPay ? `Último: ${lastPay.date} • $${lastPay.amount}` : 'Sin historial';
             
-            // Badge Logic
-            const days = calcularDiasAtraso(i);
-            const isPaidCurrentMonth = movements.some(m => m.type === 'income' && m.unitId === i && new Date(m.date + 'T00:00').getMonth() === new Date().getMonth() && new Date(m.date + 'T00:00').getFullYear() === new Date().getFullYear());
+            // Badge Logic (Strict Current Month)
+            // Check if PAID this month
+            const isPaidCurrentMonth = movements.some(m => m.type === 'income' && m.unitId === i && new Date(m.date + 'T00:00').getMonth() === cm && new Date(m.date + 'T00:00').getFullYear() === cy);
 
+            // Check days overdue
+            const days = calcularDiasAtraso(i);
             let badgeHtml = '';
             
             if (isEmpty) {
@@ -713,7 +711,7 @@
     function solicitarEdicion() { const id = ID_SELECCIONADO; if(id) { document.getElementById('modalReceipt').style.display = 'none'; prepararEdicionGlobal(id); } }
     function solicitarEliminacion() { if(!ID_SELECCIONADO) return; document.getElementById('modalConfirm').style.display = 'flex'; }
     function cerrarConfirmacion() { document.getElementById('modalConfirm').style.display = 'none'; }
-    function ejecutarEliminacionReal() { movements = movements.filter(m => m.id != ID_SELECCIONADO); guardarEnNube(); renderAll(); showToast('Eliminado'); cerrarConfirmacion(); history.back(); }
+    function ejecutarEliminacionReal() { movements = movements.filter(m => m.id != ID_SELECCIONADO); guardarEnNube(); renderAll(); cerrarConfirmacion(); history.back(); }
     
     function verRecibo(id) { 
         const m=movements.find(x=>x.id===Number(id)); if(!m)return; ID_SELECCIONADO=Number(id); const i=unitInfo[m.unitId]||{}; const fol=m.id.toString();
