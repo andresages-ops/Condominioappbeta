@@ -35,7 +35,7 @@
             
             --text-main: #f8fafc; 
             --text-sec: #94a3b8; 
-            --text-light: #cbd5e1; /* Nuevo color para encabezados */
+            --text-light: #e2e8f0; /* Color claro para encabezados */
             --empty: #64748b; 
 
             --primary-rgb: 59, 130, 246;
@@ -89,58 +89,21 @@
         .btn-outline-danger { background: transparent; border: 2px solid var(--danger); color: var(--danger); }
         .btn-outline-danger:active { background: var(--danger); color: white; }
 
-        /* BOTÓN MES SIGUIENTE (GHOST) */
-        .btn-mini-ghost {
-            padding: 6px 12px;
-            font-size: 0.75rem;
-            margin: 0;
-            width: auto;
-            display: inline-block;
-            background: rgba(139, 92, 246, 0.1);
-            color: var(--accent);
-            border: 1px solid var(--accent);
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
+        .btn-mini-ghost { padding: 6px 12px; font-size: 0.75rem; margin: 0; width: auto; display: inline-block; background: rgba(139, 92, 246, 0.1); color: var(--accent); border: 1px solid var(--accent); border-radius: 8px; cursor: pointer; transition: all 0.2s; }
         .btn-mini-ghost:active { background: var(--accent); color: white; box-shadow: 0 0 10px rgba(var(--accent-rgb), 0.6); }
 
-        /* UPLOAD FILE BTN */
-        .file-upload-btn {
-            display: flex; justify-content: center; align-items: center;
-            padding: 12px; border: 2px dashed var(--text-sec);
-            border-radius: 12px; color: var(--text-sec);
-            cursor: pointer; margin: 10px 0; transition: 0.2s;
-        }
+        .file-upload-btn { display: flex; justify-content: center; align-items: center; padding: 12px; border: 2px dashed var(--text-sec); border-radius: 12px; color: var(--text-sec); cursor: pointer; margin: 10px 0; transition: 0.2s; }
         .file-upload-btn:active { border-color: var(--primary); color: var(--primary); background: rgba(59,130,246,0.1); }
         #file-name-display { font-size: 0.8rem; color: var(--primary); text-align: center; margin-bottom: 5px; }
 
         input, select { width: 100%; padding: 14px; margin: 5px 0; border: 1px solid var(--border); border-radius: 12px; background: var(--bg-darker); color: var(--text-main); outline: none; transition: border-color 0.3s; }
         input:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.15); }
         
-        /* HEADER TOP & VERSÍON */
         .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         
-        .version-tag {
-            font-size: 0.6rem;
-            color: var(--danger);
-            font-weight: 300;
-            letter-spacing: 1px;
-            margin-left: 8px;
-            vertical-align: middle;
-            border: 1px solid var(--danger);
-            padding: 2px 4px;
-            border-radius: 4px;
-        }
+        .version-tag { font-size: 0.6rem; color: var(--danger); font-weight: 300; letter-spacing: 1px; margin-left: 8px; vertical-align: middle; border: 1px solid var(--danger); padding: 2px 4px; border-radius: 4px; }
 
-        /* BTN DIRECTORIO (Nuevo Estilo para Switch) */
-        .btn-icon-inline {
-            width: 36px; height: 36px; border-radius: 10px;
-            background: var(--bg-input); border: 1px solid var(--border);
-            display: flex; justify-content: center; align-items: center;
-            color: var(--text-main); font-size: 1rem; cursor: pointer;
-            transition: 0.2s;
-        }
+        .btn-icon-inline { width: 36px; height: 36px; border-radius: 10px; background: var(--bg-input); border: 1px solid var(--border); display: flex; justify-content: center; align-items: center; color: var(--text-main); font-size: 1rem; cursor: pointer; transition: 0.2s; }
         .btn-icon-inline:active { transform: scale(0.95); background: var(--primary); color: white; }
 
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 20px; }
@@ -157,17 +120,9 @@
         .balance-card.compact { padding: 15px; margin-bottom: 15px; margin-top: 10px; }
         .balance-card.compact .balance-amount { font-size: 1.8rem; }
         
-        /* HEADERS MEJORADOS (Light & Small) */
-        .grid-header-title { 
-            font-size: 0.8rem; 
-            font-weight: 600; 
-            color: var(--text-light); /* Color más claro */
-            letter-spacing: 0.5px; 
-            text-transform: uppercase; 
-            margin: 30px 0 10px 0; 
-        }
+        /* HEADER MEJORADO - MAS GRANDE Y CLARO */
+        .grid-header-title { font-size: 1.1rem; font-weight: 600; color: var(--text-light); letter-spacing: 0.5px; text-transform: uppercase; margin: 30px 0 10px 0; }
 
-        /* SEGMENTED CONTROLS - CLÁSICO */
         .seg-control { display: flex; background: var(--bg-input); border-radius: 10px; padding: 3px; border: 1px solid var(--border); width: fit-content; }
         .seg-control.full-width { width: 100%; margin-bottom: 15px; } 
         .seg-btn { flex: 1; padding: 6px 15px; text-align: center; cursor: pointer; border-radius: 7px; font-size: 0.8rem; font-weight: 600; color: var(--text-sec); transition: all 0.2s; border: none; background: transparent; }
@@ -178,15 +133,13 @@
         .grid-container { display: grid; grid-template-columns: repeat(8, 1fr); gap: 8px; margin-top: 10px; }
         .unit-card { aspect-ratio: 1 / 1; border-radius: 8px; display: flex; justify-content: center; align-items: center; cursor: pointer; position: relative; font-size: 0.8rem; font-weight: 700; transition: transform 0.1s; user-select: none; -webkit-user-select: none; }
         .unit-card:active { transform: scale(0.90); }
-
-        .card-bg-paid { background: rgba(var(--success-rgb), 0.3); border: 1px solid var(--success); color: var(--success); box-shadow: 0 0 5px rgba(var(--success-rgb), 0.6); }
-        .card-bg-pending { background: rgba(var(--warning-rgb), 0.3); border: 1px solid var(--warning); color: var(--warning); box-shadow: 0 0 5px rgba(var(--warning-rgb), 0.6); }
-        .card-bg-due { background: rgba(var(--danger-rgb), 0.3); border: 1px solid var(--danger); color: var(--danger); box-shadow: 0 0 5px rgba(var(--danger-rgb), 0.6); }
-        .card-bg-empty { background: rgba(var(--empty-rgb), 0.1); border: 1px solid var(--border); color: var(--empty); box-shadow: none; }
+        .card-bg-paid { background: rgba(var(--success-rgb), 0.3); border: 1px solid var(--success); color: var(--success); }
+        .card-bg-pending { background: rgba(var(--warning-rgb), 0.3); border: 1px solid var(--warning); color: var(--warning); }
+        .card-bg-due { background: rgba(var(--danger-rgb), 0.3); border: 1px solid var(--danger); color: var(--danger); }
+        .card-bg-empty { background: rgba(var(--empty-rgb), 0.1); border: 1px solid var(--border); color: var(--empty); }
 
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(3px); display: none; justify-content: center; align-items: flex-end; z-index: 1000; }
         .modal-content { background: var(--bg-card); width: 100%; max-width: 600px; border-radius: 25px 25px 0 0; padding: 25px; max-height: 90vh; overflow-y: auto; color: var(--text-main); border-top: 1px solid var(--border); }
-        
         .bottom-nav { position: fixed; bottom: 0; width: 100%; background: var(--bg-card); display: flex; justify-content: space-around; padding: 12px 0; border-top: 1px solid var(--border); z-index: 500; padding-bottom: max(12px, env(safe-area-inset-bottom)); }
         .nav-item { text-align: center; color: var(--text-sec); font-size: 0.7rem; cursor: pointer; transition: 0.2s; } 
         .nav-item.active { color: var(--primary); text-shadow: 0 0 10px rgba(var(--primary-rgb), 0.6); } 
@@ -196,14 +149,8 @@
         .fab-bar:active { transform: scale(0.98); }
         .fab-success { background: var(--success); box-shadow: 0 4px 15px rgba(var(--success-rgb), 0.4); }
 
-        .list-item { 
-            display: flex; justify-content: space-between; align-items: center; 
-            padding: 10px 15px; margin-bottom: 8px; background: var(--bg-card); 
-            border-radius: 14px; border: 1px solid var(--border); 
-            cursor: pointer; transition: transform 0.1s; min-height: 60px;
-        }
+        .list-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 15px; margin-bottom: 8px; background: var(--bg-card); border-radius: 14px; border: 1px solid var(--border); cursor: pointer; transition: transform 0.1s; min-height: 60px; }
         .list-item:active { transform: scale(0.98); background-color: var(--bg-input); }
-        
         .card-left-section { display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0; }
         .icon-box { width: 40px; height: 40px; border-radius: 10px; display: flex; justify-content: center; align-items: center; font-size: 1.1rem; color: white; flex-shrink: 0; }
         .text-info { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
@@ -220,32 +167,28 @@
         .search-wrapper i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--text-sec); font-size: 0.9rem; pointer-events: none; }
         .search-wrapper input { padding-left: 40px; }
         .list-summary { background: var(--bg-card); border-radius: 12px; padding: 15px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border); }
-    
-        /* MODAL DE CONFIRMACIÓN PERSONALIZADO */
+        
         #modalConfirm { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(5px); z-index: 2000; justify-content: center; align-items: center; }
         .confirm-box { background: var(--bg-card); padding: 25px; border-radius: 20px; border: 1px solid var(--border); width: 90%; max-width: 320px; text-align: center; box-shadow: 0 10px 40px rgba(0,0,0,0.6); }
         .confirm-title { font-size: 1.2rem; font-weight: bold; margin-bottom: 10px; color: var(--text-main); }
         .confirm-text { color: var(--text-sec); margin-bottom: 20px; font-size: 0.95rem; }
         
-        /* SWITCH ESTADO EDITAR INFO */
-        .toggle-container { display: flex; justify-content: space-between; background: var(--bg-input); padding: 15px; border-radius: 12px; align-items: center; border: 1px solid var(--border); margin-top: 10px;}
-        .switch { position: relative; display: inline-block; width: 50px; height: 26px; } .switch input { opacity: 0; width: 0; height: 0; } .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--bg-body); transition: .4s; border-radius: 34px; border: 1px solid var(--border); } .slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 2px; bottom: 2px; background-color: var(--text-sec); transition: .4s; border-radius: 50%; } input:checked + .slider { background-color: var(--primary); border-color: var(--primary); } input:checked + .slider:before { transform: translateX(24px); background-color: white; }
-
-        /* GRID SELECTOR 4x4 (SELECTOR UNIDADES) */
+        /* GRID SELECTOR 4x4 */
         .grid-selector-container { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; padding: 15px 5px; max-height: 60vh; overflow-y: auto; }
         .unit-selector-card { aspect-ratio: 1/1; background: var(--bg-input); border: 1px solid var(--primary); border-radius: 14px; display: flex; justify-content: center; align-items: center; font-weight: bold; font-size: 1.1rem; color: var(--primary); cursor: pointer; transition: transform 0.2s; }
         .unit-selector-card:active { transform: scale(0.90); background: var(--primary); color: white; }
         
-        /* DIRECTORIO ESTILOS */
+        /* DIRECTORIO ESTILOS MEJORADO */
         .contact-card { display: flex; align-items: center; background: var(--bg-card); padding: 15px; border-radius: 16px; margin-bottom: 10px; border: 1px solid var(--border); position: relative; }
         .contact-card.empty { opacity: 0.6; }
-        .contact-number { font-size: 1.2rem; font-weight: 800; color: var(--primary); margin-right: 15px; width: 35px; text-align: center;}
+        /* Numero en cajita */
+        .contact-number-box { width: 40px; height: 40px; background: var(--bg-input); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: bold; color: var(--primary); margin-right: 12px; flex-shrink: 0; border: 1px solid var(--border); }
         .contact-info { flex: 1; overflow: hidden; }
-        .contact-name { font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .contact-phone { font-size: 0.85rem; color: var(--text-sec); margin-top: 2px; display: flex; align-items: center; gap: 5px; }
-        .btn-call { background: var(--success); width: 40px; height: 40px; border-radius: 50%; display: flex; justify-content: center; align-items: center; color: white; text-decoration: none; margin-left: 10px; box-shadow: 0 0 10px rgba(var(--success-rgb), 0.4); }
+        .contact-name { font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 0.95rem; color: var(--text-main); }
+        .contact-phone { font-size: 0.85rem; color: var(--text-sec); margin-top: 2px; }
+        .contact-last-pay { font-size: 0.75rem; color: var(--success); margin-top: 2px; font-weight: 500; }
+        .contact-last-pay.none { color: var(--text-sec); opacity: 0.7; }
         
-        /* IMAGE MODAL */
         #modalImageView { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 3000; justify-content: center; align-items: center; }
     </style>
 </head>
@@ -384,13 +327,19 @@
 
     <div class="modal-overlay" id="modalEditInfo"><div class="modal-content">
         <h2>Editar Info</h2><input type="text" id="edit-name" placeholder="Nombre"><input type="tel" id="edit-phone" placeholder="Teléfono">
-        <div class="toggle-container"><span>Habitado</span><label class="switch"><input type="checkbox" id="edit-status"><span class="slider"></span></label></div>
+        
+        <label style="font-size:0.8rem; font-weight:bold; color:var(--text-sec); display:block; margin-top:10px">Estado:</label>
+        <div class="seg-control full-width" id="seg-habitado">
+            <button class="seg-btn active" onclick="setHabitado(true, this)">Habitado</button>
+            <button class="seg-btn" onclick="setHabitado(false, this)">Deshabitado</button>
+        </div>
+        <input type="hidden" id="edit-status-val" value="true">
+
         <button class="btn btn-dark" onclick="guardarInfoDepto()">Guardar</button>
         <button class="btn btn-cancel" onclick="history.back()" style="margin-top:15px">Cancelar</button>
     </div></div>
 
 <script>
-    // --- VARIABLES Y CONFIGURACIÓN ---
     const API_URL = "https://script.google.com/macros/s/AKfycby7jl6wQCWO0xkelu0fIoMvWmO1eNpK2QnZuYqVD-h0NMrLTwumjz7AIrxGriYrMajI/exec"; 
     const SECRET_PIN = "2163";
     const TOTAL_UNITS = 16;
@@ -558,14 +507,26 @@
          });
     }
     
+    // --- LÓGICA DIRECTORIO MEJORADA ---
     function renderDirectory() {
         const list = document.getElementById('directory-list'); list.innerHTML = '';
         for(let i=1; i<=TOTAL_UNITS; i++) {
             const info = unitInfo[i] || { name: '', phone: '', empty: false };
             const isEmpty = info.empty;
-            const phoneLink = info.phone ? `<a href="tel:${info.phone}" class="btn-call"><i class="fas fa-phone"></i></a>` : '';
-            const waLink = info.phone ? `<a href="https://wa.me/52${info.phone.replace(/\D/g,'')}" class="btn-call" style="background:#25D366"><i class="fab fa-whatsapp"></i></a>` : '';
-            list.innerHTML += `<div class="contact-card ${isEmpty ? 'empty' : ''}" onclick="abrirModalEditar(${i})"><div class="contact-number">${i}</div><div class="contact-info"><div class="contact-name">${info.name || 'Sin Inquilino'}</div><div class="contact-phone">${info.phone || 'Sin Teléfono'}</div></div>${isEmpty ? '' : phoneLink + waLink}</div>`;
+            
+            // Buscar último pago
+            const lastPay = movements.filter(m => m.type === 'income' && m.unitId === i).sort((a,b) => new Date(b.date) - new Date(a.date))[0];
+            const lastPayText = lastPay ? `Último: ${lastPay.date} • $${lastPay.amount}` : 'Sin pagos recientes';
+            
+            list.innerHTML += `
+            <div class="contact-card ${isEmpty ? 'empty' : ''}" onclick="abrirModalEditar(${i})">
+                <div class="contact-number-box">${i}</div>
+                <div class="contact-info">
+                    <div class="contact-name">${info.name || 'Sin Inquilino'}</div>
+                    <div class="contact-phone">${info.phone || 'Sin Teléfono'} ${isEmpty ? '• (Vacío)' : ''}</div>
+                    <div class="contact-last-pay ${!lastPay ? 'none' : ''}">${lastPayText}</div>
+                </div>
+            </div>`;
         }
     }
     function filtrarDirectorio(val) { const term=val.toLowerCase(); document.querySelectorAll('.contact-card').forEach(card => { card.style.display = card.innerText.toLowerCase().includes(term) ? 'flex' : 'none'; }); }
@@ -653,23 +614,50 @@
     function abrirModalGasto() { cancelarEdicionGasto(); document.getElementById('exp-date').value=new Date().toISOString().split('T')[0]; history.pushState({modal: true}, null, ""); document.getElementById('modalExpense').style.display='flex'; }
     function cancelarEdicionGasto() { editingExpenseId=null; ID_SELECCIONADO=null; document.getElementById('exp-desc').value=''; document.getElementById('exp-amount').value=''; document.getElementById('modal-expense-title').innerText="Nuevo"; document.getElementById('btn-save-expense').innerText="Guardar"; document.getElementById('btn-delete-expense-container').classList.add('hidden'); document.getElementById('file-name-display').innerText=''; document.getElementById('exp-receipt-input').value=''; }
 
-    function abrirModalEditar(id) { currentUnitId=id; const i=unitInfo[id]||{}; document.getElementById('edit-name').value=i.name||''; document.getElementById('edit-phone').value=i.phone||''; document.getElementById('edit-status').checked=!i.empty; history.pushState({modal: true}, null, ""); document.getElementById('modalEditInfo').style.display='flex'; }
-    
-    function prepararEdicionGlobal(id) { 
-        const m = movements.find(x => x.id === Number(id)); if(!m) return; 
-        currentUnitId = m.unitId; 
-        abrirModalUnidad(currentUnitId, false); 
-        setTimeout(() => { prepararEdicion(id); }, 100); 
+    // --- FUNCIONES EDICIÓN INFO DEPARTAMENTO ---
+    function abrirModalEditar(id) { 
+        currentUnitId=id; 
+        const i=unitInfo[id]||{}; 
+        document.getElementById('edit-name').value=i.name||''; 
+        document.getElementById('edit-phone').value=i.phone||''; 
+        
+        // SET TOGGLE STATE
+        const isHabitado = !i.empty;
+        setHabitado(isHabitado, isHabitado ? document.querySelector('#seg-habitado .seg-btn:first-child') : document.querySelector('#seg-habitado .seg-btn:last-child'));
+        
+        history.pushState({modal: true}, null, ""); 
+        document.getElementById('modalEditInfo').style.display='flex'; 
     }
-    
-    function prepararEdicion(id) { 
-        const m=movements.find(x=>x.id===Number(id)); if(!m)return; editingId=Number(id); 
-        document.getElementById('rent-amount').value=m.amount; document.getElementById('rent-note').value=m.note || ''; document.getElementById('rent-date').value=m.date; 
-        const type = m.paymentType||'regular'; const method = m.method||'Transferencia';
-        setPaymentType(type, document.querySelector(`#seg-type .seg-btn[onclick*="${type}"]`)); setPaymentMethod(method, document.querySelector(`#seg-method .seg-btn[onclick*="${method}"]`));
-        document.getElementById('btn-save-payment').innerText="Actualizar"; document.getElementById('btn-cancel-edit').classList.remove('hidden'); 
+
+    function setHabitado(val, btn) {
+        document.getElementById('edit-status-val').value = val;
+        document.querySelectorAll('#seg-habitado .seg-btn').forEach(b => b.classList.remove('active'));
+        if(btn) btn.classList.add('active');
+        // Si no hay botón (carga inicial), buscar el correcto
+        else {
+             const index = val ? 0 : 1;
+             document.querySelectorAll('#seg-habitado .seg-btn')[index].classList.add('active');
+        }
     }
-    
+
+    function guardarInfoDepto() { 
+        if(!currentUnitId) return alert("Error de ID");
+        if(!unitInfo[currentUnitId]) unitInfo[currentUnitId]={}; 
+        
+        unitInfo[currentUnitId].name = document.getElementById('edit-name').value; 
+        unitInfo[currentUnitId].phone = document.getElementById('edit-phone').value; 
+        
+        // Leer del hidden input convertido a booleano
+        const isHabitado = document.getElementById('edit-status-val').value === 'true';
+        unitInfo[currentUnitId].empty = !isHabitado; 
+        
+        guardarEnNube(); 
+        renderAll(); 
+        history.back(); 
+    }
+
+    function prepararEdicionGlobal(id) { const m = movements.find(x => x.id === Number(id)); if(!m) return; currentUnitId = m.unitId; abrirModalUnidad(currentUnitId, false); setTimeout(() => { prepararEdicion(id); }, 100); }
+    function prepararEdicion(id) { const m=movements.find(x=>x.id===Number(id)); if(!m)return; editingId=Number(id); document.getElementById('rent-amount').value=m.amount; document.getElementById('rent-note').value=m.note || ''; document.getElementById('rent-date').value=m.date; const type = m.paymentType||'regular'; const method = m.method||'Transferencia'; setPaymentType(type, document.querySelector(`#seg-type .seg-btn[onclick*="${type}"]`)); setPaymentMethod(method, document.querySelector(`#seg-method .seg-btn[onclick*="${method}"]`)); document.getElementById('btn-save-payment').innerText="Actualizar"; document.getElementById('btn-cancel-edit').classList.remove('hidden'); }
     function cancelarEdicion() { editingId=null; document.getElementById('rent-amount').value=''; document.getElementById('rent-note').value=''; document.getElementById('btn-save-payment').innerText="Registrar Pago"; document.getElementById('btn-cancel-edit').classList.add('hidden'); }
     
     function renderHistorialUnidad(id) { 
@@ -693,7 +681,6 @@
         }); 
         document.getElementById('receipts-total-sum').innerText = `$${totalSum.toLocaleString()}`;
     }
-    
     function filtrarRecibos(q) { renderReceiptsList(); }
     function filtrarGastos(q) { renderExpenses(); }
 
@@ -708,7 +695,6 @@
         const nR=document.getElementById('rcpt-row-note'); if(m.note){document.getElementById('rcpt-note').innerText=m.note; nR.style.display='flex';}else{nR.style.display='none';}
         document.getElementById('qrcode').innerHTML=''; new QRCode(document.getElementById('qrcode'),{text:`F:${m.id}|${m.amount}`,width:100,height:100}); history.pushState({modal: true}, null, ""); document.getElementById('modalReceipt').style.display='flex'; 
     }
-    
     function descargarPDF() { const e = document.getElementById('printable-receipt'); const d = document.getElementById('rcpt-unit').innerText || 'G'; const dt = document.getElementById('rcpt-date').innerText || 'F'; const cd = dt.replace(/\//g, '-'); const opt = { margin: 2, filename: `Comprobante_Depto${d}_${cd}.pdf`, image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2, useCORS: true, allowTaint: true }, jsPDF: { unit: 'mm', format: [80, 150], orientation: 'portrait' } }; html2pdf().set(opt).from(e).save().catch(err => console.error("Error PDF:", err)); }
 
 </script>
