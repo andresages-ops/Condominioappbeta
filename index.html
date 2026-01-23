@@ -10,7 +10,7 @@
     <meta name="apple-mobile-web-app-title" content="Condominio">
     <meta name="theme-color" content="#0f172a">
     
-    <title>Condominio Master v84</title>
+    <title>Condominio Master v85</title>
     
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -135,7 +135,7 @@
         .unit-selector-card { aspect-ratio: 1/1; background: var(--bg-input); border: 1px solid var(--primary); border-radius: 14px; display: flex; justify-content: center; align-items: center; font-weight: bold; font-size: 1.1rem; color: var(--primary); cursor: pointer; transition: transform 0.2s; }
         .unit-selector-card:active { transform: scale(0.90); background: var(--primary); color: white; }
         
-        /* DIRECTORIO ESTILOS V84 */
+        /* DIRECTORIO ESTILOS V85 */
         .contact-card { display: flex; align-items: center; background: var(--bg-card); padding: 15px; border-radius: 16px; margin-bottom: 10px; border: 1px solid var(--border); position: relative; transition: transform 0.1s; }
         .contact-card:active { transform: scale(0.98); background: var(--bg-input); }
         .contact-card.empty { opacity: 0.8; }
@@ -169,7 +169,6 @@
         .receipt-row { display: flex; justify-content: space-between; margin-bottom: 8px; }
         #qrcode { display: flex; justify-content: center; margin-top: 20px; }
         
-        /* CORRECCIÓN BOTONES RECIBO */
         .input-row-equal { display: flex; gap: 10px; width: 100%; }
         .input-row-equal > button { flex: 1; margin-top: 0; }
     </style>
@@ -194,7 +193,7 @@
         
         <div id="view-home" class="container">
             <div class="header-top">
-                <h2 style="margin:0;">Panel de Control <span class="version-tag">v84 Beta</span></h2>
+                <h2 style="margin:0;">Panel de Control <span class="version-tag">v85 Beta</span></h2>
                 <small id="sync-status" style="color:var(--success)">● Conectado</small>
             </div>
             
@@ -225,7 +224,7 @@
         <div id="view-directory" class="container hidden">
             <div class="header-top">
                 <div style="display:flex; align-items:center; gap:15px;">
-                    <div class="btn-icon-inline" onclick="history.back()"><i class="fas fa-chevron-left"></i></div>
+                    <div class="btn-icon-inline" onclick="cambiarVista('home')"><i class="fas fa-chevron-left"></i></div>
                     <h2 style="margin:0;">Directorio</h2>
                 </div>
             </div>
@@ -262,21 +261,22 @@
         </div>
 
         <div id="view-dev" class="container hidden">
-            <h2>Log de Cambios (v84)</h2>
+            <h2>Log de Cambios (v85)</h2>
             <div class="dev-log-container">
-1. DIRECTORIO (V84):
-- Header nativo con flecha atrás.
-- Integración con botón físico "Back".
-- Lógica de Badges Corregida:
-  * PAGADO: Mes actual
-  * PENDIENTE (●): 0-35 días
-  * VENCIDO (●): 36-65 días
-  * 60 DÍAS (●): 66-95 días
-  * 90 DÍAS (●): 96-125 días
-  * 90+ (●): >125 días
+1. NAVEGACIÓN DIRECTORIO:
+- Flecha atrás ahora fuerza vuelta a Inicio.
+- Botón físico 'Atrás' soportado mejor.
 
-2. UI:
-- Botones de recibo alineados horizontalmente.
+2. LÓGICA VENCIMIENTO:
+- PAGADO (Mes actual).
+- PENDIENTE (Debe este mes).
+- VENCIDO (Debe 2 meses).
+- 60 DÍAS (Debe 3 meses).
+- 90 DÍAS (Debe 4 meses).
+- +90 DÍAS (Debe 5+ meses).
+
+3. UI:
+- Badges píldora con punto sólido (●).
             </div>
         </div>
 
@@ -404,13 +404,22 @@
             document.getElementById('app-container').style.display = 'block';
             cargarDatosNube();
         }
+        // Force initial state for history
+        history.replaceState({view: 'home'}, null, "");
     });
 
     window.addEventListener('popstate', function(event) {
         if(document.getElementById('modalConfirm').style.display === 'flex') { document.getElementById('modalConfirm').style.display = 'none'; return; }
         if(document.querySelector('.modal-overlay[style*="display: flex"]')) { cerrarModales(false); return; }
-        if (!event.state || event.state.view === 'home') { cambiarVista('home', false); return; }
-        if (event.state.view) { cambiarVista(event.state.view, false); }
+        
+        // Handle Back from Directory
+        if (!event.state || event.state.view === 'home') { 
+            cambiarVista('home', false); // false = don't push state again
+            return; 
+        }
+        if (event.state.view) { 
+            cambiarVista(event.state.view, false); 
+        }
     });
 
     function addPin(n){ if(currentPin.length<4){ currentPin+=n; document.getElementById('pin-display').innerText="*".repeat(currentPin.length); } }
@@ -429,7 +438,7 @@
         try{ await fetch(API_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({movements,units:unitInfo,config:appConfig})}); document.getElementById('sync-status').innerText="● Conectado"; }catch(e){ document.getElementById('sync-status').innerText="⚠ Error"; }
     }
     
-    function descargarBackup() { const d = { date: new Date().toISOString(), movements, unitInfo, config: appConfig, version: "v84" }; const b = new Blob([JSON.stringify(d, null, 2)], {type : 'application/json'}); const l = document.createElement("a"); l.href = URL.createObjectURL(b); l.download = `Respaldo.json`; document.body.appendChild(l); l.click(); document.body.removeChild(l); }
+    function descargarBackup() { const d = { date: new Date().toISOString(), movements, unitInfo, config: appConfig, version: "v85" }; const b = new Blob([JSON.stringify(d, null, 2)], {type : 'application/json'}); const l = document.createElement("a"); l.href = URL.createObjectURL(b); l.download = `Respaldo.json`; document.body.appendChild(l); l.click(); document.body.removeChild(l); }
     function procesarArchivoBackup(event) { const f = event.target.files[0]; if(!f) return; const r = new FileReader(); r.onload = function(e) { try { const d = JSON.parse(e.target.result); if(d.movements){ movements=d.movements; unitInfo=d.unitInfo||{}; appConfig=d.config||appConfig; guardarEnNube(); renderAll(); alert("✅ Restaurado"); } } catch (err) { alert("Archivo inválido"); } }; r.readAsText(f); }
 
     function switchHomeView(view) {
@@ -463,14 +472,15 @@
         document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active')); 
         if(document.getElementById('nav-'+v)) document.getElementById('nav-'+v).classList.add('active'); 
         
-        if (v === 'directory') {
-            renderDirectory(); 
-        }
+        if (v === 'directory') renderDirectory(); 
         if (v === 'expenses') renderExpenses(); 
         if (v === 'receipts') renderReceiptsList();
         if (v === 'home') renderHome(); 
 
-        if (pushHistory && v !== 'home') { history.pushState({view: v}, null, ""); }
+        if (pushHistory && v !== 'home') { 
+            // Explicit Push
+            history.pushState({view: v}, null, ""); 
+        }
     }
 
     function guardarConfiguracion() { appConfig.initialBalance=parseFloat(document.getElementById('conf-balance').value)||0; appConfig.rentPrice=parseFloat(document.getElementById('conf-rent').value)||600; appConfig.extraFeeAmount=parseFloat(document.getElementById('conf-extra').value)||0; guardarEnNube(); renderHome(); showToast('Configuración guardada'); }
@@ -528,7 +538,7 @@
          });
     }
     
-    // --- LÓGICA DIRECTORIO V84 ---
+    // --- LÓGICA DIRECTORIO V85 (CORREGIDA) ---
     function renderDirectory() {
         const list = document.getElementById('directory-list'); list.innerHTML = '';
         const now = new Date(); const cm = now.getMonth(); const cy = now.getFullYear();
@@ -537,12 +547,9 @@
             const info = unitInfo[i] || { name: '', phone: '', empty: false };
             const isEmpty = info.empty;
             
-            // Buscar último pago (Sort por fecha real)
-            const lastPay = movements.filter(m => m.type === 'income' && m.unitId === i)
-                                     .sort((a,b) => new Date(b.date) - new Date(a.date))[0];
+            const lastPay = movements.filter(m => m.type === 'income' && m.unitId === i).sort((a,b) => new Date(b.date) - new Date(a.date))[0];
             const lastPayText = lastPay ? `Último: ${lastPay.date} • $${lastPay.amount}` : 'Sin historial';
             
-            // Badge Logic (Strict Current Month)
             const isPaidCurrentMonth = movements.some(m => m.type === 'income' && m.unitId === i && new Date(m.date + 'T00:00').getMonth() === cm && new Date(m.date + 'T00:00').getFullYear() === cy);
             const days = calcularDiasAtraso(i);
             
@@ -552,10 +559,14 @@
                 badgeHtml = '<span class="badge badge-empty">● VACÍO</span>';
             } else if (isPaidCurrentMonth) {
                 badgeHtml = '<span class="badge badge-success">● PAGADO</span>';
-            } else if (days <= 35) {
+            } else if (days <= 30) {
                  badgeHtml = '<span class="badge badge-warning">● PENDIENTE</span>';
             } else {
-                let lateText = days > 125 ? '90+' : (days > 95 ? '90 DÍAS' : (days > 65 ? '60 DÍAS' : 'VENCIDO'));
+                let lateText = 'VENCIDO';
+                if(days > 90) lateText = '+90 DÍAS';
+                else if(days > 60) lateText = '90 DÍAS';
+                else if(days > 30) lateText = '60 DÍAS';
+                
                 badgeHtml = `<span class="badge badge-danger">● ${lateText}</span>`;
             }
             
