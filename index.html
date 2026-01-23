@@ -4,14 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     
-    <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Condominio">
     <meta name="theme-color" content="#0f172a">
-    <link rel="manifest" id="my-manifest-placeholder">
     
-    <title>Condominio Master v79</title>
+    <title>Condominio Master v80</title>
     
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -20,63 +19,44 @@
     <style>
         /* --- TEMA DARK PREMIUM / NEON PUNK --- */
         :root { 
-            --primary: #3b82f6; 
-            --primary-dark: #2563eb;
-            --accent: #8b5cf6;
-            --success: #10b981; 
-            --warning: #f59e0b; 
-            --danger: #ef4444; 
-            
-            --bg-body: #0f172a; 
-            --bg-card: #1e293b; 
-            --bg-input: #334155; 
-            --bg-active-gray: #475569;
-            --bg-darker: #020617;
+            --primary: #3b82f6; --primary-dark: #2563eb;
+            --accent: #8b5cf6; --success: #10b981; 
+            --warning: #f59e0b; --danger: #ef4444; 
+            --bg-body: #0f172a; --bg-card: #1e293b; 
+            --bg-input: #334155; --bg-active-gray: #475569; --bg-darker: #020617;
             --border: #334155; 
-            
-            --text-main: #f8fafc; 
-            --text-sec: #94a3b8; 
-            --text-light: #e2e8f0;
+            --text-main: #f8fafc; --text-sec: #94a3b8; --text-light: #e2e8f0;
             --empty: #64748b; 
-
-            --primary-rgb: 59, 130, 246;
-            --accent-rgb: 139, 92, 246;
-            --success-rgb: 16, 185, 129;
-            --warning-rgb: 245, 158, 11;
-            --danger-rgb: 239, 68, 68;
-            --empty-rgb: 100, 116, 139;
+            --primary-rgb: 59, 130, 246; --accent-rgb: 139, 92, 246; --success-rgb: 16, 185, 129; --warning-rgb: 245, 158, 11; --danger-rgb: 239, 68, 68; --empty-rgb: 100, 116, 139;
         }
         
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        
         html { height: 100%; overflow: hidden; }
-        body { 
-            margin: 0; padding: 0; 
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
-            background-color: var(--bg-body); color: var(--text-main); 
-            height: 100%; overflow-y: auto; 
-            padding-bottom: 120px; 
-            user-select: none; 
-            transition: background-color 0.5s ease; 
-            padding-top: env(safe-area-inset-top);
-        }
-
+        body { margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: var(--bg-body); color: var(--text-main); height: 100%; overflow-y: auto; padding-bottom: 120px; user-select: none; padding-top: env(safe-area-inset-top); }
         .hidden { display: none !important; }
         .container { padding: 20px; max-width: 800px; margin: 0 auto; }
         
-        /* LOGIN & LOADER */
-        #login-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: var(--bg-body); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; transition: opacity 0.5s; }
+        /* TOAST NOTIFICATION */
+        #toast-container { position: fixed; top: 60px; left: 50%; transform: translateX(-50%); z-index: 99999; pointer-events: none; width: 90%; max-width: 300px; text-align: center; }
+        .toast { background: rgba(30, 41, 59, 0.95); backdrop-filter: blur(5px); color: white; padding: 12px 20px; border-radius: 50px; margin-bottom: 10px; animation: slideDown 0.3s ease-out; border: 1px solid var(--border); box-shadow: 0 10px 30px rgba(0,0,0,0.5); display: inline-flex; align-items: center; gap: 10px; font-size: 0.9rem; font-weight: 500; }
+        .toast.success { border-color: var(--success); color: var(--success); }
+        .toast i { font-size: 1.1rem; }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* PREVENT GHOST CLICKS CLASS */
+        .prevent-interaction { pointer-events: none !important; }
+
+        /* ... (ESTILOS UI STANDARD - Botones, Inputs, Login, Loader) ... */
+        #login-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: var(--bg-body); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; }
         .login-box { background: var(--bg-card); padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); width: 100%; max-width: 350px; text-align: center; border: 1px solid var(--border); }
-        .pin-display { font-size: 2rem; letter-spacing: 10px; margin: 20px 0; font-weight: bold; min-height: 40px; color: var(--primary); text-shadow: 0 0 10px rgba(var(--primary-rgb), 0.5); }
+        .pin-display { font-size: 2rem; letter-spacing: 10px; margin: 20px 0; font-weight: bold; min-height: 40px; color: var(--primary); }
         .keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 10px; }
-        .key { padding: 15px; background: var(--bg-input); border-radius: 12px; font-size: 1.2rem; font-weight: bold; cursor: pointer; border: 1px solid var(--border); color: var(--text-main); transition: 0.2s; }
-        .key:active { background: var(--primary); border-color: var(--primary); }
-        .key-c { color: var(--danger); } .key-go { background: var(--primary); color: white; border: none; }
+        .key { padding: 15px; background: var(--bg-input); border-radius: 12px; font-size: 1.2rem; font-weight: bold; cursor: pointer; border: 1px solid var(--border); color: var(--text-main); }
+        .key:active { background: var(--primary); } .key-c { color: var(--danger); } .key-go { background: var(--primary); color: white; }
         #loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.9); display: flex; justify-content: center; align-items: center; z-index: 2000; flex-direction: column; color: var(--text-main); display: none; }
         .spinner { width: 40px; height: 40px; border: 4px solid var(--bg-input); border-top: 4px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 10px; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        /* UI ELEMENTS */
         .btn { padding: 15px; border-radius: 14px; border: none; font-weight: bold; cursor: pointer; width: 100%; font-size: 1rem; margin-top: 10px; display: flex; justify-content: center; align-items: center; gap: 10px; transition: 0.2s; position: relative; z-index: 10; }
         .btn:active { transform: scale(0.98); }
         .btn-primary { background: var(--primary); color: white; box-shadow: 0 4px 15px rgba(var(--primary-rgb), 0.4); } 
@@ -86,26 +66,20 @@
         .btn-cancel { background: transparent; border: 1px solid var(--danger); color: var(--danger); }
         .btn-close { background: var(--bg-input); color: var(--text-main); }
         .btn-update { background: var(--warning); color: #0f172a; box-shadow: 0 4px 15px rgba(var(--warning-rgb), 0.4); }
-        
         .btn-outline-danger { background: transparent; border: 2px solid var(--danger); color: var(--danger); }
         .btn-outline-danger:active { background: var(--danger); color: white; }
-
-        .btn-mini-ghost { padding: 6px 12px; font-size: 0.75rem; margin: 0; width: auto; display: inline-block; background: rgba(139, 92, 246, 0.1); color: var(--accent); border: 1px solid var(--accent); border-radius: 8px; cursor: pointer; transition: all 0.2s; }
-        .btn-mini-ghost:active { background: var(--accent); color: white; box-shadow: 0 0 10px rgba(var(--accent-rgb), 0.6); }
-
-        .file-upload-btn { display: flex; justify-content: center; align-items: center; padding: 12px; border: 2px dashed var(--text-sec); border-radius: 12px; color: var(--text-sec); cursor: pointer; margin: 10px 0; transition: 0.2s; }
+        .btn-mini-ghost { padding: 6px 12px; font-size: 0.75rem; margin: 0; width: auto; display: inline-block; background: rgba(139, 92, 246, 0.1); color: var(--accent); border: 1px solid var(--accent); border-radius: 8px; cursor: pointer; }
+        .btn-mini-ghost:active { background: var(--accent); color: white; }
+        .file-upload-btn { display: flex; justify-content: center; align-items: center; padding: 12px; border: 2px dashed var(--text-sec); border-radius: 12px; color: var(--text-sec); cursor: pointer; margin: 10px 0; }
         .file-upload-btn:active { border-color: var(--primary); color: var(--primary); background: rgba(59,130,246,0.1); }
         #file-name-display { font-size: 0.8rem; color: var(--primary); text-align: center; margin-bottom: 5px; }
 
         input, select { width: 100%; padding: 14px; margin: 5px 0; border: 1px solid var(--border); border-radius: 12px; background: var(--bg-darker); color: var(--text-main); outline: none; transition: border-color 0.3s; }
         input:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.15); }
         
-        /* HEADER TOP & VERSÍON */
         .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        
         .version-tag { font-size: 0.6rem; color: var(--danger); font-weight: 300; letter-spacing: 1px; margin-left: 8px; vertical-align: middle; border: 1px solid var(--danger); padding: 2px 4px; border-radius: 4px; }
-
-        .btn-icon-inline { width: 36px; height: 36px; border-radius: 10px; background: var(--bg-input); border: 1px solid var(--border); display: flex; justify-content: center; align-items: center; color: var(--text-main); font-size: 1rem; cursor: pointer; transition: 0.2s; }
+        .btn-icon-inline { width: 36px; height: 36px; border-radius: 10px; background: var(--bg-input); border: 1px solid var(--border); display: flex; justify-content: center; align-items: center; color: var(--text-main); font-size: 1rem; cursor: pointer; }
         .btn-icon-inline:active { transform: scale(0.95); background: var(--primary); color: white; }
 
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 20px; }
@@ -113,20 +87,17 @@
         .stat-number { font-size: 1.1rem; font-weight: 700; display: block; color: var(--text-main); margin-top: 4px; }
         .stat-label { font-size: 0.7rem; font-weight: bold; letter-spacing: 0.5px; opacity: 0.8; text-transform: uppercase; }
         .text-paid { color: var(--success); } .text-pending { color: var(--warning); } .text-due { color: var(--danger); } .text-income { color: var(--primary); }
-
-        .balance-card { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; padding: 20px; border-radius: 20px; margin-bottom: 20px; text-align: center; transition: background 0.3s; box-shadow: 0 0 20px rgba(var(--primary-rgb), 0.4); border: 1px solid rgba(255,255,255,0.1); }
+        .balance-card { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; padding: 20px; border-radius: 20px; margin-bottom: 20px; text-align: center; box-shadow: 0 0 20px rgba(var(--primary-rgb), 0.4); border: 1px solid rgba(255,255,255,0.1); }
         .balance-card.extra-mode { background: linear-gradient(135deg, var(--accent), #7c3aed); box-shadow: 0 0 20px rgba(var(--accent-rgb), 0.4); } 
         .balance-card.income-mode { background: linear-gradient(135deg, var(--success), #059669); box-shadow: 0 0 20px rgba(var(--success-rgb), 0.4); } 
         .balance-card.expense-mode { background: linear-gradient(135deg, var(--danger), #b91c1c); box-shadow: 0 0 20px rgba(var(--danger-rgb), 0.4); } 
-        .balance-amount { font-size: 2.2rem; font-weight: 800; text-shadow: 0 2px 4px rgba(0,0,0,0.2); }
-        .balance-card.compact { padding: 15px; margin-bottom: 15px; margin-top: 10px; }
-        .balance-card.compact .balance-amount { font-size: 1.8rem; }
+        .balance-amount { font-size: 2.2rem; font-weight: 800; }
+        .balance-card.compact { padding: 15px; margin-bottom: 15px; margin-top: 10px; } .balance-card.compact .balance-amount { font-size: 1.8rem; }
         
         .grid-header-title { font-size: 1.1rem; font-weight: 600; color: var(--text-light); letter-spacing: 0.5px; text-transform: uppercase; margin: 30px 0 10px 0; }
-
         .seg-control { display: flex; background: var(--bg-input); border-radius: 10px; padding: 3px; border: 1px solid var(--border); width: fit-content; }
         .seg-control.full-width { width: 100%; margin-bottom: 15px; } 
-        .seg-btn { flex: 1; padding: 6px 15px; text-align: center; cursor: pointer; border-radius: 7px; font-size: 0.8rem; font-weight: 600; color: var(--text-sec); transition: all 0.2s; border: none; background: transparent; }
+        .seg-btn { flex: 1; padding: 6px 15px; text-align: center; cursor: pointer; border-radius: 7px; font-size: 0.8rem; font-weight: 600; color: var(--text-sec); border: none; background: transparent; }
         .seg-btn.active { background: var(--bg-active-gray); color: white; box-shadow: 0 2px 4px rgba(0,0,0,0.3); } 
         .seg-btn.active-extra { background: var(--accent); color: white; box-shadow: 0 2px 4px rgba(0,0,0,0.3); } 
         .seg-btn.active-cash { background: var(--success); color: white; box-shadow: 0 2px 4px rgba(0,0,0,0.3); } 
@@ -147,8 +118,7 @@
         .nav-item i { font-size: 1.4rem; display: block; margin-bottom: 4px; }
         
         .fab-bar { position: fixed; bottom: 85px; left: 20px; right: 20px; background: var(--danger); color: white; padding: 15px; border-radius: 14px; font-weight: bold; text-align: center; box-shadow: 0 4px 15px rgba(var(--danger-rgb), 0.4); z-index: 400; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 10px; border: 1px solid rgba(255,255,255,0.1); }
-        .fab-bar:active { transform: scale(0.98); }
-        .fab-success { background: var(--success); box-shadow: 0 4px 15px rgba(var(--success-rgb), 0.4); }
+        .fab-bar:active { transform: scale(0.98); } .fab-success { background: var(--success); box-shadow: 0 4px 15px rgba(var(--success-rgb), 0.4); }
 
         .list-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 15px; margin-bottom: 8px; background: var(--bg-card); border-radius: 14px; border: 1px solid var(--border); cursor: pointer; transition: transform 0.1s; min-height: 60px; }
         .list-item:active { transform: scale(0.98); background-color: var(--bg-input); }
@@ -156,77 +126,51 @@
         .icon-box { width: 40px; height: 40px; border-radius: 10px; display: flex; justify-content: center; align-items: center; font-size: 1.1rem; color: white; flex-shrink: 0; }
         .text-info { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
         .card-amount-section { text-align: right; margin-left: 10px; flex-shrink: 0; }
-
-        .receipt-container { background: #fff; padding: 20px; border: none; margin-bottom: 15px; color: black; border-radius: 12px; width: 100%; max-width: 320px; margin: 0 auto 15px auto; font-size: 0.9rem; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
-        .receipt-header { text-align: center; border-bottom: 2px dashed #ccc; padding-bottom: 15px; margin-bottom: 15px; }
-        .receipt-row { display: flex; justify-content: space-between; margin-bottom: 8px; }
-        #qrcode { display: flex; justify-content: center; margin-top: 20px; } #qrcode img { border: 4px solid white; }
-        
-        .input-row-equal { display: flex; gap: 10px; } .input-row-equal > div { flex: 1; }
-        .setting-section { background: var(--bg-card); padding: 20px; border-radius: 16px; margin-bottom: 15px; border: 1px solid var(--border); }
-        .search-wrapper { position: relative; margin-bottom: 15px; }
-        .search-wrapper i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--text-sec); font-size: 0.9rem; pointer-events: none; }
-        .search-wrapper input { padding-left: 40px; }
-        .list-summary { background: var(--bg-card); border-radius: 12px; padding: 15px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border); }
         
         #modalConfirm { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(5px); z-index: 2000; justify-content: center; align-items: center; }
         .confirm-box { background: var(--bg-card); padding: 25px; border-radius: 20px; border: 1px solid var(--border); width: 90%; max-width: 320px; text-align: center; box-shadow: 0 10px 40px rgba(0,0,0,0.6); }
         .confirm-title { font-size: 1.2rem; font-weight: bold; margin-bottom: 10px; color: var(--text-main); }
         .confirm-text { color: var(--text-sec); margin-bottom: 20px; font-size: 0.95rem; }
         
-        /* SWITCH ESTADO EDITAR INFO */
         .toggle-container { display: flex; justify-content: space-between; background: var(--bg-input); padding: 15px; border-radius: 12px; align-items: center; border: 1px solid var(--border); margin-top: 10px;}
-        .switch { position: relative; display: inline-block; width: 50px; height: 26px; } .switch input { opacity: 0; width: 0; height: 0; } .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--bg-body); transition: .4s; border-radius: 34px; border: 1px solid var(--border); } .slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 2px; bottom: 2px; background-color: var(--text-sec); transition: .4s; border-radius: 50%; } input:checked + .slider { background-color: var(--primary); border-color: var(--primary); } input:checked + .slider:before { transform: translateX(24px); background-color: white; }
-
-        /* GRID SELECTOR 4x4 (SELECTOR UNIDADES) */
+        
         .grid-selector-container { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; padding: 15px 5px; max-height: 60vh; overflow-y: auto; }
         .unit-selector-card { aspect-ratio: 1/1; background: var(--bg-input); border: 1px solid var(--primary); border-radius: 14px; display: flex; justify-content: center; align-items: center; font-weight: bold; font-size: 1.1rem; color: var(--primary); cursor: pointer; transition: transform 0.2s; }
         .unit-selector-card:active { transform: scale(0.90); background: var(--primary); color: white; }
         
-        /* DIRECTORIO ESTILOS V79 */
+        /* DIRECTORIO ESTILOS V80 */
         .contact-card { display: flex; align-items: center; background: var(--bg-card); padding: 15px; border-radius: 16px; margin-bottom: 10px; border: 1px solid var(--border); position: relative; transition: transform 0.1s; }
         .contact-card:active { transform: scale(0.98); background: var(--bg-input); }
         .contact-card.empty { opacity: 0.8; }
-        
-        /* Recuadro del numero */
-        .contact-number-box { 
-            width: 45px; height: 45px; 
-            background: var(--bg-input); 
-            border-radius: 12px; 
-            display: flex; align-items: center; justify-content: center; 
-            font-weight: 800; font-size: 1.1rem; 
-            color: var(--primary); 
-            margin-right: 15px; flex-shrink: 0; 
-            border: 1px solid var(--primary); 
-            box-shadow: 0 0 10px rgba(var(--primary-rgb), 0.2);
-        }
-        
-        /* Estilo para vacío */
-        .contact-card.empty .contact-number-box {
-            color: var(--empty);
-            border-color: var(--empty);
-            box-shadow: none;
-            background: transparent;
-        }
-
+        .contact-number-box { width: 45px; height: 45px; background: var(--bg-input); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.1rem; color: var(--primary); margin-right: 15px; flex-shrink: 0; border: 1px solid var(--primary); box-shadow: 0 0 10px rgba(var(--primary-rgb), 0.2); }
+        .contact-card.empty .contact-number-box { color: var(--empty); border-color: var(--empty); box-shadow: none; background: transparent; }
         .contact-info { flex: 1; overflow: hidden; }
-        .contact-name { font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 1rem; color: var(--text-main); margin-bottom: 4px; }
-        .contact-last-pay { font-size: 0.75rem; color: var(--text-sec); display: block; }
         
-        /* Botones de acción (ocultos visualmente, pero funcionales en lógica interna si se requiriera, aquí removidos visualmente) */
-        .contact-actions { display: flex; gap: 10px; }
-
-        /* BADGES NEON */
-        .badge { padding: 4px 8px; border-radius: 6px; font-size: 0.7rem; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; border: 1px solid transparent; white-space: nowrap; }
-        .badge-success { color: var(--success); border-color: var(--success); background: rgba(16, 185, 129, 0.1); box-shadow: 0 0 5px rgba(var(--success-rgb), 0.2); }
-        .badge-warning { color: var(--warning); border-color: var(--warning); background: rgba(245, 158, 11, 0.1); box-shadow: 0 0 5px rgba(var(--warning-rgb), 0.2); }
-        .badge-danger { color: var(--danger); border-color: var(--danger); background: rgba(239, 68, 68, 0.1); box-shadow: 0 0 5px rgba(var(--danger-rgb), 0.2); }
+        /* Contenedor Nombre + Badge */
+        .contact-header { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 4px; }
+        .contact-name { font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 1rem; color: var(--text-main); flex: 1; }
+        
+        /* BADGE PÍLDORA PEQUEÑA */
+        .badge { padding: 3px 10px; border-radius: 50px; font-size: 0.65rem; font-weight: 800; text-transform: uppercase; border: 1px solid transparent; white-space: nowrap; flex-shrink: 0; }
+        .badge-success { color: var(--success); border-color: var(--success); background: rgba(16, 185, 129, 0.1); }
+        .badge-warning { color: var(--warning); border-color: var(--warning); background: rgba(245, 158, 11, 0.1); }
+        .badge-danger { color: var(--danger); border-color: var(--danger); background: rgba(239, 68, 68, 0.1); }
         .badge-empty { color: var(--empty); border-color: var(--empty); background: rgba(100, 116, 139, 0.1); }
 
+        .contact-phone-row { display:none; } /* Ocultar teléfono visualmente */
+        .contact-last-pay { font-size: 0.75rem; color: var(--text-sec); display: block; }
+        .contact-actions { display: flex; gap: 10px; display:none; } 
+
         #modalImageView { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 3000; justify-content: center; align-items: center; }
+
+        /* DEV LOG TAB */
+        .dev-log-container { background: #1e1e1e; padding: 15px; border-radius: 10px; border: 1px solid #333; font-family: monospace; font-size: 0.8rem; color: #00ff00; overflow-x: auto; white-space: pre-wrap; margin-bottom: 20px; }
+        .dev-title { color: white; font-weight: bold; margin-bottom: 10px; display:block; }
     </style>
 </head>
 <body>
+
+    <div id="toast-container"></div>
 
     <div id="modalConfirm"><div class="confirm-box"><div class="confirm-title"><i class="fas fa-exclamation-triangle" style="color:var(--danger)"></i> ¿Eliminar?</div><div class="confirm-text">Esta acción no se puede deshacer.</div><div class="input-row-equal"><button class="btn btn-dark" onclick="cerrarConfirmacion()">Cancelar</button><button class="btn btn-danger" onclick="ejecutarEliminacionReal()">Eliminar</button></div></div></div>
 
@@ -244,21 +188,17 @@
         
         <div id="view-home" class="container">
             <div class="header-top">
-                <h2 style="margin:0;">Panel de Control <span class="version-tag">v79 Beta</span></h2>
+                <h2 style="margin:0;">Panel de Control <span class="version-tag">v80 Beta</span></h2>
                 <small id="sync-status" style="color:var(--success)">● Conectado</small>
             </div>
-            
             <div id="main-balance-card" class="balance-card"><div style="font-size:0.8rem; opacity:0.9;">BALANCE EN CAJA</div><div class="balance-amount global-balance-display">$0.00</div></div>
-            
             <div class="stats-grid">
                 <div class="stat-card"><span class="stat-label text-paid">PAGADOS</span><span class="stat-number" id="stat-paid">0</span></div>
                 <div class="stat-card"><span class="stat-label text-pending">PENDIENTES</span><span class="stat-number" id="stat-pending">0</span></div>
                 <div class="stat-card"><span class="stat-label text-due">VENCIDOS</span><span class="stat-number" id="stat-due">0</span></div>
                 <div class="stat-card"><span class="stat-label text-income">INGRESOS</span><span class="stat-number" id="total-income">$0</span></div>
             </div>
-            
             <div class="grid-header-title">Estatus Departamentos</div>
-            
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; margin-left: 2px;">
                 <div class="seg-control" id="home-toggle-control">
                     <button class="seg-btn active" onclick="switchHomeView('regular')">Regular</button>
@@ -266,7 +206,6 @@
                 </div>
                 <div class="btn-icon-inline" onclick="cambiarVista('directory')"><i class="fas fa-address-book"></i></div>
             </div>
-
             <div class="grid-container" id="grid-units"></div>
             <div class="grid-header-title" style="margin-top: 30px;">Actividad Reciente</div>
             <div id="home-notifications"></div>
@@ -306,11 +245,34 @@
             <div style="margin-top:40px; margin-bottom: 20px;"><button class="btn btn-danger" onclick="logout()" style="padding:15px; opacity:0.8"><i class="fas fa-lock"></i> Cerrar Sesión</button></div>
         </div>
 
+        <div id="view-dev" class="container hidden">
+            <h2>Log de Cambios (v80)</h2>
+            <div class="dev-log-container">
+1. TOAST NOTIFICATIONS:
+- Añadido feedback visual verde (éxito) al guardar/editar.
+
+2. DIRECTORIO:
+- Badge tipo píldora a la derecha del nombre.
+- Lógica de estados:
+  * PAGADO (Verde)
+  * PENDIENTE (Amarillo)
+  * VENCIDO (Rojo 30-59 días)
+  * 60 DÍAS (Rojo)
+  * 90 DÍAS (Rojo)
+  * 90+ (Rojo)
+- Teléfono oculto visualmente.
+
+3. ESTABILIDAD:
+- Fix "Ghost Clicks": Bloqueo de inputs por 400ms al abrir modal.
+            </div>
+        </div>
+
         <div class="bottom-nav">
             <div class="nav-item active" onclick="cambiarVista('home')" id="nav-home"><i class="fas fa-home"></i></div>
             <div class="nav-item" onclick="cambiarVista('receipts')" id="nav-receipts"><i class="fas fa-receipt"></i></div>
             <div class="nav-item" onclick="cambiarVista('expenses')" id="nav-expenses"><i class="fas fa-money-bill-wave"></i></div>
             <div class="nav-item" onclick="cambiarVista('settings')" id="nav-settings"><i class="fas fa-cog"></i></div>
+            <div class="nav-item" onclick="cambiarVista('dev')" id="nav-dev" style="opacity:0.5"><i class="fas fa-code"></i></div>
         </div>
     </div>
 
@@ -374,33 +336,38 @@
     </div></div>
 
 <script>
-    // --- MANIFEST DINÁMICO (V79) ---
-    const manifestData = {
-        "name": "Condominio Master",
-        "short_name": "Condominio",
-        "start_url": ".",
-        "display": "standalone",
-        "background_color": "#0f172a",
-        "theme_color": "#0f172a",
-        "orientation": "portrait",
-        "id": "/condominio-v79/",
-        "icons": [
-            { "src": "https://cdn-icons-png.flaticon.com/512/5569/5569424.png", "sizes": "192x192", "type": "image/png" },
-            { "src": "https://cdn-icons-png.flaticon.com/512/5569/5569424.png", "sizes": "512x512", "type": "image/png" }
-        ]
-    };
-    const blob = new Blob([JSON.stringify(manifestData)], {type: 'application/json'});
-    document.getElementById('my-manifest-placeholder').href = URL.createObjectURL(blob);
-
     const API_URL = "https://script.google.com/macros/s/AKfycby7jl6wQCWO0xkelu0fIoMvWmO1eNpK2QnZuYqVD-h0NMrLTwumjz7AIrxGriYrMajI/exec"; 
     const SECRET_PIN = "2163";
     const TOTAL_UNITS = 16;
     let appConfig = { initialBalance: 0, rentPrice: 600, extraFeeAmount: 0 };
     let movements = []; let unitInfo = {}; 
-    let currentUnitId, editingId, editingExpenseId, currentPin = "";
+    let currentUnitId, editingId, editingExpenseId, pressTimer, isLongPress, currentPin = "";
     let currentHomeView = 'regular';
     let ID_SELECCIONADO = null; 
     let deferredPrompt; 
+
+    // --- TOAST NOTIFICATION SYSTEM ---
+    function showToast(message, type = 'success') {
+        const container = document.getElementById('toast-container');
+        const toast = document.createElement('div');
+        toast.className = `toast ${type}`;
+        toast.innerHTML = `<i class="fas fa-check-circle"></i> ${message}`;
+        container.appendChild(toast);
+        // Remove after animation (3s)
+        setTimeout(() => {
+            toast.style.animation = 'slideDown 0.3s ease-in reverse forwards';
+            setTimeout(() => toast.remove(), 300);
+        }, 3000);
+    }
+
+    // --- BLOQUEO DE GHOST CLICKS ---
+    function bloquearInteraccionTemporal() {
+        const overlays = document.querySelectorAll('.modal-overlay');
+        overlays.forEach(o => o.classList.add('prevent-interaction'));
+        setTimeout(() => {
+            overlays.forEach(o => o.classList.remove('prevent-interaction'));
+        }, 400); // 400ms delay block
+    }
 
     window.addEventListener('beforeinstallprompt', (e) => {
         e.preventDefault(); deferredPrompt = e;
@@ -412,12 +379,14 @@
         });
     });
 
-    // --- CLICK HANDLERS ---
     let touchStartTime = 0; let isScrolling = false;
     function handleUnitStart() { touchStartTime = Date.now(); isScrolling = false; }
     function handleUnitMove() { isScrolling = true; }
     function handleUnitEnd(id) {
         if (isScrolling) return; 
+        // Prevención básica de ghost click en origen
+        if (event.type === 'touchend') event.preventDefault();
+        
         const touchDuration = Date.now() - touchStartTime;
         if (touchDuration < 500) { abrirModalUnidad(id); } 
         else { if (navigator.vibrate) navigator.vibrate(50); abrirModalEditar(id); }
@@ -461,7 +430,7 @@
         try{ await fetch(API_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({movements,units:unitInfo,config:appConfig})}); document.getElementById('sync-status').innerText="● Conectado"; }catch(e){ document.getElementById('sync-status').innerText="⚠ Error"; }
     }
     
-    function descargarBackup() { const d = { date: new Date().toISOString(), movements, unitInfo, config: appConfig, version: "v79" }; const b = new Blob([JSON.stringify(d, null, 2)], {type : 'application/json'}); const l = document.createElement("a"); l.href = URL.createObjectURL(b); l.download = `Respaldo.json`; document.body.appendChild(l); l.click(); document.body.removeChild(l); }
+    function descargarBackup() { const d = { date: new Date().toISOString(), movements, unitInfo, config: appConfig, version: "v80" }; const b = new Blob([JSON.stringify(d, null, 2)], {type : 'application/json'}); const l = document.createElement("a"); l.href = URL.createObjectURL(b); l.download = `Respaldo.json`; document.body.appendChild(l); l.click(); document.body.removeChild(l); }
     function procesarArchivoBackup(event) { const f = event.target.files[0]; if(!f) return; const r = new FileReader(); r.onload = function(e) { try { const d = JSON.parse(e.target.result); if(d.movements){ movements=d.movements; unitInfo=d.unitInfo||{}; appConfig=d.config||appConfig; guardarEnNube(); renderAll(); alert("✅ Restaurado"); } } catch (err) { alert("Archivo inválido"); } }; r.readAsText(f); }
 
     function switchHomeView(view) {
@@ -503,7 +472,7 @@
         if (pushHistory && v !== 'home') { history.pushState({view: v}, null, ""); }
     }
 
-    function guardarConfiguracion() { appConfig.initialBalance=parseFloat(document.getElementById('conf-balance').value)||0; appConfig.rentPrice=parseFloat(document.getElementById('conf-rent').value)||600; appConfig.extraFeeAmount=parseFloat(document.getElementById('conf-extra').value)||0; guardarEnNube(); renderHome(); alert("Guardado"); }
+    function guardarConfiguracion() { appConfig.initialBalance=parseFloat(document.getElementById('conf-balance').value)||0; appConfig.rentPrice=parseFloat(document.getElementById('conf-rent').value)||600; appConfig.extraFeeAmount=parseFloat(document.getElementById('conf-extra').value)||0; guardarEnNube(); renderHome(); showToast('Configuración guardada'); }
     function exportarExcel() { if(movements.length===0) return alert("Sin datos"); let ti=0, tg=0; movements.forEach(m=>{ if(m.type==='income') ti+=m.amount; else tg+=m.amount; }); let csv = `REPORTE DEPARTAMENTOS 2163\nSaldo Inicial,"$${appConfig.initialBalance}"\nIngresos,"$${ti}"\nGastos,"$${tg}"\nBALANCE TOTAL,"$${(appConfig.initialBalance+ti-tg)}"\n\nID,Fecha,Depto,Concepto,TipoPago,Metodo,Ingreso,Gasto\n`; movements.sort((a,b)=>new Date(a.date)-new Date(b.date)).forEach(m=>{ let i=m.type==='income'?`"$${m.amount}"`:'"$0.00"'; let g=m.type==='expense'?`"$${m.amount}"`:'"$0.00"'; let cn=(m.type==='income'?m.note:m.description)||'-'; csv+=`${m.id},${m.date},${m.unitId||'-'},${cn},${m.paymentType==='extra'?'EXTRA':'REGULAR'},${m.method||'-'},${i},${g}\n`; }); const b=new Blob(["\ufeff"+csv],{type:'text/csv;charset=utf-8;'}); const l=document.createElement("a"); l.href=URL.createObjectURL(b); l.download=`Reporte.csv`; document.body.appendChild(l); l.click(); document.body.removeChild(l); }
     function calcularDiasAtraso(uid) { const ps=movements.filter(m=>m.type==='income'&&m.unitId===uid&&m.paymentType!=='extra'); if(ps.length===0) return 999; ps.sort((a,b)=>new Date(b.date)-new Date(a.date)); return Math.ceil(Math.abs(new Date()-new Date(ps[0].date))/86400000); }
     
@@ -525,9 +494,7 @@
             if (info.empty) { cardClass = 'card-bg-empty'; } else {
                 occ++;
                 if (isPaid) { fullyPaid++; cardClass = 'card-bg-paid'; } else {
-                    // Logic fixed for Extra: apply same tolerance rule
-                    const days = calcularDiasAtraso(i); 
-                    if (days <= 40) { pending++; cardClass = 'card-bg-pending'; } else { overdue++; cardClass = 'card-bg-due'; }
+                    if (currentHomeView === 'regular') { const days = calcularDiasAtraso(i); if (days <= 40) { pending++; cardClass = 'card-bg-pending'; } else { overdue++; cardClass = 'card-bg-due'; } } else { overdue++; cardClass = 'card-bg-due'; }
                 }
             }
             const card = document.createElement('div'); card.className = `unit-card ${cardClass}`; card.innerHTML = `${i}`;
@@ -560,45 +527,45 @@
          });
     }
     
-    // --- LÓGICA DIRECTORIO REFINADA (V79) ---
+    // --- LÓGICA DIRECTORIO v80 ---
     function renderDirectory() {
         const list = document.getElementById('directory-list'); list.innerHTML = '';
         for(let i=1; i<=TOTAL_UNITS; i++) {
             const info = unitInfo[i] || { name: '', phone: '', empty: false };
             const isEmpty = info.empty;
             
-            // 1. Obtener último pago
+            // Buscar último pago
             const lastPay = movements.filter(m => m.type === 'income' && m.unitId === i).sort((a,b) => new Date(b.date) - new Date(a.date))[0];
             const lastPayText = lastPay ? `Último: ${lastPay.date} • $${lastPay.amount}` : 'Sin historial';
             
-            // 2. Calcular estado (Badge)
+            // Badge Logic
             const days = calcularDiasAtraso(i);
+            const isPaidCurrentMonth = movements.some(m => m.type === 'income' && m.unitId === i && new Date(m.date + 'T00:00').getMonth() === new Date().getMonth() && new Date(m.date + 'T00:00').getFullYear() === new Date().getFullYear());
+
             let badgeHtml = '';
             
             if (isEmpty) {
                 badgeHtml = '<span class="badge badge-empty">VACÍO</span>';
+            } else if (isPaidCurrentMonth) {
+                badgeHtml = '<span class="badge badge-success">PAGADO</span>';
             } else if (days <= 30) {
-                badgeHtml = '<span class="badge badge-success">AL CORRIENTE</span>';
-            } else if (days <= 45) {
-                badgeHtml = '<span class="badge badge-warning">PENDIENTE</span>';
+                 badgeHtml = '<span class="badge badge-warning">PENDIENTE</span>';
             } else {
-                let lateText = days > 90 ? '90+ DÍAS' : (days > 60 ? '60 DÍAS' : '30 DÍAS');
-                badgeHtml = `<span class="badge badge-danger">VENCIDO ${lateText}</span>`;
+                let lateText = days > 90 ? '90+' : (days > 60 ? '90 DÍAS' : (days > 30 ? '60 DÍAS' : 'VENCIDO'));
+                badgeHtml = `<span class="badge badge-danger">${lateText}</span>`;
             }
-            
-            // 3. Botones (Ocultos pero lógicos)
-            const phoneLink = info.phone ? `<a href="tel:${info.phone}" class="btn-call"><i class="fas fa-phone"></i></a>` : '';
-            const waLink = info.phone ? `<a href="https://wa.me/52${info.phone.replace(/\D/g,'')}" class="btn-call" style="background:#25D366"><i class="fab fa-whatsapp"></i></a>` : '';
             
             list.innerHTML += `
             <div class="contact-card ${isEmpty ? 'empty' : ''}" onclick="abrirModalEditar(${i})">
                 <div class="contact-number-box">${i}</div>
                 <div class="contact-info">
-                    <div class="contact-name">${info.name || 'Sin Inquilino'}</div>
+                    <div class="contact-header">
+                        <div class="contact-name">${info.name || 'Sin Inquilino'}</div>
+                        ${badgeHtml}
+                    </div>
                     <div class="contact-last-pay ${!lastPay ? 'none' : ''}">${lastPayText}</div>
                 </div>
-                ${badgeHtml}
-                <div style="display:none">${phoneLink}${waLink}</div> </div>`;
+            </div>`;
         }
     }
     function filtrarDirectorio(val) { const term=val.toLowerCase(); document.querySelectorAll('.contact-card').forEach(card => { card.style.display = card.innerText.toLowerCase().includes(term) ? 'flex' : 'none'; }); }
@@ -622,7 +589,7 @@
         let imageBase64 = null;
         try { if(fileInput.files.length > 0) { document.getElementById('btn-save-expense').innerText = "Comprimiendo..."; imageBase64 = await leerArchivo(fileInput.files[0]); } else if (editingExpenseId) { const old = movements.find(m => m.id === editingExpenseId); if(old) imageBase64 = old.image; } } catch(e) { console.log("Error img", e); }
         if(editingExpenseId){ const idx=movements.findIndex(x=>x.id===editingExpenseId); if(idx!==-1) movements[idx]={...movements[idx], description:de, amount:a, category:c, date:da, image: imageBase64}; } else { movements.push({id:Date.now(), type:'expense', description:de, amount:a, category:c, date:da, image: imageBase64}); } 
-        guardarEnNube(); renderAll(); history.back(); 
+        guardarEnNube(); renderAll(); showToast('Gasto registrado'); history.back(); 
     }
 
     function prepararEdicionGasto(id) { 
@@ -661,6 +628,7 @@
     }
 
     function abrirModalUnidad(id, clean = true) { 
+        bloquearInteraccionTemporal();
         currentUnitId=id; 
         if(clean) cancelarEdicion(); 
         const i=unitInfo[id]||{}; 
@@ -680,52 +648,38 @@
         const m=document.getElementById('rent-method').value; const t=document.getElementById('rent-type').value; 
         if(!a)return alert("Monto?"); 
         if(editingId){const idx=movements.findIndex(x=>x.id===editingId); if(idx!==-1)movements[idx]={...movements[idx], amount:a, note:n, date:d, method:m, paymentType:t};}else{movements.push({id:Date.now(), type:'income', unitId:currentUnitId, amount:a, date:d, note:n, method:m, paymentType:t});} 
-        guardarEnNube(); renderAll(); history.back(); 
+        guardarEnNube(); renderAll(); showToast('Pago registrado'); history.back(); 
     }
 
     function abrirModalGasto() { cancelarEdicionGasto(); document.getElementById('exp-date').value=new Date().toISOString().split('T')[0]; history.pushState({modal: true}, null, ""); document.getElementById('modalExpense').style.display='flex'; }
     function cancelarEdicionGasto() { editingExpenseId=null; ID_SELECCIONADO=null; document.getElementById('exp-desc').value=''; document.getElementById('exp-amount').value=''; document.getElementById('modal-expense-title').innerText="Nuevo"; document.getElementById('btn-save-expense').innerText="Guardar"; document.getElementById('btn-delete-expense-container').classList.add('hidden'); document.getElementById('file-name-display').innerText=''; document.getElementById('exp-receipt-input').value=''; }
 
-    // --- FUNCIONES EDICIÓN INFO DEPARTAMENTO (V79 CORREGIDA) ---
     function abrirModalEditar(id) { 
         currentUnitId=id; 
         const i=unitInfo[id]||{}; 
         document.getElementById('edit-name').value=i.name||''; 
         document.getElementById('edit-phone').value=i.phone||''; 
-        
-        // SET TOGGLE STATE (Logica inversa: empty=true significa DESHABITADO)
-        // isHabitado = !empty
         const isHabitado = !i.empty;
         setHabitado(isHabitado, isHabitado ? document.querySelector('#seg-habitado .seg-btn:first-child') : document.querySelector('#seg-habitado .seg-btn:last-child'));
-        
         history.pushState({modal: true}, null, ""); 
         document.getElementById('modalEditInfo').style.display='flex'; 
     }
 
     function setHabitado(val, btn) {
-        document.getElementById('edit-status-val').value = val; // "true" or "false" string
+        document.getElementById('edit-status-val').value = val; 
         document.querySelectorAll('#seg-habitado .seg-btn').forEach(b => b.classList.remove('active'));
         if(btn) btn.classList.add('active');
-        else {
-             const index = val ? 0 : 1;
-             document.querySelectorAll('#seg-habitado .seg-btn')[index].classList.add('active');
-        }
+        else { const index = val ? 0 : 1; document.querySelectorAll('#seg-habitado .seg-btn')[index].classList.add('active'); }
     }
 
     function guardarInfoDepto() { 
         if(!currentUnitId) return alert("Error de ID");
         if(!unitInfo[currentUnitId]) unitInfo[currentUnitId]={}; 
-        
         unitInfo[currentUnitId].name = document.getElementById('edit-name').value; 
         unitInfo[currentUnitId].phone = document.getElementById('edit-phone').value; 
-        
-        // Leer del hidden input. Si value es "true", entonces habitado (empty=false).
         const isHabitado = document.getElementById('edit-status-val').value === 'true';
         unitInfo[currentUnitId].empty = !isHabitado; 
-        
-        guardarEnNube(); 
-        renderAll(); 
-        history.back(); 
+        guardarEnNube(); renderAll(); showToast('Info actualizada'); history.back(); 
     }
 
     function prepararEdicionGlobal(id) { const m = movements.find(x => x.id === Number(id)); if(!m) return; currentUnitId = m.unitId; abrirModalUnidad(currentUnitId, false); setTimeout(() => { prepararEdicion(id); }, 100); }
@@ -759,7 +713,7 @@
     function solicitarEdicion() { const id = ID_SELECCIONADO; if(id) { document.getElementById('modalReceipt').style.display = 'none'; prepararEdicionGlobal(id); } }
     function solicitarEliminacion() { if(!ID_SELECCIONADO) return; document.getElementById('modalConfirm').style.display = 'flex'; }
     function cerrarConfirmacion() { document.getElementById('modalConfirm').style.display = 'none'; }
-    function ejecutarEliminacionReal() { movements = movements.filter(m => m.id != ID_SELECCIONADO); guardarEnNube(); renderAll(); cerrarConfirmacion(); history.back(); }
+    function ejecutarEliminacionReal() { movements = movements.filter(m => m.id != ID_SELECCIONADO); guardarEnNube(); renderAll(); showToast('Eliminado'); cerrarConfirmacion(); history.back(); }
     
     function verRecibo(id) { 
         const m=movements.find(x=>x.id===Number(id)); if(!m)return; ID_SELECCIONADO=Number(id); const i=unitInfo[m.unitId]||{}; const fol=m.id.toString();
