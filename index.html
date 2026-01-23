@@ -10,7 +10,7 @@
     <meta name="apple-mobile-web-app-title" content="Condominio">
     <meta name="theme-color" content="#0f172a">
     
-    <title>Condominio Master v85</title>
+    <title>Condominio Master v86</title>
     
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -135,7 +135,7 @@
         .unit-selector-card { aspect-ratio: 1/1; background: var(--bg-input); border: 1px solid var(--primary); border-radius: 14px; display: flex; justify-content: center; align-items: center; font-weight: bold; font-size: 1.1rem; color: var(--primary); cursor: pointer; transition: transform 0.2s; }
         .unit-selector-card:active { transform: scale(0.90); background: var(--primary); color: white; }
         
-        /* DIRECTORIO ESTILOS V85 */
+        /* DIRECTORIO ESTILOS V86 */
         .contact-card { display: flex; align-items: center; background: var(--bg-card); padding: 15px; border-radius: 16px; margin-bottom: 10px; border: 1px solid var(--border); position: relative; transition: transform 0.1s; }
         .contact-card:active { transform: scale(0.98); background: var(--bg-input); }
         .contact-card.empty { opacity: 0.8; }
@@ -193,7 +193,7 @@
         
         <div id="view-home" class="container">
             <div class="header-top">
-                <h2 style="margin:0;">Panel de Control <span class="version-tag">v85 Beta</span></h2>
+                <h2 style="margin:0;">Panel de Control <span class="version-tag">v86 Beta</span></h2>
                 <small id="sync-status" style="color:var(--success)">● Conectado</small>
             </div>
             
@@ -261,22 +261,17 @@
         </div>
 
         <div id="view-dev" class="container hidden">
-            <h2>Log de Cambios (v85)</h2>
+            <h2>Log de Cambios (v86)</h2>
             <div class="dev-log-container">
-1. NAVEGACIÓN DIRECTORIO:
-- Flecha atrás ahora fuerza vuelta a Inicio.
-- Botón físico 'Atrás' soportado mejor.
+1. LÓGICA VISTA EXTRA:
+- Corregido: Ahora usa el historial de pagos para determinar si es Pendiente (Amarillo) o Vencido (Rojo), en lugar de marcar todo como rojo si falta.
 
-2. LÓGICA VENCIMIENTO:
-- PAGADO (Mes actual).
-- PENDIENTE (Debe este mes).
-- VENCIDO (Debe 2 meses).
-- 60 DÍAS (Debe 3 meses).
-- 90 DÍAS (Debe 4 meses).
-- +90 DÍAS (Debe 5+ meses).
-
-3. UI:
-- Badges píldora con punto sólido (●).
+2. LÓGICA DIRECTORIO:
+- Rangos ajustados:
+  * 0-30 días: Pendiente
+  * 31-60 días: Vencido (Rojo)
+  * 61-90 días: 60 Días
+  * 91+ días: 90 Días
             </div>
         </div>
 
@@ -404,22 +399,13 @@
             document.getElementById('app-container').style.display = 'block';
             cargarDatosNube();
         }
-        // Force initial state for history
-        history.replaceState({view: 'home'}, null, "");
     });
 
     window.addEventListener('popstate', function(event) {
         if(document.getElementById('modalConfirm').style.display === 'flex') { document.getElementById('modalConfirm').style.display = 'none'; return; }
         if(document.querySelector('.modal-overlay[style*="display: flex"]')) { cerrarModales(false); return; }
-        
-        // Handle Back from Directory
-        if (!event.state || event.state.view === 'home') { 
-            cambiarVista('home', false); // false = don't push state again
-            return; 
-        }
-        if (event.state.view) { 
-            cambiarVista(event.state.view, false); 
-        }
+        if (!event.state || event.state.view === 'home') { cambiarVista('home', false); return; }
+        if (event.state.view) { cambiarVista(event.state.view, false); }
     });
 
     function addPin(n){ if(currentPin.length<4){ currentPin+=n; document.getElementById('pin-display').innerText="*".repeat(currentPin.length); } }
@@ -438,7 +424,7 @@
         try{ await fetch(API_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({movements,units:unitInfo,config:appConfig})}); document.getElementById('sync-status').innerText="● Conectado"; }catch(e){ document.getElementById('sync-status').innerText="⚠ Error"; }
     }
     
-    function descargarBackup() { const d = { date: new Date().toISOString(), movements, unitInfo, config: appConfig, version: "v85" }; const b = new Blob([JSON.stringify(d, null, 2)], {type : 'application/json'}); const l = document.createElement("a"); l.href = URL.createObjectURL(b); l.download = `Respaldo.json`; document.body.appendChild(l); l.click(); document.body.removeChild(l); }
+    function descargarBackup() { const d = { date: new Date().toISOString(), movements, unitInfo, config: appConfig, version: "v86" }; const b = new Blob([JSON.stringify(d, null, 2)], {type : 'application/json'}); const l = document.createElement("a"); l.href = URL.createObjectURL(b); l.download = `Respaldo.json`; document.body.appendChild(l); l.click(); document.body.removeChild(l); }
     function procesarArchivoBackup(event) { const f = event.target.files[0]; if(!f) return; const r = new FileReader(); r.onload = function(e) { try { const d = JSON.parse(e.target.result); if(d.movements){ movements=d.movements; unitInfo=d.unitInfo||{}; appConfig=d.config||appConfig; guardarEnNube(); renderAll(); alert("✅ Restaurado"); } } catch (err) { alert("Archivo inválido"); } }; r.readAsText(f); }
 
     function switchHomeView(view) {
@@ -477,10 +463,7 @@
         if (v === 'receipts') renderReceiptsList();
         if (v === 'home') renderHome(); 
 
-        if (pushHistory && v !== 'home') { 
-            // Explicit Push
-            history.pushState({view: v}, null, ""); 
-        }
+        if (pushHistory && v !== 'home') { history.pushState({view: v}, null, ""); }
     }
 
     function guardarConfiguracion() { appConfig.initialBalance=parseFloat(document.getElementById('conf-balance').value)||0; appConfig.rentPrice=parseFloat(document.getElementById('conf-rent').value)||600; appConfig.extraFeeAmount=parseFloat(document.getElementById('conf-extra').value)||0; guardarEnNube(); renderHome(); showToast('Configuración guardada'); }
@@ -505,7 +488,7 @@
             if (info.empty) { cardClass = 'card-bg-empty'; } else {
                 occ++;
                 if (isPaid) { fullyPaid++; cardClass = 'card-bg-paid'; } else {
-                    if (currentHomeView === 'regular') { const days = calcularDiasAtraso(i); if (days <= 40) { pending++; cardClass = 'card-bg-pending'; } else { overdue++; cardClass = 'card-bg-due'; } } else { overdue++; cardClass = 'card-bg-due'; }
+                    const days = calcularDiasAtraso(i); if (days <= 40) { pending++; cardClass = 'card-bg-pending'; } else { overdue++; cardClass = 'card-bg-due'; }
                 }
             }
             const card = document.createElement('div'); card.className = `unit-card ${cardClass}`; card.innerHTML = `${i}`;
@@ -538,7 +521,7 @@
          });
     }
     
-    // --- LÓGICA DIRECTORIO V85 (CORREGIDA) ---
+    // --- LÓGICA DIRECTORIO V86 (CORREGIDA) ---
     function renderDirectory() {
         const list = document.getElementById('directory-list'); list.innerHTML = '';
         const now = new Date(); const cm = now.getMonth(); const cy = now.getFullYear();
@@ -561,26 +544,15 @@
                 badgeHtml = '<span class="badge badge-success">● PAGADO</span>';
             } else if (days <= 30) {
                  badgeHtml = '<span class="badge badge-warning">● PENDIENTE</span>';
+            } else if (days <= 60) {
+                 badgeHtml = '<span class="badge badge-danger">● VENCIDO</span>';
+            } else if (days <= 90) {
+                 badgeHtml = '<span class="badge badge-danger">● 60 DÍAS</span>';
             } else {
-                let lateText = 'VENCIDO';
-                if(days > 90) lateText = '+90 DÍAS';
-                else if(days > 60) lateText = '90 DÍAS';
-                else if(days > 30) lateText = '60 DÍAS';
-                
-                badgeHtml = `<span class="badge badge-danger">● ${lateText}</span>`;
+                 badgeHtml = '<span class="badge badge-danger">● 90 DÍAS</span>';
             }
             
-            list.innerHTML += `
-            <div class="contact-card ${isEmpty ? 'empty' : ''}" onclick="abrirModalEditar(${i})">
-                <div class="contact-number-box">${i}</div>
-                <div class="contact-info">
-                    <div class="contact-header">
-                        <div class="contact-name">${info.name || 'Sin Inquilino'}</div>
-                        ${badgeHtml}
-                    </div>
-                    <div class="contact-last-pay ${!lastPay ? 'none' : ''}">${lastPayText}</div>
-                </div>
-            </div>`;
+            list.innerHTML += `<div class="contact-card ${isEmpty ? 'empty' : ''}" onclick="abrirModalEditar(${i})"><div class="contact-number-box">${i}</div><div class="contact-info"><div class="contact-header"><div class="contact-name">${info.name || 'Sin Inquilino'}</div>${badgeHtml}</div><div class="contact-last-pay ${!lastPay ? 'none' : ''}">${lastPayText}</div></div></div>`;
         }
     }
     function filtrarDirectorio(val) { const term=val.toLowerCase(); document.querySelectorAll('.contact-card').forEach(card => { card.style.display = card.innerText.toLowerCase().includes(term) ? 'flex' : 'none'; }); }
