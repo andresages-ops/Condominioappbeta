@@ -7,9 +7,10 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Condominio">
+    <meta name="mobile-web-app-capable" content="yes">
     <meta name="theme-color" content="#0f172a">
     
-    <title>Condominio Master v76</title>
+    <title>Condominio Master v77</title>
     
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -116,8 +117,17 @@
         input, select { width: 100%; padding: 14px; margin: 5px 0; border: 1px solid var(--border); border-radius: 12px; background: var(--bg-darker); color: var(--text-main); outline: none; transition: border-color 0.3s; }
         input:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.15); }
         
+        /* HEADER TOP & DIR BUTTON */
         .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        
+        .btn-icon-header {
+            width: 40px; height: 40px; border-radius: 50%;
+            background: var(--bg-card); border: 1px solid var(--border);
+            display: flex; justify-content: center; align-items: center;
+            color: var(--primary); font-size: 1.1rem; cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+        .btn-icon-header:active { transform: scale(0.95); background: var(--bg-input); }
+
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 20px; }
         .stat-card { background: var(--bg-card); padding: 15px; border-radius: 16px; text-align: left; border: 1px solid var(--border); display: flex; flex-direction: column; justify-content: center; }
         .stat-number { font-size: 1.1rem; font-weight: 700; display: block; color: var(--text-main); margin-top: 4px; }
@@ -233,7 +243,10 @@
     <div id="app-container" style="display:none">
         
         <div id="view-home" class="container">
-            <div class="header-top"><h2 style="margin:0;">Panel de Control</h2><small id="sync-status" style="color:var(--success)">● Conectado</small></div>
+            <div class="header-top">
+                <h2 style="margin:0;">Panel de Control</h2>
+                <div class="btn-icon-header" onclick="cambiarVista('directory')"><i class="fas fa-address-book"></i></div>
+            </div>
             <div id="main-balance-card" class="balance-card"><div style="font-size:0.8rem; opacity:0.9;">BALANCE EN CAJA</div><div class="balance-amount global-balance-display">$0.00</div></div>
             <div class="stats-grid">
                 <div class="stat-card"><span class="stat-label text-paid">PAGADOS</span><span class="stat-number" id="stat-paid">0</span></div>
@@ -281,13 +294,13 @@
             <h2>Configuración</h2>
             <div class="setting-section"><p style="margin:0 0 10px 0; font-weight:bold">Respaldo</p><button class="btn btn-dark" onclick="descargarBackup()"><i class="fas fa-download"></i> Descargar (.json)</button><button class="btn" style="border:1px solid var(--text-sec)" onclick="document.getElementById('file-restore').click()"><i class="fas fa-upload"></i> Restaurar</button><input type="file" id="file-restore" style="display:none" onchange="procesarArchivoBackup(event)" accept=".json"></div>
             <div class="setting-section"><p style="margin:0 0 10px 0; font-weight:bold">Datos Financieros</p><label style="font-size:0.8rem; color:var(--text-sec)">Saldo Inicial:</label><input type="number" id="conf-balance" placeholder="0.00"><label style="font-size:0.8rem; color:var(--text-sec)">Cuota Regular:</label><input type="number" id="conf-rent" placeholder="600.00"><label style="font-size:0.8rem; color:var(--accent)">Cuota Extra:</label><input type="number" id="conf-extra" placeholder="Ej. 1500.00" style="border-color:var(--accent)"><button class="btn btn-primary" onclick="guardarConfiguracion()">Guardar Cambios</button></div>
+            <div id="pwa-install-container" class="hidden" style="margin-bottom:20px"><button class="btn btn-success" id="btn-install-app"><i class="fas fa-download"></i> Instalar App</button></div>
             <button class="btn btn-success" onclick="exportarExcel()"><i class="fas fa-file-excel"></i> Reporte Excel</button>
             <div style="margin-top:40px; margin-bottom: 20px;"><button class="btn btn-danger" onclick="logout()" style="padding:15px; opacity:0.8"><i class="fas fa-lock"></i> Cerrar Sesión</button></div>
         </div>
 
         <div class="bottom-nav">
             <div class="nav-item active" onclick="cambiarVista('home')" id="nav-home"><i class="fas fa-home"></i></div>
-            <div class="nav-item" onclick="cambiarVista('directory')" id="nav-directory"><i class="fas fa-address-book"></i></div>
             <div class="nav-item" onclick="cambiarVista('receipts')" id="nav-receipts"><i class="fas fa-receipt"></i></div>
             <div class="nav-item" onclick="cambiarVista('expenses')" id="nav-expenses"><i class="fas fa-money-bill-wave"></i></div>
             <div class="nav-item" onclick="cambiarVista('settings')" id="nav-settings"><i class="fas fa-cog"></i></div>
@@ -352,12 +365,30 @@
     const TOTAL_UNITS = 16;
     let appConfig = { initialBalance: 0, rentPrice: 600, extraFeeAmount: 0 };
     let movements = []; let unitInfo = {}; 
-    let currentUnitId, editingId, editingExpenseId, currentPin = "";
+    let currentUnitId, editingId, editingExpenseId, pressTimer, isLongPress, currentPin = "";
     let currentHomeView = 'regular';
     let ID_SELECCIONADO = null; 
+    let deferredPrompt; 
+
+    // --- EVENTOS PWA ---
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        const installBtn = document.getElementById('pwa-install-container');
+        if(installBtn) installBtn.classList.remove('hidden');
+        
+        document.getElementById('btn-install-app').addEventListener('click', () => {
+            deferredPrompt.prompt();
+            deferredPrompt.userChoice.then((choiceResult) => {
+                if (choiceResult.outcome === 'accepted') {
+                    console.log('User accepted the A2HS prompt');
+                }
+                deferredPrompt = null;
+            });
+        });
+    });
 
     // --- MANEJO DE EVENTOS (CLICK VS LONG PRESS) ---
-    // Usamos un objeto simple para rastrear el estado del toque
     let touchStartTime = 0;
     let isScrolling = false;
 
@@ -367,20 +398,20 @@
     }
 
     function handleUnitMove() {
-        isScrolling = true; // Si se mueve, es scroll, cancelar todo
+        isScrolling = true; // Si mueve el dedo, es scroll
     }
 
     function handleUnitEnd(id) {
-        if (isScrolling) return; // Si fue scroll, ignorar
+        if (isScrolling) return; // Ignorar si fue scroll
 
         const touchDuration = Date.now() - touchStartTime;
         
         if (touchDuration < 500) {
-            // TOQUE CORTO (< 0.5s) -> Registrar Pago
+            // Click corto -> Pagar
             abrirModalUnidad(id);
         } else {
-            // TOQUE LARGO (> 0.5s) -> Editar Info
-            if (navigator.vibrate) navigator.vibrate(50); // Feedback táctil
+            // Click largo -> Editar Info
+            if (navigator.vibrate) navigator.vibrate(50);
             abrirModalEditar(id);
         }
     }
@@ -399,6 +430,19 @@
             document.getElementById('login-screen').style.display = 'none';
             document.getElementById('app-container').style.display = 'block';
             cargarDatosNube();
+        }
+        
+        // PWA Button Handler
+        const installBtn = document.getElementById('btn-install-app');
+        if(installBtn) {
+            installBtn.addEventListener('click', async () => {
+                if (deferredPrompt) {
+                    deferredPrompt.prompt();
+                    const { outcome } = await deferredPrompt.userChoice;
+                    console.log(`User response to the install prompt: ${outcome}`);
+                    deferredPrompt = null;
+                }
+            });
         }
     });
 
@@ -430,7 +474,7 @@
     }
     
     function descargarBackup() {
-        const backupData = { date: new Date().toISOString(), movements, unitInfo, config: appConfig, version: "v76" };
+        const backupData = { date: new Date().toISOString(), movements, unitInfo, config: appConfig, version: "v77" };
         const blob = new Blob([JSON.stringify(backupData, null, 2)], {type : 'application/json'});
         const link = document.createElement("a"); link.href = URL.createObjectURL(blob); link.download = `Respaldo_${new Date().toISOString().split('T')[0]}.json`; document.body.appendChild(link); link.click(); document.body.removeChild(link);
     }
@@ -510,12 +554,8 @@
         for(let i=1; i<=TOTAL_UNITS; i++){
             const info=unitInfo[i]||{name:'',empty:false}; 
             let totalPaidCurrentView = 0;
-            
-            if (currentHomeView === 'regular') { 
-                totalPaidCurrentView = movements.filter(m => m.type==='income' && m.unitId===i && (m.paymentType === 'regular' || !m.paymentType) && new Date(m.date+'T00:00').getMonth()===cm && new Date(m.date+'T00:00').getFullYear()===cy).reduce((s,m)=>s+m.amount,0); 
-            } else { 
-                totalPaidCurrentView = movements.filter(m => m.type==='income' && m.unitId===i && m.paymentType === 'extra' && new Date(m.date+'T00:00').getMonth()===cm && new Date(m.date+'T00:00').getFullYear()===cy).reduce((s,m)=>s+m.amount,0); 
-            }
+            if (currentHomeView === 'regular') { totalPaidCurrentView = movements.filter(m => m.type==='income' && m.unitId===i && (m.paymentType === 'regular' || !m.paymentType) && new Date(m.date+'T00:00').getMonth()===cm && new Date(m.date+'T00:00').getFullYear()===cy).reduce((s,m)=>s+m.amount,0); } 
+            else { totalPaidCurrentView = movements.filter(m => m.type==='income' && m.unitId===i && m.paymentType === 'extra' && new Date(m.date+'T00:00').getMonth()===cm && new Date(m.date+'T00:00').getFullYear()===cy).reduce((s,m)=>s+m.amount,0); }
             
             const isPaid = totalPaidCurrentView >= targetAmount;
             let cardClass = ''; 
@@ -528,20 +568,21 @@
                     } else { overdue++; cardClass = 'card-bg-due'; }
                 }
             }
-            const card = document.createElement('div'); card.className = `unit-card ${cardClass}`; card.innerHTML = `${i}`;
             
-            // LOGICA CLICK vs LONG PRESS (MANUAL)
+            const card = document.createElement('div'); card.className = `unit-card ${cardClass}`; 
+            card.innerHTML = `${i}`;
+            
+            // EVENTOS DE TOQUE PERSONALIZADOS (CLICK vs LONG PRESS)
             card.addEventListener('mousedown', handleUnitStart);
             card.addEventListener('touchstart', handleUnitStart);
-            
             card.addEventListener('mousemove', handleUnitMove);
             card.addEventListener('touchmove', handleUnitMove);
             
-            card.addEventListener('mouseup', () => handleUnitEnd(i));
-            card.addEventListener('touchend', () => handleUnitEnd(i));
+            // Usamos closures para pasar el ID 'i' correctamente
+            card.addEventListener('mouseup', function(e) { handleUnitEnd(i); });
+            card.addEventListener('touchend', function(e) { handleUnitEnd(i); });
             
-            // Deshabilitar menú contextual
-            card.oncontextmenu = function() { return false; }
+            card.oncontextmenu = function() { return false; } // Prevenir menu contextual
 
             g.appendChild(card);
         }
@@ -567,7 +608,7 @@
             let icon, color, title, subtitle, clickAction, noteHtml;
             if (isIncome) {
                 const isExtra = m.paymentType === 'extra'; const i = unitInfo[m.unitId] || {}; icon = m.method === 'Efectivo' ? 'fa-money-bill-wave' : 'fa-university'; color = isExtra ? 'var(--accent)' : 'var(--primary)'; title = `Depto ${m.unitId}`; subtitle = `${date}`;
-                noteHtml = m.note ? `<small style="color:var(--warning); display:block; font-style:italic; font-size:0.75rem; margin-top:2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${m.note}</small>` : '';
+                noteHtml = m.note ? `<small style="color:var(--warning); display:block; font-style:italic; font-size:0.75rem; margin-top:2px;">${m.note}</small>` : '';
                 clickAction = `verRecibo(${m.id})`;
             } else {
                  const expenseIcons = { 'Mantenimiento': 'fa-tools', 'Servicios': 'fa-bolt', 'Reparación': 'fa-hammer', 'Otro': 'fa-box-open' }; icon = expenseIcons[m.category] || 'fa-dollar-sign'; color = 'var(--warning)'; title = m.description; subtitle = `${m.category} • ${date}`; noteHtml = ''; clickAction = `prepararEdicionGasto(${m.id})`;
@@ -578,32 +619,17 @@
     
     // --- LÓGICA DIRECTORIO ---
     function renderDirectory() {
-        const list = document.getElementById('directory-list');
-        list.innerHTML = '';
+        const list = document.getElementById('directory-list'); list.innerHTML = '';
         for(let i=1; i<=TOTAL_UNITS; i++) {
             const info = unitInfo[i] || { name: '', phone: '', empty: false };
             const isEmpty = info.empty;
             const phoneLink = info.phone ? `<a href="tel:${info.phone}" class="btn-call"><i class="fas fa-phone"></i></a>` : '';
             const waLink = info.phone ? `<a href="https://wa.me/52${info.phone.replace(/\D/g,'')}" class="btn-call" style="background:#25D366"><i class="fab fa-whatsapp"></i></a>` : '';
-            
-            list.innerHTML += `
-            <div class="contact-card ${isEmpty ? 'empty' : ''}" onclick="abrirModalEditar(${i})">
-                <div class="contact-number">${i}</div>
-                <div class="contact-info">
-                    <div class="contact-name">${info.name || 'Sin Inquilino'}</div>
-                    <div class="contact-phone">${info.phone || 'Sin Teléfono'} ${isEmpty ? '• (Vacío)' : ''}</div>
-                </div>
-                ${isEmpty ? '' : phoneLink + waLink}
-            </div>`;
+            list.innerHTML += `<div class="contact-card ${isEmpty ? 'empty' : ''}" onclick="abrirModalEditar(${i})"><div class="contact-number">${i}</div><div class="contact-info"><div class="contact-name">${info.name || 'Sin Inquilino'}</div><div class="contact-phone">${info.phone || 'Sin Teléfono'}</div></div>${isEmpty ? '' : phoneLink + waLink}</div>`;
         }
     }
 
-    function filtrarDirectorio(val) {
-        const term = val.toLowerCase();
-        document.querySelectorAll('.contact-card').forEach(card => {
-            card.style.display = card.innerText.toLowerCase().includes(term) ? 'flex' : 'none';
-        });
-    }
+    function filtrarDirectorio(val) { const term=val.toLowerCase(); document.querySelectorAll('.contact-card').forEach(card => { card.style.display = card.innerText.toLowerCase().includes(term) ? 'flex' : 'none'; }); }
 
     // --- LÓGICA FOTOS EN GASTOS ---
     function mostrarNombreArchivo() {
@@ -640,17 +666,18 @@
         const da=document.getElementById('exp-date').value;
         const c=document.getElementById('exp-cat').value; 
         const fileInput = document.getElementById('exp-receipt-input');
-        
         if(!a) return alert("Monto?"); 
         
         let imageBase64 = null;
-        if(fileInput.files.length > 0) {
-             document.getElementById('btn-save-expense').innerText = "Comprimiendo...";
-             imageBase64 = await leerArchivo(fileInput.files[0]);
-        } else if (editingExpenseId) {
-             const old = movements.find(m => m.id === editingExpenseId);
-             if(old) imageBase64 = old.image;
-        }
+        try {
+            if(fileInput.files.length > 0) {
+                 document.getElementById('btn-save-expense').innerText = "Comprimiendo...";
+                 imageBase64 = await leerArchivo(fileInput.files[0]);
+            } else if (editingExpenseId) {
+                 const old = movements.find(m => m.id === editingExpenseId);
+                 if(old) imageBase64 = old.image;
+            }
+        } catch(e) { console.log("Error img", e); }
 
         if(editingExpenseId){
             const idx=movements.findIndex(x=>x.id===editingExpenseId); 
@@ -832,7 +859,7 @@
                     <div class="text-info">
                         <div style="font-weight:bold; font-size:0.9rem; color:var(--text-main); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">$${m.amount}</div>
                         <small style="color:var(--text-sec); font-size:0.75rem; display:block;">${m.date}</small>
-                        ${m.note ? `<small style="color:var(--warning); display:block; font-style:italic; font-size:0.75rem; margin-top:2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${m.note}</small>` : ''}
+                        ${m.note ? `<small style="color:var(--warning); display:block; font-style:italic; font-size:0.75rem; margin-top:2px;">${m.note}</small>` : ''}
                     </div>
                 </div>
             </div>`; 
@@ -861,7 +888,7 @@
                     <div class="text-info">
                         <div style="font-weight:bold; font-size:0.9rem; color:var(--text-main); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Depto ${m.unitId}</div>
                         <small style="color:var(--text-sec); font-size:0.75rem; display:block;">${m.date} • ${m.amount}</small>
-                        ${m.note ? `<small style="color:var(--warning); display:block; font-style:italic; font-size:0.75rem; margin-top:2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${m.note}</small>` : ''}
+                        ${m.note ? `<small style="color:var(--warning); display:block; font-style:italic; font-size:0.75rem; margin-top:2px;">${m.note}</small>` : ''}
                     </div>
                 </div>
                 <div class="card-amount-section">
