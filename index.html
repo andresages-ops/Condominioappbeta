@@ -10,7 +10,7 @@
     <meta name="apple-mobile-web-app-title" content="Condominio">
     <meta name="theme-color" content="#0f172a">
     
-    <title>Condominio Master v92</title>
+    <title>Condominio Master v94</title>
     
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -18,7 +18,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
     <style>
-        /* --- ESTILOS GENERALES (Minificados para rendimiento) --- */
+        /* --- ESTILOS GENERALES (Minificados) --- */
         :root { --primary: #3b82f6; --primary-dark: #2563eb; --accent: #8b5cf6;
         --success: #10b981; --warning: #f59e0b; --danger: #ef4444; --bg-body: #0f172a; --bg-card: #1e293b; --bg-input: #334155; --bg-active-gray: #475569; --bg-darker: #020617; --border: #334155; --text-main: #f8fafc;
         --text-sec: #94a3b8; --text-light: #e2e8f0; --empty: #64748b; --primary-rgb: 59, 130, 246; --accent-rgb: 139, 92, 246; --success-rgb: 16, 185, 129;
@@ -329,7 +329,7 @@
     <div id="app-container" style="display:none">
         
         <div id="view-home" class="container">
-            <div class="header-top"><h2 style="margin:0;">Panel de Control <span class="version-tag">v92 Beta</span></h2><small id="sync-status" style="color:var(--success)">● Conectado</small></div>
+            <div class="header-top"><h2 style="margin:0;">Panel de Control <span class="version-tag">v94 Beta</span></h2><small id="sync-status" style="color:var(--success)">● Conectado</small></div>
             <div id="main-balance-card" class="balance-card"><div style="font-size:0.8rem;
             opacity:0.9;">BALANCE EN CAJA</div><div class="balance-amount global-balance-display">$0.00</div></div>
             <div class="stats-grid">
@@ -393,7 +393,7 @@
             margin-bottom: 20px;"><button class="btn btn-danger" onclick="logout()" style="padding:15px; opacity:0.8"><i class="fas fa-lock"></i> Cerrar Sesión</button></div>
         </div>
         
-        <div id="view-dev" class="container hidden"><h2>Log de Cambios (v92)</h2><div class="dev-log-container">REPORTE EXCEL VERTICAL + FOTOS DRIVE + UI CORREGIDA + CORRECCIÓN FECHA ZONA HORARIA</div></div>
+        <div id="view-dev" class="container hidden"><h2>Log de Cambios (v94)</h2><div class="dev-log-container">REPORTE HÍBRIDO (BALANCE MENSUAL + MATRIZ COMPLETA) + CORRECCION FECHAS</div></div>
 
         <div class="bottom-nav">
             <div class="nav-item active" onclick="cambiarVista('home')" id="nav-home"><i class="fas fa-home"></i></div>
@@ -475,7 +475,7 @@
     async function subirImagenNube(file) { return new Promise((resolve, reject) => { const reader = new FileReader(); reader.readAsDataURL(file); reader.onload = async (e) => { const base64Data = e.target.result.split(',')[1]; const payload = { action: "upload", file: base64Data, mimeType: file.type, fileName: file.name }; try { const response = await fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) }); const result = await response.json(); if(result.status === 'success') resolve(result.url); else reject(result.message); } catch (err) { reject(err); } }; });
     }
 
-    function descargarBackup() { const d = { date: new Date().toISOString(), movements, unitInfo, config: appConfig, version: "v92" };
+    function descargarBackup() { const d = { date: new Date().toISOString(), movements, unitInfo, config: appConfig, version: "v94" };
     const b = new Blob([JSON.stringify(d, null, 2)], {type : 'application/json'}); const l = document.createElement("a"); l.href = URL.createObjectURL(b); l.download = `Respaldo.json`;
     document.body.appendChild(l); l.click(); document.body.removeChild(l); }
     function procesarArchivoBackup(event) { const f = event.target.files[0]; if(!f) return;
@@ -501,34 +501,117 @@
     function guardarConfiguracion() { appConfig.initialBalance=parseFloat(document.getElementById('conf-balance').value)||0;
     appConfig.rentPrice=parseFloat(document.getElementById('conf-rent').value)||600; appConfig.extraFeeAmount=parseFloat(document.getElementById('conf-extra').value)||0; guardarEnNube(); renderHome(); showToast('Configuración guardada'); }
     
-    // EXCEL SHEETJS LOGIC (CORREGIDA PARA FECHAS)
+    // --- NUEVA FUNCIÓN DE EXCEL HÍBRIDO (v94) ---
     function exportarExcel() {
-        if (movements.length === 0) return alert("Sin datos");
+        if (movements.length === 0) return alert("Sin datos para exportar");
+
+        const soloMesActual = confirm("¿Deseas generar el reporte SOLO del MES ACTUAL?\n\n[Aceptar] = Solo Mes Actual (Bitácora limpia, Balance del mes, pero Matriz completa)\n[Cancelar] = Reporte Anual Completo (Todo)");
+        
+        const hoy = new Date();
+        const mesActual = hoy.getMonth();      
+        const anioActual = hoy.getFullYear();  
+
+        // 1. DEFINIR LOS DOS SETS DE DATOS
+        let movimientosParaBitacoraYBalance = movements; // Se filtrará si es mensual
+        let movimientosParaMatriz = movements; // SIEMPRE es todo el historial (para que la matriz se vea llena)
+        
+        let tituloReporte = "REPORTE ANUAL ACUMULADO";
+        let saldoInicialReporte = appConfig.initialBalance; // Por defecto
+
+        if (soloMesActual) {
+            // Filtrar SOLO la bitácora y el cálculo de balance
+            movimientosParaBitacoraYBalance = movements.filter(m => {
+                const fechaMov = new Date(m.date + 'T00:00');
+                return fechaMov.getMonth() === mesActual && fechaMov.getFullYear() === anioActual;
+            });
+            
+            // TITULO
+            const nombresMeses = ["ENERO", "FEBRERO", "MARZO", "ABRIL", "MAYO", "JUNIO", "JULIO", "AGOSTO", "SEPTIEMBRE", "OCTUBRE", "NOVIEMBRE", "DICIEMBRE"];
+            tituloReporte = `REPORTE MENSUAL: ${nombresMeses[mesActual]} ${anioActual}`;
+
+            if (movimientosParaBitacoraYBalance.length === 0) return alert("No hay movimientos registrados en este mes para generar un corte.");
+
+            // --- CÁLCULO INTELIGENTE DEL SALDO INICIAL (RETROSPECTIVO) ---
+            const fechaInicioMes = new Date(anioActual, mesActual, 1);
+            let ingresosAnteriores = 0;
+            let gastosAnteriores = 0;
+
+            movements.forEach(m => {
+                const fechaM = new Date(m.date + 'T00:00');
+                if (fechaM < fechaInicioMes) {
+                    if (m.type === 'income') ingresosAnteriores += m.amount;
+                    else gastosAnteriores += m.amount;
+                }
+            });
+            saldoInicialReporte = appConfig.initialBalance + ingresosAnteriores - gastosAnteriores;
+        }
+
+        // 2. Calcular totales (Usando la lista filtrada o completa según corresponda)
         let totalIngresos = 0, totalGastos = 0;
-        movements.forEach(m => { if (m.type === 'income') totalIngresos += m.amount; else totalGastos += m.amount; });
-        const balance = appConfig.initialBalance + totalIngresos - totalGastos;
-        const ws_data = [ ["REPORTE CONDOMINIO 2163", "", "", "FECHA CORTE:", new Date().toLocaleDateString()], ["", "", "", "", ""], ["SALDO INICIAL", appConfig.initialBalance], ["(+) INGRESOS", totalIngresos], ["(-) GASTOS", totalGastos], ["(=) BALANCE FINAL", balance], ["", "", "", "", ""], ["--- MATRIZ ANUAL ---", "", "", "", ""], ["UNIDAD", "ENE", "FEB", "MAR", "ABR", "MAY", "JUN", "JUL", "AGO", "SEP", "OCT", "NOV", "DIC", "TOTAL"] ];
+        movimientosParaBitacoraYBalance.forEach(m => { 
+            if (m.type === 'income') totalIngresos += m.amount; 
+            else totalGastos += m.amount; 
+        });
+        
+        const balance = saldoInicialReporte + totalIngresos - totalGastos; 
+
+        // 3. Armar Excel
+        const ws_data = [ 
+            ["CONDOMINIO 2163", "", "", "FECHA REPORTE:", new Date().toLocaleDateString()], 
+            ["TIPO REPORTE:", tituloReporte, "", "", ""],
+            ["", "", "", "", ""], 
+            ["SALDO INICIAL", saldoInicialReporte], // Cálculo inteligente
+            ["(+) INGRESOS PERIODO", totalIngresos], // Solo del mes (si se eligió mes)
+            ["(-) GASTOS PERIODO", totalGastos],     // Solo del mes (si se eligió mes)
+            ["(=) BALANCE FINAL", balance], 
+            ["", "", "", "", ""], 
+            ["--- MATRIZ ANUAL COMPLETA (Referencia) ---", "", "", "", ""], 
+            ["UNIDAD", "ENE", "FEB", "MAR", "ABR", "MAY", "JUN", "JUL", "AGO", "SEP", "OCT", "NOV", "DIC", "TOTAL"] 
+        ];
+
+        // 4. GENERAR MATRIZ (Usamos movimientosParaMatriz que tiene TODO el año)
         for (let i = 1; i <= TOTAL_UNITS; i++) {
             let row = [`Depto ${i}`];
             let unitTotal = 0;
             for (let m = 0; m < 12; m++) { 
-                // CORRECCIÓN AQUI: Se agrega 'T00:00' para evitar el bug de zona horaria
-                const montAmount = movements.filter(mov => mov.type === 'income' && mov.unitId === i && new Date(mov.date+'T00:00').getMonth() === m).reduce((sum, mov) => sum + mov.amount, 0);
-                row.push(montAmount > 0 ? montAmount : "-"); unitTotal += montAmount;
+                // Usamos la lista COMPLETA para llenar la matriz visualmente
+                const montAmount = movimientosParaMatriz.filter(mov => mov.type === 'income' && mov.unitId === i && new Date(mov.date+'T00:00').getMonth() === m).reduce((sum, mov) => sum + mov.amount, 0);
+                row.push(montAmount > 0 ? montAmount : "-"); 
+                unitTotal += montAmount;
             }
-            row.push(unitTotal); ws_data.push(row);
+            row.push(unitTotal); 
+            ws_data.push(row);
         }
-        let expenseRow = ["GASTOS MES"]; let totalExpenseYear = 0;
+
+        let expenseRow = ["GASTOS GLOBALES"]; 
+        let totalExpenseYear = 0;
         for (let m = 0; m < 12; m++) { 
-             // CORRECCIÓN AQUI TAMBIEN: Se agrega 'T00:00'
-             const montExp = movements.filter(mov => mov.type === 'expense' && new Date(mov.date+'T00:00').getMonth() === m).reduce((sum, mov) => sum + mov.amount, 0);
-             expenseRow.push(montExp > 0 ? montExp : "-"); totalExpenseYear += montExp; 
+             const montExp = movimientosParaMatriz.filter(mov => mov.type === 'expense' && new Date(mov.date+'T00:00').getMonth() === m).reduce((sum, mov) => sum + mov.amount, 0);
+             expenseRow.push(montExp > 0 ? montExp : "-"); 
+             totalExpenseYear += montExp; 
         }
-        expenseRow.push(totalExpenseYear); ws_data.push(expenseRow);
-        ws_data.push(["", "", "", "", ""]); ws_data.push(["--- BITÁCORA DETALLADA ---", "", "", "", ""]);
+        expenseRow.push(totalExpenseYear); 
+        ws_data.push(expenseRow);
+
+        ws_data.push(["", "", "", "", ""]); 
+        ws_data.push(["--- BITÁCORA DETALLADA (Periodo Seleccionado) ---", "", "", "", ""]);
         ws_data.push(["FECHA", "TIPO", "CONCEPTO/UNIDAD", "MÉTODO", "NOTA", "INGRESO", "EGRESO", "EVIDENCIA (LINK)"]);
-        movements.sort((a,b) => new Date(a.date) - new Date(b.date)).forEach(m => { let concepto = m.type === 'income' ? `Pago Depto ${m.unitId}` : m.description; let ingreso = m.type === 'income' ? m.amount : ""; let egreso = m.type === 'expense' ? m.amount : ""; let link = m.image || ""; ws_data.push([ m.date, m.type === 'income' ? (m.paymentType === 'extra' ? 'EXTRA' : 'REGULAR') : 'GASTO', concepto, m.method || '-', m.note || (m.type==='income' ? '' : m.category), ingreso, egreso, link ]); });
-        const ws = XLSX.utils.aoa_to_sheet(ws_data); const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "Reporte Anual"); XLSX.writeFile(wb, "Reporte_Condominio.xlsx");
+
+        // 5. GENERAR BITÁCORA (Usamos movimientosParaBitacoraYBalance que está filtrada)
+        movimientosParaBitacoraYBalance.sort((a,b) => new Date(a.date) - new Date(b.date)).forEach(m => { 
+            let concepto = m.type === 'income' ? `Pago Depto ${m.unitId}` : m.description; 
+            let ingreso = m.type === 'income' ? m.amount : ""; 
+            let egreso = m.type === 'expense' ? m.amount : ""; 
+            let link = m.image || ""; 
+            ws_data.push([ m.date, m.type === 'income' ? (m.paymentType === 'extra' ? 'EXTRA' : 'REGULAR') : 'GASTO', concepto, m.method || '-', m.note || (m.type==='income' ? '' : m.category), ingreso, egreso, link ]); 
+        });
+
+        const ws = XLSX.utils.aoa_to_sheet(ws_data); 
+        const wb = XLSX.utils.book_new(); 
+        XLSX.utils.book_append_sheet(wb, ws, "Reporte"); 
+        
+        const nombreArchivo = soloMesActual ? `Corte_Mes_${mesActual+1}_${anioActual}.xlsx` : `Reporte_Anual_${anioActual}.xlsx`;
+        XLSX.writeFile(wb, nombreArchivo);
     }
 
     function calcularDiasAtraso(uid, esExtra) { const ps = movements.filter(m => m.type === 'income' && m.unitId === uid && (esExtra ? m.paymentType === 'extra' : m.paymentType !== 'extra'));
