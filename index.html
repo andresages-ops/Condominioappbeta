@@ -75,7 +75,6 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* --- NOTIFICACIONES TOAST --- */
         #toast-container {
             position: fixed;
             top: max(20px, env(safe-area-inset-top));
@@ -120,7 +119,6 @@
             to { opacity: 1; transform: translateY(0) scale(1); }
         }
 
-        /* --- STREAMING_CHUNK: Estilos de Componentes UI --- */
         #login-screen {
             position: fixed;
             inset: 0;
@@ -179,7 +177,6 @@
         .input-row-equal { display: flex; gap: 10px; width: 100%; }
         .input-row-equal > * { flex: 1; }
 
-        /* --- STREAMING_CHUNK: Estilos de Tarjetas y Grid --- */
         .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
         .badge-version { font-size: 0.65rem; background: rgba(59, 130, 246, 0.15); color: var(--primary); border: 1px solid rgba(59, 130, 246, 0.3); padding: 2px 8px; border-radius: 20px; font-weight: 700; margin-left: 6px; }
         .btn-icon-inline { width: 40px; height: 40px; border-radius: 12px; background: var(--bg-card); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; color: var(--text-main); cursor: pointer; transition: all 0.15s ease; }
@@ -241,7 +238,6 @@
         .card-bg-due { background: rgba(239, 68, 68, 0.15); border: 1.5px solid var(--danger); color: var(--danger); }
         .card-bg-empty { background: rgba(100, 116, 139, 0.1); border: 1.5px dashed var(--border); color: var(--text-muted); }
 
-        /* --- STREAMING_CHUNK: Listas, Buscadores y Navegación --- */
         .list-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 14px; margin-bottom: 10px; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-md); cursor: pointer; transition: transform 0.1s, background-color 0.15s; }
         .list-item:active { transform: scale(0.98); background: var(--bg-card-hover); }
         .date-divider { padding: 14px 0 8px 0; font-size: 0.8rem; font-weight: 800; color: var(--text-sec); text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid var(--border); margin-bottom: 12px; }
@@ -269,7 +265,6 @@
         .clear-search-btn.show { display: block; }
         .list-summary { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
 
-        /* MATERIAL YOU 3 EXPRESSIVE NAV BAR */
         .bottom-nav {
             position: fixed;
             bottom: calc(10px + env(safe-area-inset-bottom));
@@ -337,7 +332,6 @@
 
         .fab-bar.fab-success { background: var(--success); box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4); }
 
-        /* --- STREAMING_CHUNK: Modales y Documentos Imprimibles --- */
         .modal-overlay { position: fixed; inset: 0; background: rgba(4, 7, 13, 0.78); backdrop-filter: blur(5px); display: none; justify-content: center; align-items: flex-end; z-index: 2000; }
         .modal-overlay.active { display: flex; }
         .modal-content { background: var(--bg-card); border-top: 1px solid var(--border); border-radius: 28px 28px 0 0; padding: 24px 20px calc(24px + env(safe-area-inset-bottom)) 20px; width: 100%; max-width: 600px; max-height: 90vh; overflow-y: auto; animation: sheetUp 0.25s cubic-bezier(0.16, 1, 0.3, 1); }
@@ -434,7 +428,6 @@
 
     <div id="app-container" style="display:none">
         
-        <!-- VISTA: HOME / DASHBOARD -->
         <div id="view-home" class="container">
             <div class="header-top">
                 <div style="display:flex; align-items:center;">
@@ -490,7 +483,6 @@
             <div id="home-notifications"></div>
         </div>
 
-        <!-- VISTA: ALERTAS -->
         <div id="view-alerts" class="container hidden">
             <div class="header-top">
                 <div>
@@ -523,7 +515,6 @@
             <div id="alerts-full-list" style="padding-bottom:40px;"></div>
         </div>
 
-        <!-- VISTA: DIRECTORIO -->
         <div id="view-directory" class="container hidden">
             <div class="header-top">
                 <div style="display:flex; align-items:center; gap:12px;">
@@ -541,7 +532,6 @@
             <div id="directory-list" style="padding-bottom: 40px;"></div>
         </div>
 
-        <!-- VISTA: GASTOS -->
         <div id="view-expenses" class="container hidden">
             <h2 style="font-size:1.35rem; font-weight:800; margin-bottom:12px;">Gastos Operativos</h2>
             <div class="balance-card expense-mode compact">
@@ -563,7 +553,6 @@
             <div class="fab-bar" onclick="abrirModalGasto()"><i class="fas fa-plus"></i> REGISTRAR GASTO</div>
         </div>
 
-        <!-- VISTA: COBROS -->
         <div id="view-receipts" class="container hidden">
             <h2 style="font-size:1.35rem; font-weight:800; margin-bottom:12px;">Comprobantes de Ingreso</h2>
             <div class="balance-card income-mode compact">
@@ -585,7 +574,6 @@
             <div class="fab-bar fab-success" onclick="abrirSelectorUnidad()"><i class="fas fa-plus-circle"></i> NUEVO PAGO</div>
         </div>
 
-        <!-- VISTA: AJUSTES -->
         <div id="view-settings" class="container hidden">
             <h2 style="font-size:1.35rem; font-weight:800; margin-bottom:16px;">Configuración</h2>
             
@@ -648,7 +636,6 @@
         </nav>
     </div>
 
-    <!-- MODAL REGISTRO/EDICIÓN PAGO POR UNIDAD -->
     <div class="modal-overlay" id="modalUnit">
         <div class="modal-content">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
@@ -675,7 +662,7 @@
                 </div>
 
                 <div id="payment-extra-fee-select-container" class="hidden">
-                    <label style="font-size:0.8rem; font-weight:700; color:var(--accent)">¿Qué cuota extraordinaria se cubre?</label>
+                    <label style="font-size:0.8rem; font-weight:700; color:var(--accent)">¿Qué cuota extra se cubre?</label>
                     <select id="rent-extra-fee-id" onchange="actualizarMontoCuotaExtraSeleccionada()" style="border-color:var(--accent);"></select>
                 </div>
 
@@ -714,7 +701,6 @@
         </div>
     </div>
 
-    <!-- MODAL NUEVA CUOTA EXTRAORDINARIA -->
     <div class="modal-overlay" id="modalNewExtraFee">
         <div class="modal-content">
             <h2 style="color:var(--accent); font-size:1.3rem; margin-bottom:12px;"><i class="fas fa-bullhorn"></i> Nueva Cuota Extraordinaria</h2>
@@ -733,7 +719,6 @@
         </div>
     </div>
 
-    <!-- MODAL DETALLE DE RECIBO / TICKET -->
     <div class="modal-overlay" id="modalReceipt">
         <div class="modal-content">
             <div class="receipt-container" id="printable-receipt">
@@ -769,7 +754,6 @@
         </div>
     </div>
     
-    <!-- MODAL ESTADO DE CUENTA MENSUAL -->
     <div class="modal-overlay" id="modalAccountStatement">
         <div class="modal-content" style="max-width: 500px;">
             <div class="account-statement-container" id="printable-account-statement">
@@ -835,7 +819,6 @@
         </div>
     </div>
 
-    <!-- MODAL GASTOS -->
     <div class="modal-overlay" id="modalExpense">
         <div class="modal-content">
             <h2 id="modal-expense-title" style="margin-bottom:12px; font-size:1.3rem;">Nuevo Gasto</h2>
@@ -872,7 +855,6 @@
         </div>
     </div>
 
-    <!-- MODAL EDITAR INFORMACIÓN DEPARTAMENTO -->
     <div class="modal-overlay" id="modalEditInfo">
         <div class="modal-content">
             <h2 style="margin-bottom:12px; font-size:1.3rem;" id="modal-dept-name">Editar Depto</h2>
@@ -916,6 +898,10 @@
     let currentHomeView = 'regular';
     let activeAlertsFilter = 'todos';
 
+    // Manejo de Modales en Pila (Soluciona el botón "Atrás" anidado)
+    let currentModal = null;
+    let previousModal = null;
+
     function showToast(message, type = 'success') {
         const container = document.getElementById('toast-container');
         const toast = document.createElement('div');
@@ -949,7 +935,6 @@
         }, {});
     }
 
-    /* --- LOGIN --- */
     function teclearPin(n) { if (currentPin.length < 4) { currentPin += n; actualizarPuntosPin(); if (currentPin.length === 4) setTimeout(validarPin, 100); } }
     function borrarPin() { currentPin = ""; actualizarPuntosPin(); document.getElementById('login-error').style.visibility = 'hidden'; }
     function actualizarPuntosPin() { for (let i = 0; i < 4; i++) document.getElementById(`dot-${i}`).classList.toggle('filled', i < currentPin.length); }
@@ -967,7 +952,6 @@
     }
     function logout() { localStorage.removeItem('isLoggedIn'); location.reload(); }
 
-    /* --- NAVEGACIÓN --- */
     const vistasOrden = ['home', 'alerts', 'receipts', 'expenses', 'settings'];
     function cambiarVista(vista) {
         document.querySelectorAll('.container').forEach(c => c.classList.add('hidden'));
@@ -991,53 +975,17 @@
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    /* --- GESTIÓN DE MODALES INTELIGENTE (Solución de Bug de Cierre) --- */
-    function abrirModal(id) {
-        // Verifica si algún modal ya está abierto
-        const isModalOpen = document.querySelector('.modal-overlay.active') !== null;
-        
-        // Oculta visualmente todos los modales para mostrar el nuevo
-        document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('active'));
-        document.getElementById('modalConfirm').style.display = 'none';
-
-        const modal = document.getElementById(id);
-        if (modal) {
-            modal.classList.add('active');
-            // SOLO agregamos un nuevo estado de historial si venimos de la pantalla principal (sin modales)
-            if (!isModalOpen) {
-                history.pushState({ modalOpen: true }, ""); 
-            }
-        }
-    }
-
-    function cerrarModales(fromHistory = false) {
-        document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('active'));
-        document.getElementById('modalConfirm').style.display = 'none';
-        
-        // Si hay estado de historial y no viene del botón físico de atrás, forzamos el retroceso
-        if (!fromHistory && history.state && history.state.modalOpen) {
-            history.back();
-        }
-    }
-
-    // Escuchador del botón "Atrás" físico del móvil
-    window.addEventListener('popstate', (e) => {
-        document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('active'));
-        document.getElementById('modalConfirm').style.display = 'none';
-    });
-
-    /* --- GESTOS (SWIPE) --- */
     let touchstartX = 0, touchendX = 0, touchstartY = 0, touchendY = 0;
     document.addEventListener('touchstart', e => {
-        if (e.target.closest('.alerts-filter-bar') || e.target.closest('.seg-control')) return;
+        if (e.target.closest('.alerts-filter-bar') || e.target.closest('.seg-control') || e.target.closest('.modal-content')) return;
         touchstartX = e.changedTouches[0].screenX; touchstartY = e.changedTouches[0].screenY;
     }, { passive: true });
     
     document.addEventListener('touchend', e => {
-        if (e.target.closest('.alerts-filter-bar') || e.target.closest('.seg-control')) return;
+        if (e.target.closest('.alerts-filter-bar') || e.target.closest('.seg-control') || e.target.closest('.modal-content')) return;
         touchendX = e.changedTouches[0].screenX; touchendY = e.changedTouches[0].screenY;
         
-        if (document.querySelector('.modal-overlay.active')) return; // No swipe si hay modal
+        if (document.querySelector('.modal-overlay.active')) return;
         
         const dx = touchendX - touchstartX, dy = touchendY - touchstartY;
         if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 70) {
@@ -1051,7 +999,52 @@
         }
     }, { passive: true });
 
-    /* --- STREAMING_CHUNK: Datos, Sincronización y Cálculos --- */
+    function abrirModal(id) {
+        const isModalAlreadyOpen = document.querySelector('.modal-overlay.active') !== null;
+        if (isModalAlreadyOpen) {
+            if (currentModal === id) return;
+            previousModal = currentModal;
+        } else {
+            previousModal = null;
+            history.pushState({ modalOpen: true }, ""); 
+        }
+        
+        document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('active'));
+        document.getElementById('modalConfirm').style.display = 'none';
+        
+        document.getElementById(id).classList.add('active');
+        currentModal = id;
+    }
+
+    function cerrarModales(fromHistory = false) {
+        if (previousModal) {
+            // Regresamos al modal anterior (ej. cerrar ticket y volver a depto)
+            document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('active'));
+            const prev = document.getElementById(previousModal);
+            if (prev) prev.classList.add('active');
+            
+            currentModal = previousModal;
+            previousModal = null; 
+            
+            // Re-trampear el estado para que el botón de atrás funcione de nuevo
+            if (fromHistory) history.pushState({ modalOpen: true }, ""); 
+        } else {
+            document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('active'));
+            document.getElementById('modalConfirm').style.display = 'none';
+            currentModal = null;
+            
+            if (!fromHistory && history.state && history.state.modalOpen) {
+                history.back();
+            }
+        }
+    }
+
+    window.addEventListener('popstate', (e) => {
+        if (document.querySelector('.modal-overlay.active') || document.getElementById('modalConfirm').style.display === 'flex') {
+            cerrarModales(true);
+        }
+    });
+
     async function cargarDatos() {
         const loader = document.getElementById('loader');
         loader.style.display = 'flex';
@@ -1143,7 +1136,6 @@
         return { unitId, vacio: false, nombre: info.name || 'Sin Inquilino', telefono: info.phone || '', mesesFaltantes, cuotasExtraFaltantes, manualDebt, adeudoTotal, diasAtrasoReal, estado };
     }
 
-    /* --- STREAMING_CHUNK: Dashboard e Inicio --- */
     function renderAll() {
         const today = new Date().toISOString().split('T')[0];
         document.getElementById('exp-date').value = today;
@@ -1262,7 +1254,6 @@
         });
     }
 
-    /* --- STREAMING_CHUNK: Registro de Pagos y Atrasos --- */
     function abrirSelectorUnidad() {
         const container = document.getElementById('selector-container-units');
         container.innerHTML = '';
@@ -1448,7 +1439,6 @@
         });
     }
 
-    /* --- STREAMING_CHUNK: Estado de Cuenta y WhatsApp --- */
     function prepararEstadoCuenta() {
         if (!currentUnitId) return;
         const id = currentUnitId;
@@ -1507,12 +1497,24 @@
         window.open(`https://wa.me/${telF}?text=${encodeURIComponent(msj)}`, '_blank');
     }
 
+    function abrirWhatsApp(unitId) {
+        const aud = auditarDepartamentoCompleto(unitId);
+        if (!aud.telefono) { showToast("Asigna un teléfono en Directorio", "warning"); abrirModalEditar(unitId); return; }
+        const phoneClean = aud.telefono.replace(/\D/g, '');
+        const telefonoFinal = phoneClean.length === 10 ? `52${phoneClean}` : phoneClean;
+        window.open(`https://wa.me/${telefonoFinal}`, '_blank');
+    }
+
+    function verEstadoCuentaAlerta(unitId) {
+        currentUnitId = unitId;
+        prepararEstadoCuenta();
+    }
+
     function descargarEstadoCuentaPDF() {
         const el = document.getElementById('printable-account-statement');
         html2pdf().set({ margin: 5, filename: `EdoCta_Depto${currentUnitId}_${new Date().getFullYear()}.pdf`, image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2.5 }, jsPDF: { unit: 'mm', format: [100, 150], orientation: 'portrait' } }).from(el).save().then(() => showToast("PDF descargado"));
     }
 
-    /* --- STREAMING_CHUNK: Alertas, Directorio y Listas --- */
     function renderPestanaAlertas() {
         const listContainer = document.getElementById('alerts-full-list'); listContainer.innerHTML = '';
         let totDeuda = 0, totDeudores = 0, totMeses = 0, totExtras = 0; const auditorias = [];
@@ -1545,14 +1547,13 @@
             if (a.cuotasExtraFaltantes.length > 0) eHtml = `<div style="margin-top:6px"><span style="font-weight:700; color:var(--accent)">Cuotas extra:</span><div class="debt-tag-list">${a.cuotasExtraFaltantes.map(e => `<span class="debt-tag debt-tag-extra">${e.name}: $${e.faltante}</span>`).join('')}</div></div>`;
             if (a.manualDebt > 0) manHtml = `<div style="margin-top:6px"><span style="font-weight:700; color:var(--warning)">Ajuste Manual:</span><div class="debt-tag-list"><span class="debt-tag" style="background:rgba(245,158,11,0.15); color:#fcd34d;">Histórica: $${a.manualDebt}</span></div></div>`;
 
-            card.innerHTML = `<div class="alert-dept-header"><div><span style="font-size:1.1rem; font-weight:800; color:var(--primary)">Depto ${a.unitId}</span><span style="font-weight:700; color:var(--text-main); margin-left:8px">${a.nombre}</span></div><span class="alert-badge-pill ${a.estado === 'critico' ? 'pill-critical' : 'pill-warning'}"><i class="fas fa-clock"></i> ${a.diasAtrasoReal > 0 ? a.diasAtrasoReal + ' días' : 'Debe'}</span></div><div class="breakdown-box">${mHtml}${eHtml}${manHtml}<div class="breakdown-item" style="border-top:1px solid var(--border); margin-top:8px; padding-top:8px; font-weight:800;"><span>TOTAL PENDIENTE:</span><span style="color:var(--danger); font-size:1.1rem">$${a.adeudoTotal.toLocaleString('en-US', { minimumFractionDigits: 2 })}</span></div></div><div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px;"><span style="font-size:0.75rem; color:var(--text-sec)">${a.telefono ? `<i class="fas fa-phone"></i> ${a.telefono}` : 'Sin teléfono'}</span><div style="display:flex; gap:8px;">${a.telefono ? `<button class="btn-action-small btn-action-whatsapp" onclick="enviarWhatsAppAuditoria(${a.unitId})"><i class="fab fa-whatsapp"></i></button>` : ''}<button class="btn-action-small btn-action-pay" onclick="abrirModalUnidad(${a.unitId})"><i class="fas fa-plus-circle"></i> Cobrar</button></div></div>`;
+            card.innerHTML = `<div class="alert-dept-header"><div><span style="font-size:1.1rem; font-weight:800; color:var(--primary)">Depto ${a.unitId}</span><span style="font-weight:700; color:var(--text-main); margin-left:8px">${a.nombre}</span></div><span class="alert-badge-pill ${a.estado === 'critico' ? 'pill-critical' : 'pill-warning'}"><i class="fas fa-clock"></i> ${a.diasAtrasoReal > 0 ? a.diasAtrasoReal + ' días' : 'Debe'}</span></div><div class="breakdown-box">${mHtml}${eHtml}${manHtml}<div class="breakdown-item" style="border-top:1px solid var(--border); margin-top:8px; padding-top:8px; font-weight:800;"><span>TOTAL PENDIENTE:</span><span style="color:var(--danger); font-size:1.1rem">$${a.adeudoTotal.toLocaleString('en-US', { minimumFractionDigits: 2 })}</span></div></div><div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px;"><span style="font-size:0.75rem; color:var(--text-sec)">${a.telefono ? `<i class="fas fa-phone"></i> ${a.telefono}` : 'Sin teléfono'}</span><div style="display:flex; gap:8px;">${a.telefono ? `<button class="btn-action-small btn-action-whatsapp" onclick="abrirWhatsApp(${a.unitId})" title="Abrir Chat WhatsApp"><i class="fab fa-whatsapp"></i></button>` : ''}<button class="btn-action-small" style="background:rgba(245,158,11,0.15); color:var(--warning); border:1px solid rgba(245,158,11,0.3);" onclick="verEstadoCuentaAlerta(${a.unitId})" title="Estado de Cuenta"><i class="fas fa-file-invoice-dollar"></i> Edo. Cuenta</button><button class="btn-action-small btn-action-pay" onclick="abrirModalUnidad(${a.unitId})"><i class="fas fa-plus-circle"></i> Cobrar</button></div></div>`;
             listContainer.appendChild(card);
         });
     }
 
     function filtrarVistaAlertas(f, btn) { activeAlertsFilter = f; document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active')); if(btn) btn.classList.add('active'); renderPestanaAlertas(); }
     function recalcularAlertas() { renderPestanaAlertas(); showToast("Auditoría recalculada"); }
-    function enviarWhatsAppAuditoria(id) { const aud = auditarDepartamentoCompleto(id); if (!aud.telefono) return showToast("Asigna un teléfono", "warning"); const t = aud.telefono.replace(/\D/g, ''); window.open(`https://wa.me/${t.length===10?'52'+t:t}?text=${encodeURIComponent(`Hola ${aud.nombre}, el Depto ${id} presenta un adeudo de $${aud.adeudoTotal}. Favor de verificar. ¡Saludos!`)}`, '_blank'); }
 
     function renderDirectory(query = '') {
         const list = document.getElementById('directory-list'); list.innerHTML = '';
@@ -1621,7 +1622,6 @@
     }
     function filtrarRecibos(v) { renderReceiptsList(v); }
 
-    /* --- STREAMING_CHUNK: Gastos, Recibos y Ajustes --- */
     function abrirModalGasto() {
         editingExpenseId = null; selectedIdToDelete = null;
         document.getElementById('modal-expense-title').innerText = "Nuevo Gasto";
@@ -1655,8 +1655,8 @@
         abrirModal('modalReceipt');
     }
     function descargarPDF() {
-        const el = document.getElementById('printable-receipt'), depto = document.getElementById('rcpt-unit').innerText.replace(/\s+/g, '_'), date = document.getElementById('rcpt-date').innerText;
-        html2pdf().set({ margin: 3, filename: `Recibo_${depto}_${date}.pdf`, image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2.5 }, jsPDF: { unit: 'mm', format: [80, 140], orientation: 'portrait' } }).from(el).save();
+        const el = document.getElementById('printable-receipt'), depto = document.getElementById('rcpt-unit').innerText.replace(/\s+/g, '_').replace('Depto_', ''), date = document.getElementById('rcpt-date').innerText;
+        html2pdf().set({ margin: 3, filename: `Recibo_Depto${depto}_${date}.pdf`, image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2.5 }, jsPDF: { unit: 'mm', format: [80, 140], orientation: 'portrait' } }).from(el).save();
     }
     function solicitarEdicion() {
         if (!selectedIdToDelete) return; const m = movements.find(x => x.id === selectedIdToDelete); if (!m) return;
@@ -1685,7 +1685,6 @@
         sincronizarNube(); renderAll(); cerrarModales(); showToast("Actualizado");
     }
 
-    /* --- STREAMING_CHUNK: Reportes Excel y Backup --- */
     function guardarConfiguracion() { appConfig.initialBalance = parseFloat(document.getElementById('conf-balance').value) || 0; appConfig.rentPrice = parseFloat(document.getElementById('conf-rent').value) || 600; sincronizarNube(); renderAll(); showToast("Guardado"); }
     function abrirModalNuevaCuotaExtra() { document.getElementById('new-extra-name').value = ''; document.getElementById('new-extra-amount').value = ''; document.getElementById('new-extra-date').value = new Date().toISOString().split('T')[0]; abrirModal('modalNewExtraFee'); }
     function guardarNuevaCuotaExtra() {
@@ -1727,8 +1726,11 @@
             for (let mo = 0; mo < 12; mo++) { const p = movs.filter(x => x.type === 'income' && x.unitId === u && x.paymentType !== 'extra' && new Date(x.date+'T00:00').getMonth() === mo).reduce((s, i) => s + i.amount, 0); fila.push(p > 0 ? p : "-"); sub += p; }
             fila.push(sub); data.push(fila);
         }
-        data.push([]); data.push(["--- BITÁCORA ---"]); data.push(["FECHA", "TIPO", "CONCEPTO", "INGRESO", "EGRESO"]);
-        movs.sort((a,b)=>new Date(a.date)-new Date(b.date)).forEach(m => data.push([m.date, m.type==='income'?'INGRESO':'GASTO', m.type==='income'?`Depto ${m.unitId}`:m.description, m.type==='income'?m.amount:'', m.type==='expense'?m.amount:'']));
+        data.push([]); data.push(["--- BITÁCORA ---"]); data.push(["FECHA", "TIPO", "CONCEPTO", "MÉTODO", "INGRESO", "EGRESO"]);
+        movs.sort((a,b)=>new Date(a.date)-new Date(b.date)).forEach(m => {
+            const isInc = m.type==='income';
+            data.push([ m.date, isInc ? (m.paymentType === 'extra' ? 'EXTRA' : 'REGULAR') : 'GASTO', isInc ? `Depto ${m.unitId}` : m.description, m.method || '-', isInc ? m.amount : '', !isInc ? m.amount : '' ]);
+        });
         generarExcel(data, `Reporte_Anual_${year}.xlsx`);
     }
 
