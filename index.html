@@ -10,7 +10,7 @@
     <meta name="apple-mobile-web-app-title" content="Condominio">
     <meta name="theme-color" content="#000000">
     
-    <title>Condominio Master Pro v100</title>
+    <title>Condominio Master Pro v99.5</title>
     
     <!-- Librerías Externas -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
@@ -235,10 +235,9 @@
         .unit-card { aspect-ratio: 1 / 1; border-radius: 12px; display: flex; flex-direction: column; justify-content: center; align-items: center; cursor: pointer; font-size: 0.85rem; font-weight: 800; user-select: none; transition: transform 0.2s var(--bounce-easing), filter 0.15s ease; position: relative; }
         .unit-card:active { transform: scale(0.85); filter: brightness(1.2); }
         
-        /* Limpiados los box-shadow para evitar glows indeseados */
         .card-bg-paid { background: rgba(16, 185, 129, 0.15); border: 1.5px solid var(--success); color: var(--success); }
-        .card-bg-pending { background: rgba(245, 158, 11, 0.15); border: 1.5px solid var(--warning); color: var(--warning); }
-        .card-bg-due { background: rgba(239, 68, 68, 0.15); border: 1.5px solid var(--danger); color: var(--danger); }
+        .card-bg-pending { background: rgba(245, 158, 11, 0.15); border: 1.5px solid var(--warning); color: var(--warning);  }
+        .card-bg-due { background: rgba(239, 68, 68, 0.15); border: 1.5px solid var(--danger); color: var(--danger);  }
         .card-bg-empty { background: rgba(100, 116, 139, 0.1); border: 1.5px dashed var(--border); color: var(--text-muted); }
 
         .list-item { display: flex; justify-content: space-between; align-items: center; padding: 14px 16px; margin-bottom: 12px; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-md); cursor: pointer; transition: transform 0.25s var(--bounce-easing), background-color 0.15s; }
@@ -261,7 +260,7 @@
 
         .alert-detail-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 20px; margin-bottom: 14px; transition: transform 0.2s var(--bounce-easing); }
         .alert-detail-card:active { transform: scale(0.96); }
-        .alert-detail-card.critical { border-color: rgba(239, 68, 68, 0.5); }
+        .alert-detail-card.critical { border-color: rgba(239, 68, 68, 0.5); box-shadow: none; }
         .alert-detail-card.success-card { border-color: rgba(16, 185, 129, 0.4); }
         
         .alert-dept-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
@@ -298,9 +297,8 @@
             position: fixed;
             bottom: max(20px, env(safe-area-inset-bottom));
             left: 50%;
-            /* translate3d asegura renderizado por GPU evitando saltos abruptos */
-            transform: translate3d(-50%, 0, 0); 
-            will-change: transform;
+            transform: translateX(-50%) translateZ(0);
+            will-change: transform, bottom;
             width: calc(100% - 40px);
             max-width: 400px;
             background: rgba(21, 30, 50, 0.85);
@@ -314,6 +312,7 @@
             padding: 8px 16px;
             z-index: 1000;
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+            transition: bottom 0.5s var(--spring-easing), transform 0.4s var(--spring-easing);
         }
 
         .nav-item {
@@ -408,18 +407,22 @@
         </div>
     </div>
 
-    <div id="modalFabActions" class="modal-overlay">
-        <div class="modal-content" style="padding-bottom: calc(40px + env(safe-area-inset-bottom));">
+    <!-- Modal Menú del Botón FAB Central -->
+    <div id="modalFabMenu" class="modal-overlay">
+        <div class="modal-content" style="padding-bottom: 40px; text-align: center;">
             <div class="modal-drag-handle"></div>
-            <h3 style="text-align: center; font-size: 1.3rem; font-weight: 800; margin-bottom: 20px;">¿Qué deseas registrar?</h3>
-            <div style="display: flex; flex-direction: column; gap: 12px;">
-                <button class="btn btn-primary" onclick="abrirSelectorUnidad()" style="padding: 20px; font-size: 1.1rem;"><i class="fas fa-hand-holding-usd"></i> Ingreso / Pago de Cuota</button>
-                <button class="btn btn-danger" onclick="abrirModalGasto()" style="padding: 20px; font-size: 1.1rem;"><i class="fas fa-wallet"></i> Gasto Operativo</button>
-            </div>
-            <button class="btn btn-cancel" onclick="cerrarModales()" style="margin-top: 20px;">Cancelar</button>
+            <h3 style="margin-bottom: 24px; font-weight: 800; color: var(--text-main);">¿Qué deseas registrar?</h3>
+            <button class="btn btn-primary" style="margin-bottom: 16px; padding: 20px; font-size: 1.1rem; box-shadow: 0 10px 20px rgba(139, 92, 246, 0.3);" onclick="abrirSelectorUnidad(true)">
+                <i class="fas fa-hand-holding-usd"></i> Ingreso / Pago de Depto
+            </button>
+            <button class="btn btn-danger" style="padding: 20px; font-size: 1.1rem; box-shadow: 0 10px 20px rgba(239, 68, 68, 0.3);" onclick="abrirModalGasto(true)">
+                <i class="fas fa-file-invoice-dollar"></i> Gasto Operativo
+            </button>
+            <button class="btn btn-cancel" style="margin-top: 24px;" onclick="cerrarModales()">Cancelar</button>
         </div>
     </div>
 
+    <!-- Modal Unit Selector -->
     <div id="modalUnitSelector" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-drag-handle"></div>
@@ -479,7 +482,7 @@
                         <small id="sync-status" style="color:var(--success); font-weight:800">● En línea</small>
                     </div>
                 </div>
-                <span class="badge-version">v100 Pro</span>
+                <span class="badge-version">v99.5 Pro</span>
             </div>
 
             <div id="main-balance-card" class="balance-card">
@@ -561,7 +564,7 @@
         <div id="view-directory" class="container hidden">
             <div class="header-top">
                 <div style="display:flex; align-items:center; gap:14px;">
-                    <div class="btn-icon-inline" onclick="cambiarVista('home')"><i class="fas fa-chevron-left"></i></div>
+                    <div class="btn-icon-inline" onclick="cambiarVista('home', 'left')"><i class="fas fa-chevron-left"></i></div>
                     <h2 style="font-size:1.45rem; font-weight:800; margin:0;">Directorio</h2>
                 </div>
             </div>
@@ -590,7 +593,7 @@
                 <input type="text" placeholder="Buscar por concepto o categoría..." id="search-expenses" oninput="filtrarGastos(this.value)">
                 <button class="clear-search-btn" id="clear-exp-btn" onclick="limpiarBusqueda('search-expenses', filtrarGastos)"><i class="fas fa-times-circle"></i></button>
             </div>
-            
+
             <div class="list-summary">
                 <span style="color:var(--text-sec); font-size:0.9rem; font-weight:600">Total filtrado:</span>
                 <span id="expenses-total-sum" style="color:var(--danger); font-weight:800; font-size:1.35rem">$0.00</span>
@@ -601,7 +604,7 @@
 
         <!-- VISTA RECIBOS -->
         <div id="view-receipts" class="container hidden">
-            <h2 style="font-size:1.45rem; font-weight:800; margin-bottom:16px;">Historial de Ingresos</h2>
+            <h2 style="font-size:1.45rem; font-weight:800; margin-bottom:16px; margin-top: env(safe-area-inset-top);">Historial de Ingresos</h2>
             <div class="balance-card income-mode compact">
                 <div class="balance-label">INGRESOS DEL MES</div>
                 <div class="balance-amount" id="income-month-total">$0.00</div>
@@ -624,7 +627,7 @@
         <div id="view-settings" class="container hidden">
             <div class="header-top">
                 <div style="display:flex; align-items:center; gap:14px;">
-                    <div class="btn-icon-inline" onclick="cambiarVista('home')"><i class="fas fa-chevron-left"></i></div>
+                    <div class="btn-icon-inline" onclick="cambiarVista('home', 'left')"><i class="fas fa-chevron-left"></i></div>
                     <h2 style="font-size:1.45rem; font-weight:800; margin:0;">Configuración</h2>
                 </div>
             </div>
@@ -638,13 +641,14 @@
                 <button class="btn btn-primary" onclick="guardarConfiguracion()"><i class="fas fa-save"></i> Guardar Cambios</button>
             </div>
 
+            <!-- GASTOS RECURRENTES (Plantillas) -->
             <div style="background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-lg); padding:20px; margin-bottom:16px;">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
-                    <h4 style="color:var(--primary); margin:0; font-size:1.1rem;"><i class="fas fa-sync-alt"></i> Gastos Fijos (Plantillas)</h4>
-                    <button class="btn-mini-ghost" onclick="abrirModalNuevoGastoRecurrente()"><i class="fas fa-plus"></i> Nuevo</button>
+                    <h4 style="color:var(--danger); margin:0; font-size:1.1rem;"><i class="fas fa-sync-alt"></i> Gastos Fijos (Plantillas)</h4>
+                    <button class="btn-mini-ghost" style="color: #fca5a5; background: rgba(239,68,68,0.1); border-color: rgba(239,68,68,0.3);" onclick="abrirModalNuevoGastoFijo()"><i class="fas fa-plus"></i> Añadir</button>
                 </div>
-                <div id="settings-recurring-expenses-list" style="margin-bottom: 14px;"></div>
-                <button class="btn btn-dark" style="border-color: var(--primary); color: var(--primary);" onclick="aplicarGastosRecurrentes()"><i class="fas fa-check-double"></i> Registrar gastos de este mes</button>
+                <div id="settings-recurring-expenses-list"></div>
+                <button class="btn btn-success" style="margin-top:16px" onclick="aplicarGastosRecurrentesMes()"><i class="fas fa-calendar-check"></i> Registrar gastos de este mes</button>
             </div>
 
             <div style="background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-lg); padding:20px; margin-bottom:16px;">
@@ -672,8 +676,9 @@
             <button class="btn btn-danger" onclick="logout()"><i class="fas fa-power-off"></i> Cerrar Sesión</button>
         </div>
 
+        <!-- BARRA INFERIOR -->
         <nav class="bottom-nav">
-            <div class="nav-item active" onclick="cambiarVista('home')" id="nav-home">
+            <div class="nav-item active" onclick="cambiarVista('home', 'left')" id="nav-home">
                 <i class="fas fa-home"></i><span>Inicio</span>
             </div>
             <div class="nav-item" onclick="cambiarVista('receipts')" id="nav-receipts">
@@ -681,7 +686,7 @@
             </div>
             
             <div class="nav-fab-container">
-                <div class="nav-fab" onclick="abrirModal('modalFabActions')">
+                <div class="nav-fab" onclick="abrirMenuFab()">
                     <i class="fas fa-plus"></i>
                 </div>
             </div>
@@ -764,39 +769,45 @@
         </div>
     </div>
 
+    <!-- MODAL NUEVO GASTO FIJO (PLANTILLA) -->
+    <div class="modal-overlay" id="modalNewRecurring">
+        <div class="modal-content">
+            <div class="modal-drag-handle"></div>
+            <h2 style="color:var(--danger); font-size:1.5rem; font-weight:800; margin-bottom:16px;"><i class="fas fa-sync-alt"></i> Nuevo Gasto Fijo</h2>
+            
+            <label style="font-size:0.85rem; font-weight:700; color:var(--text-sec)">Concepto (Ej. Recibo de Agua):</label>
+            <input type="text" id="new-rec-name" placeholder="Ej. Recibo de Agua">
+            
+            <label style="font-size:0.85rem; font-weight:700; color:var(--text-sec)">Monto Regular Aproximado ($):</label>
+            <input type="number" id="new-rec-amount" placeholder="Ej. 500.00" step="any">
+            
+            <label style="font-size:0.85rem; font-weight:700; color:var(--text-sec)">Categoría:</label>
+            <select id="new-rec-cat">
+                <option value="Servicios">Servicios (Agua/Luz/Gas)</option>
+                <option value="Mantenimiento">Mantenimiento</option>
+                <option value="Sueldos">Sueldos</option>
+                <option value="Otro">Otro</option>
+            </select>
+
+            <button class="btn btn-danger" onclick="guardarNuevoGastoFijo()" style="margin-top:10px;"><i class="fas fa-save"></i> Guardar Plantilla</button>
+            <button class="btn btn-cancel" onclick="cerrarModales()" style="margin-top:12px">Cancelar</button>
+        </div>
+    </div>
+
     <!-- MODAL NUEVA CUOTA EXTRA -->
     <div class="modal-overlay" id="modalNewExtraFee">
         <div class="modal-content">
             <div class="modal-drag-handle"></div>
             <h2 style="color:var(--accent); font-size:1.5rem; font-weight:800; margin-bottom:16px;"><i class="fas fa-bullhorn"></i> Nueva Cuota Extraordinaria</h2>
+            
             <label style="font-size:0.85rem; font-weight:700; color:var(--text-sec)">Nombre o Proyecto:</label>
             <input type="text" id="new-extra-name" placeholder="Ej. Reparación Portón Eléctrico">
             <label style="font-size:0.85rem; font-weight:700; color:var(--text-sec)">Monto por Departamento ($):</label>
             <input type="number" id="new-extra-amount" placeholder="Ej. 1500.00" step="any">
             <label style="font-size:0.85rem; font-weight:700; color:var(--text-sec)">Fecha de Emisión / Inicio:</label>
             <input type="date" id="new-extra-date">
-            <button class="btn btn-primary" onclick="guardarNuevaCuotaExtra()" style="background:linear-gradient(135deg, var(--accent), var(--accent-dark)); margin-top:10px;"><i class="fas fa-save"></i> Crear Cuota</button>
-            <button class="btn btn-cancel" onclick="cerrarModales()" style="margin-top:12px">Cancelar</button>
-        </div>
-    </div>
 
-    <!-- MODAL NUEVO GASTO RECURRENTE (PLANTILLA) -->
-    <div class="modal-overlay" id="modalNewRecurringExpense">
-        <div class="modal-content">
-            <div class="modal-drag-handle"></div>
-            <h2 style="color:var(--primary); font-size:1.5rem; font-weight:800; margin-bottom:16px;"><i class="fas fa-sync-alt"></i> Nuevo Gasto Fijo</h2>
-            <label style="font-size:0.85rem; font-weight:700; color:var(--text-sec)">Concepto / Proveedor:</label>
-            <input type="text" id="new-rec-desc" placeholder="Ej. Recibo de Luz">
-            <label style="font-size:0.85rem; font-weight:700; color:var(--text-sec)">Monto Promedio / Fijo ($):</label>
-            <input type="number" id="new-rec-amount" placeholder="0.00" step="any">
-            <label style="font-size:0.85rem; font-weight:700; color:var(--text-sec)">Categoría:</label>
-            <select id="new-rec-cat">
-                <option value="Servicios">Servicios (Agua/Luz/Gas)</option>
-                <option value="Mantenimiento">Mantenimiento</option>
-                <option value="Sueldos">Sueldos / Honorarios</option>
-                <option value="Otro">Otro</option>
-            </select>
-            <button class="btn btn-primary" onclick="guardarGastoRecurrente()" style="margin-top:10px;"><i class="fas fa-save"></i> Guardar Plantilla</button>
+            <button class="btn btn-primary" onclick="guardarNuevaCuotaExtra()" style="background:linear-gradient(135deg, var(--accent), var(--accent-dark)); margin-top:10px;"><i class="fas fa-save"></i> Crear Cuota</button>
             <button class="btn btn-cancel" onclick="cerrarModales()" style="margin-top:12px">Cancelar</button>
         </div>
     </div>
@@ -818,10 +829,7 @@
                 <div class="receipt-row"><span>Método:</span><span id="rcpt-method" style="font-weight:600;"></span></div>
                 <div class="receipt-row" id="rcpt-row-note"><span>Nota:</span><span id="rcpt-note" style="max-width: 60%; text-align:right; font-weight:600; color:#475569;"></span></div>
                 
-                <div class="receipt-total">
-                    <span>TOTAL</span>
-                    <span id="rcpt-amount" style="color:var(--success);"></span>
-                </div>
+                <div class="receipt-total"><span>TOTAL</span><span id="rcpt-amount" style="color:var(--success);"></span></div>
                 <div id="qrcode"></div>
                 <div style="text-align:center; font-size:0.75rem; color:#64748b; margin-top:18px; font-weight:600;">
                     Comprobante digital verificado.<br>Administración Condominio
@@ -829,6 +837,7 @@
             </div>
 
             <button class="btn btn-primary" onclick="descargarPDF()"><i class="fas fa-file-pdf"></i> Descargar Ticket PDF</button>
+            <button class="btn btn-success" style="margin-top:12px; background: #25D366; box-shadow: 0 8px 20px rgba(37, 211, 102, 0.4);" onclick="compartirReciboWhatsApp()"><i class="fab fa-whatsapp"></i> Compartir por WhatsApp</button>
             <div class="input-row-equal" style="margin-top:12px;">
                 <button class="btn btn-update" onclick="solicitarEdicion()"><i class="fas fa-pen"></i> Editar</button>
                 <button class="btn btn-outline-danger" onclick="solicitarEliminacion()"><i class="fas fa-trash"></i> Eliminar</button>
@@ -881,12 +890,14 @@
         <div class="modal-content">
             <div class="modal-drag-handle"></div>
             <h2 style="color:var(--success); font-size:1.5rem; font-weight:800; margin-bottom:16px;"><i class="fas fa-file-excel"></i> Generar Reporte</h2>
+            
             <label style="font-size:0.85rem; font-weight:700; color:var(--text-sec)">Tipo de Reporte:</label>
             <div class="seg-control full-width" id="seg-report-type">
                 <button class="seg-btn active" onclick="setReportType('mensual', this)">Mensual</button>
                 <button class="seg-btn" onclick="setReportType('anual', this)">Anual</button>
             </div>
             <input type="hidden" id="report-type-val" value="mensual">
+
             <div class="input-row-equal">
                 <div>
                     <label style="font-size:0.85rem; font-weight:700; color:var(--text-sec)">Año:</label>
@@ -897,6 +908,7 @@
                     <select id="report-month"></select>
                 </div>
             </div>
+
             <button class="btn btn-success" onclick="ejecutarExportacion()" style="margin-top:16px"><i class="fas fa-download"></i> Generar Excel</button>
             <button class="btn btn-cancel" onclick="cerrarModales()" style="margin-top:12px">Cancelar</button>
         </div>
@@ -907,6 +919,7 @@
         <div class="modal-content">
             <div class="modal-drag-handle"></div>
             <h2 id="modal-expense-title" style="margin-bottom:16px; font-size:1.5rem; font-weight:800;">Nuevo Gasto</h2>
+            
             <label style="font-size:0.85rem; font-weight:700; color:var(--text-sec)">Fecha:</label>
             <input type="date" id="exp-date">
             <label style="font-size:0.85rem; font-weight:700; color:var(--text-sec)">Concepto del Gasto:</label>
@@ -918,9 +931,9 @@
                 <option value="Mantenimiento">Mantenimiento</option>
                 <option value="Servicios">Servicios (Agua/Luz/Gas)</option>
                 <option value="Reparación">Reparación</option>
-                <option value="Sueldos">Sueldos / Honorarios</option>
                 <option value="Otro">Otro</option>
             </select>
+
             <button id="btn-save-expense" class="btn btn-danger" onclick="guardarGasto()" style="margin-top:10px;"><i class="fas fa-save"></i> Guardar Gasto</button>
             <button id="btn-delete-expense" class="btn btn-outline-danger hidden" style="margin-top:12px" onclick="solicitarEliminacion()"><i class="fas fa-trash"></i> Eliminar Gasto</button>
             <button class="btn btn-cancel" onclick="cerrarModales()" style="margin-top:12px">Cancelar</button>
@@ -932,6 +945,7 @@
         <div class="modal-content">
             <div class="modal-drag-handle"></div>
             <h2 style="margin-bottom:16px; font-size:1.5rem; font-weight:800;" id="modal-dept-name">Editar Depto</h2>
+            
             <label style="font-size:0.85rem; font-weight:700; color:var(--text-sec)">Nombre Inquilino / Propietario:</label>
             <input type="text" id="edit-name" placeholder="Nombre completo">
             <label style="font-size:0.85rem; font-weight:700; color:var(--text-sec)">Teléfono de Contacto (WhatsApp):</label>
@@ -939,12 +953,14 @@
             <label style="font-size:0.85rem; font-weight:800; color:var(--warning)">Deuda Previa / Ajuste Manual ($):</label>
             <input type="number" id="edit-manual-debt" placeholder="Monto histórico (opcional)" step="any">
             <small style="color:var(--text-sec); font-size:0.8rem; display:block; margin-bottom:16px; line-height:1.3; font-weight:600;">Agrega adeudos anteriores a la app. Se sumará al Total.</small>
+
             <label style="font-size:0.85rem; font-weight:700; color:var(--text-sec)">Estado de Ocupación:</label>
             <div class="seg-control full-width" id="seg-habitado">
                 <button class="seg-btn active" onclick="setHabitado(true, this)">Habitado</button>
                 <button class="seg-btn" onclick="setHabitado(false, this)">Deshabitado</button>
             </div>
             <input type="hidden" id="edit-status-val" value="true">
+
             <button class="btn btn-primary" onclick="guardarInfoDepto()"><i class="fas fa-save"></i> Guardar Cambios</button>
             <button class="btn btn-cancel" onclick="cerrarModales()" style="margin-top:12px">Cancelar</button>
         </div>
@@ -964,13 +980,13 @@
     let editingExpenseId = null;
     let selectedIdToDelete = null;
     let currentPin = "";
+    
+    // Variables para control de animaciones y swipe
     let currentHomeView = 'regular';
     let activeAlertsFilter = 'todos';
-
+    let vistaActual = 'home';
     let currentModal = null;
     let previousModal = null;
-    let vistaActual = 'home';
-    const vistasOrden = ['home', 'receipts', 'expenses', 'alerts', 'settings'];
 
     function showToast(message, type = 'success') {
         const container = document.getElementById('toast-container');
@@ -1025,6 +1041,8 @@
     }
     function logout() { localStorage.removeItem('isLoggedIn'); location.reload(); }
 
+    const vistasOrden = ['home', 'receipts', 'expenses', 'alerts', 'settings'];
+    
     function cambiarVista(vista, direction = 'fade') {
         document.querySelectorAll('.container').forEach(c => {
             c.classList.add('hidden');
@@ -1054,12 +1072,16 @@
         else if (vista === 'receipts') renderReceiptsList();
         else if (vista === 'settings') renderAjustes();
         
-        // window.scrollTo(0, 0) evita saltos indeseados en barras fijas
-        window.scrollTo(0, 0); 
+        window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
         vistaActual = vista;
     }
 
-    function abrirModal(id) {
+    function abrirMenuFab() {
+        abrirModal('modalFabMenu');
+    }
+
+    // Animación fluida de escala (App se va hacia atrás al abrir modal)
+    function abrirModal(id, fromMenu = false) {
         const isModalAlreadyOpen = document.querySelector('.modal-overlay.active') !== null;
         
         if (isModalAlreadyOpen) {
@@ -1067,7 +1089,7 @@
             previousModal = currentModal;
         } else {
             previousModal = null;
-            history.pushState({ modalOpen: true }, ""); 
+            if(!fromMenu) history.pushState({ modalOpen: true }, ""); 
             document.getElementById('app-wrapper').classList.add('app-scaled');
         }
         
@@ -1113,7 +1135,7 @@
             try {
                 const local = JSON.parse(cached);
                 movements = local.movements || []; unitInfo = local.units || {}; appConfig = local.config || appConfig;
-                if (!appConfig.extraFees) appConfig.extraFees = [];
+                if (!appConfig.extraFees || appConfig.extraFees.length === 0) appConfig.extraFees = [{ id: "extra_init", name: "Cuota Extraordinaria", amount: 1000, date: "2026-01-01" }];
                 if (!appConfig.recurringExpenses) appConfig.recurringExpenses = [];
                 renderAll();
             } catch (e) {}
@@ -1124,7 +1146,7 @@
             movements = data.movements || []; unitInfo = data.units || {};
             if (data.config) {
                 appConfig = { ...appConfig, ...data.config };
-                if (!appConfig.extraFees) appConfig.extraFees = [];
+                if (!appConfig.extraFees || appConfig.extraFees.length === 0) appConfig.extraFees = [{ id: "extra_init", name: "Cuota Extraordinaria", amount: data.config.extraFeeAmount || 1000, date: "2026-01-01" }];
                 if (!appConfig.recurringExpenses) appConfig.recurringExpenses = [];
             }
             localStorage.setItem('condo_cache_data_v97', JSON.stringify({ movements, units: unitInfo, config: appConfig }));
@@ -1280,18 +1302,39 @@
             card.className = `unit-card ${cardClass}`;
             card.innerText = i;
             
-            // Toque inteligente
+            // CORRECCIÓN TOQUES FANTASMA
             let touchTimer = null, moved = false;
-            const interact = (e, isLong) => {
-                e.preventDefault();
-                if (isLong || e.ctrlKey || e.altKey) abrirModalEditar(i);
-                else abrirModalUnidad(i);
-            };
-
-            card.addEventListener('touchstart', (e) => { moved = false; touchTimer = setTimeout(() => { if (!moved) { if (navigator.vibrate) navigator.vibrate(40); interact(e, true); touchTimer = null; } }, 500); }, { passive: false });
+            
+            card.addEventListener('touchstart', (e) => { 
+                moved = false; 
+                touchTimer = setTimeout(() => { 
+                    if (!moved) { 
+                        if (navigator.vibrate) navigator.vibrate(40); 
+                        abrirModalEditar(i);
+                        touchTimer = null; 
+                    } 
+                }, 500); 
+            }, { passive: true });
+            
             card.addEventListener('touchmove', () => { moved = true; }, { passive: true });
-            card.addEventListener('touchend', (e) => { if (touchTimer) { clearTimeout(touchTimer); if (!moved) interact(e, false); } });
-            card.addEventListener('click', e => { if (e.pointerType === "mouse" || e.pointerType === undefined) interact(e, false); });
+            
+            card.addEventListener('touchend', (e) => { 
+                if (touchTimer) { 
+                    clearTimeout(touchTimer); 
+                    if (!moved) {
+                        e.preventDefault(); // Previene que el celular simule un 'click' después
+                        abrirModalUnidad(i);
+                    }
+                } 
+            });
+            
+            // Se mantiene el evento click solo para uso en PC/Mouse
+            card.addEventListener('click', e => { 
+                if (e.pointerType === "mouse" || e.pointerType === undefined) { 
+                     if (e.ctrlKey || e.altKey) abrirModalEditar(i);
+                     else abrirModalUnidad(i);
+                }
+            });
 
             fragment.appendChild(card);
         }
@@ -1326,7 +1369,7 @@
         });
     }
 
-    function abrirSelectorUnidad() {
+    function abrirSelectorUnidad(fromMenu = false) {
         const container = document.getElementById('selector-container-units');
         container.innerHTML = '';
         for (let i = 1; i <= TOTAL_UNITS; i++) {
@@ -1335,7 +1378,7 @@
             card.onclick = () => { abrirModalUnidad(i); };
             container.appendChild(card);
         }
-        abrirModal('modalUnitSelector');
+        abrirModal('modalUnitSelector', fromMenu);
     }
 
     function abrirModalUnidad(id) {
@@ -1559,16 +1602,27 @@
         if (!aud.telefono) { showToast("Asigna un teléfono primero", "warning"); abrirModalEditar(currentUnitId); return; }
 
         const tel = aud.telefono.replace(/\D/g, ''); const telF = tel.length === 10 ? `52${tel}` : tel;
-        let msj = `Hola ${aud.nombre || 'Vecino'}, te compartimos el Estado de Cuenta (Depto ${currentUnitId}) al mes de ${NOMBRES_MESES[new Date().getMonth()]}:\n\n`;
+        let msj = `Buen día, le comparto su estado de cuenta del mes.`;
+        
+        window.open(`https://wa.me/${telF}?text=${encodeURIComponent(msj)}`, '_blank');
+    }
 
-        if (aud.adeudoTotal === 0) msj += `✅ *ESTADO: AL DÍA*\n¡Muchas gracias por tu puntualidad y contribución!`;
-        else {
-            msj += `⚠️ *ESTADO: PENDIENTE*\n\n*Desglose:*\n`;
-            aud.mesesFaltantes.forEach(m => msj += `- Mant. ${m.nombreMes} ${m.anio}: $${m.faltante}\n`);
-            aud.cuotasExtraFaltantes.forEach(e => msj += `- Extra: ${e.name}: $${e.faltante}\n`);
-            if (aud.manualDebt > 0) msj += `- Deuda Histórica: $${aud.manualDebt}\n`;
-            msj += `\n*TOTAL A PAGAR: $${aud.adeudoTotal.toLocaleString('en-US', { minimumFractionDigits: 2 })}*\n\nPor favor envíanos tu comprobante al pagar. ¡Saludos!`;
+    function compartirReciboWhatsApp() {
+        if (!selectedIdToDelete) return;
+        const m = movements.find(x => x.id === selectedIdToDelete);
+        if (!m) return;
+        const aud = auditarDepartamentoCompleto(m.unitId);
+        
+        if (!aud.telefono) {
+            showToast("Asigna un teléfono en Directorio", "warning");
+            abrirModalEditar(m.unitId);
+            return;
         }
+        
+        const tel = aud.telefono.replace(/\D/g, ''); 
+        const telF = tel.length === 10 ? `52${tel}` : tel;
+        let msj = `Buen día, le envío su comprobante de pago.`;
+        
         window.open(`https://wa.me/${telF}?text=${encodeURIComponent(msj)}`, '_blank');
     }
 
@@ -1629,7 +1683,7 @@
         if (totDeudores > 0) { badge.innerText = totDeudores; badge.classList.remove('hidden'); } else badge.classList.add('hidden');
 
         const sortMode = document.getElementById('alerts-sort-select').value;
-        let baseList = sortMode === 'departamento' ? auditoriasTodos : auditoriasDeudores;
+        let baseList = (sortMode === 'departamento' && activeAlertsFilter === 'todos') ? auditoriasTodos : auditoriasDeudores;
 
         let filtrados = baseList;
         if (activeAlertsFilter === 'criticos') filtrados = baseList.filter(a => a.estado === 'critico');
@@ -1664,6 +1718,14 @@
             const pillClass = isAlDia ? 'pill-success' : (a.estado === 'critico' ? 'pill-critical' : 'pill-warning');
             const pillIcon = isAlDia ? 'fa-check' : 'fa-clock';
             const pillText = isAlDia ? 'Al Día' : (a.diasAtrasoReal > 0 ? a.diasAtrasoReal + ' días' : 'Debe');
+
+            card.style.cursor = 'pointer';
+            card.onclick = (e) => {
+                // Si el clic no fue dentro de alguno de los botones de acción pequeños, abre el estado de cuenta
+                if (!e.target.closest('.btn-action-small')) {
+                    verEstadoCuentaAlerta(a.unitId);
+                }
+            };
 
             card.innerHTML = `<div class="alert-dept-header"><div><span style="font-size:1.2rem; font-weight:900; color:var(--primary)">Depto ${a.unitId}</span><span style="font-weight:700; color:var(--text-main); margin-left:10px">${a.nombre}</span></div><span class="alert-badge-pill ${pillClass}"><i class="fas ${pillIcon}"></i> ${pillText}</span></div><div class="breakdown-box">${breakdownHtml}</div><div style="display:flex; justify-content:space-between; align-items:center; margin-top:14px;"><span style="font-size:0.8rem; font-weight:600; color:var(--text-sec)">${a.telefono ? `<i class="fas fa-phone"></i> ${a.telefono}` : 'Sin teléfono'}</span><div style="display:flex; gap:10px;">${a.telefono ? `<button class="btn-action-small btn-action-whatsapp" onclick="abrirWhatsApp(${a.unitId})" title="Abrir Chat WhatsApp"><i class="fab fa-whatsapp"></i></button>` : ''}<button class="btn-action-small" style="background:rgba(245,158,11,0.15); color:var(--warning); border:1px solid rgba(245,158,11,0.3);" onclick="verEstadoCuentaAlerta(${a.unitId})" title="Estado de Cuenta"><i class="fas fa-file-invoice-dollar"></i></button><button class="btn-action-small btn-action-pay" onclick="abrirModalUnidad(${a.unitId})"><i class="fas fa-plus"></i> Cobrar</button></div></div>`;
             listContainer.appendChild(card);
@@ -1740,13 +1802,13 @@
     }
     function filtrarRecibos(v) { renderReceiptsList(v); }
 
-    function abrirModalGasto() {
+    function abrirModalGasto(fromMenu = false) {
         editingExpenseId = null; selectedIdToDelete = null;
         document.getElementById('modal-expense-title').innerText = "Nuevo Gasto";
         document.getElementById('exp-desc').value = ''; document.getElementById('exp-amount').value = ''; document.getElementById('exp-date').value = new Date().toISOString().split('T')[0];
         document.getElementById('btn-save-expense').innerHTML = '<i class="fas fa-save"></i> Guardar Gasto';
         document.getElementById('btn-delete-expense').classList.add('hidden');
-        abrirModal('modalExpense');
+        abrirModal('modalExpense', fromMenu);
     }
     async function guardarGasto() {
         const desc = document.getElementById('exp-desc').value.trim(), amount = parseFloat(document.getElementById('exp-amount').value), date = document.getElementById('exp-date').value, cat = document.getElementById('exp-cat').value;
@@ -1762,6 +1824,56 @@
         document.getElementById('exp-desc').value = m.description || ''; document.getElementById('exp-amount').value = m.amount; document.getElementById('exp-cat').value = m.category || 'Mantenimiento'; document.getElementById('exp-date').value = m.date;
         document.getElementById('btn-save-expense').innerHTML = '<i class="fas fa-sync"></i> Actualizar'; document.getElementById('btn-delete-expense').classList.remove('hidden');
         abrirModal('modalExpense');
+    }
+
+    function abrirModalNuevoGastoFijo() {
+        document.getElementById('new-rec-name').value = '';
+        document.getElementById('new-rec-amount').value = '';
+        abrirModal('modalNewRecurring');
+    }
+
+    function guardarNuevoGastoFijo() {
+        const name = document.getElementById('new-rec-name').value.trim();
+        const amount = parseFloat(document.getElementById('new-rec-amount').value);
+        const cat = document.getElementById('new-rec-cat').value;
+
+        if (!name || !amount) return showToast("Datos inválidos", "warning");
+        if (!appConfig.recurringExpenses) appConfig.recurringExpenses = [];
+        
+        appConfig.recurringExpenses.push({ id: `rec_${Date.now()}`, name, amount, cat });
+        sincronizarNube(); renderAll(); cerrarModales(); showToast("Plantilla Creada");
+    }
+
+    function eliminarGastoFijo(id) {
+        if (confirm("¿Eliminar plantilla?")) {
+            appConfig.recurringExpenses = appConfig.recurringExpenses.filter(e => e.id !== id);
+            sincronizarNube(); renderAll(); showToast("Plantilla Eliminada");
+        }
+    }
+
+    function aplicarGastosRecurrentesMes() {
+        if (!appConfig.recurringExpenses || appConfig.recurringExpenses.length === 0) return showToast("No hay plantillas guardadas", "warning");
+        
+        const cy = new Date().getFullYear();
+        const cm = new Date().getMonth();
+        const todayStr = new Date().toISOString().split('T')[0];
+        let agregados = 0;
+
+        appConfig.recurringExpenses.forEach(rec => {
+            // Revisa si ya se agregó este mismo gasto en el mes actual
+            const yaExiste = movements.some(m => m.type === 'expense' && m.description === rec.name && new Date(m.date+'T00:00').getFullYear() === cy && new Date(m.date+'T00:00').getMonth() === cm);
+            
+            if (!yaExiste) {
+                movements.unshift({ id: Date.now() + Math.floor(Math.random() * 1000), type: 'expense', description: rec.name, amount: rec.amount, category: rec.cat, date: todayStr });
+                agregados++;
+            }
+        });
+
+        if (agregados > 0) {
+            sincronizarNube(); renderAll(); showToast(`${agregados} Gastos aplicados con éxito`);
+        } else {
+            showToast("Los gastos ya habían sido aplicados este mes", "warning");
+        }
     }
 
     function verRecibo(id) {
@@ -1813,71 +1925,18 @@
     }
     function eliminarCuotaExtra(id) { if (confirm("¿Eliminar?")) { appConfig.extraFees = appConfig.extraFees.filter(e => e.id !== id); sincronizarNube(); renderAll(); showToast("Eliminada"); } }
     
-    function abrirModalNuevoGastoRecurrente() {
-        document.getElementById('new-rec-desc').value = '';
-        document.getElementById('new-rec-amount').value = '';
-        document.getElementById('new-rec-cat').value = 'Servicios';
-        abrirModal('modalNewRecurringExpense');
-    }
-    
-    function guardarGastoRecurrente() {
-        const desc = document.getElementById('new-rec-desc').value.trim();
-        const amount = parseFloat(document.getElementById('new-rec-amount').value);
-        const cat = document.getElementById('new-rec-cat').value;
-
-        if (!desc || !amount || amount <= 0) return showToast("Datos inválidos", "warning");
-        if (!appConfig.recurringExpenses) appConfig.recurringExpenses = [];
-        appConfig.recurringExpenses.push({ id: `rec_${Date.now()}`, desc, amount, cat });
-        
-        sincronizarNube(); renderAjustes(); cerrarModales(); showToast("Plantilla de gasto guardada");
-    }
-
-    function eliminarGastoRecurrente(id) {
-        if (confirm("¿Eliminar este gasto recurrente?")) {
-            appConfig.recurringExpenses = appConfig.recurringExpenses.filter(e => e.id !== id);
-            sincronizarNube(); renderAjustes(); showToast("Plantilla eliminada");
-        }
-    }
-
-    function aplicarGastosRecurrentes() {
-        const cy = new Date().getFullYear();
-        const cm = new Date().getMonth();
-        let agregados = 0;
-        const today = new Date().toISOString().split('T')[0];
-
-        if(!appConfig.recurringExpenses || appConfig.recurringExpenses.length === 0) {
-            return showToast("No hay gastos fijos configurados.", "warning");
-        }
-
-        appConfig.recurringExpenses.forEach(re => {
-            const exists = movements.find(m => m.type === 'expense' && m.description === re.desc && new Date(m.date + 'T00:00').getFullYear() === cy && new Date(m.date + 'T00:00').getMonth() === cm);
-            if(!exists) {
-                movements.unshift({ id: Date.now() + agregados, type: 'expense', description: re.desc, amount: re.amount, category: re.cat, date: today });
-                agregados++;
-            }
-        });
-
-        if(agregados > 0) {
-            sincronizarNube(); renderAll(); showToast(`¡${agregados} gastos registrados exitosamente!`);
-        } else {
-            showToast("Los gastos de este mes ya estaban registrados.", "warning");
-        }
-    }
-
     function renderAjustes() {
-        const listExtras = document.getElementById('settings-extra-fees-list');
-        listExtras.innerHTML = '';
+        const listExtra = document.getElementById('settings-extra-fees-list'); listExtra.innerHTML = '';
         (appConfig.extraFees || []).forEach(e => {
             const row = document.createElement('div'); row.style.cssText = "display:flex; justify-content:space-between; align-items:center; padding:12px 14px; background:rgba(30, 41, 59, 0.4); border-radius:12px; margin-bottom:10px; border:1px solid var(--border);";
             row.innerHTML = `<div><div style="font-weight:800; font-size:0.95rem">${e.name}</div><small style="color:var(--accent); font-weight:700">$${e.amount.toFixed(2)} • Inicio: ${e.date}</small></div><button class="btn-mini-ghost" style="color:var(--danger); border-color:rgba(239, 68, 68, 0.3); background:rgba(239, 68, 68, 0.1);" onclick="eliminarCuotaExtra('${e.id}')"><i class="fas fa-trash"></i></button>`;
-            listExtras.appendChild(row);
+            listExtra.appendChild(row);
         });
 
-        const listRec = document.getElementById('settings-recurring-expenses-list');
-        listRec.innerHTML = '';
+        const listRec = document.getElementById('settings-recurring-expenses-list'); listRec.innerHTML = '';
         (appConfig.recurringExpenses || []).forEach(e => {
             const row = document.createElement('div'); row.style.cssText = "display:flex; justify-content:space-between; align-items:center; padding:12px 14px; background:rgba(30, 41, 59, 0.4); border-radius:12px; margin-bottom:10px; border:1px solid var(--border);";
-            row.innerHTML = `<div><div style="font-weight:800; font-size:0.95rem">${e.desc}</div><small style="color:var(--text-sec); font-weight:700">$${e.amount.toFixed(2)} • ${e.cat}</small></div><button class="btn-mini-ghost" style="color:var(--danger); border-color:rgba(239, 68, 68, 0.3); background:rgba(239, 68, 68, 0.1);" onclick="eliminarGastoRecurrente('${e.id}')"><i class="fas fa-trash"></i></button>`;
+            row.innerHTML = `<div><div style="font-weight:800; font-size:0.95rem">${e.name}</div><small style="color:var(--danger); font-weight:700">Aprox. $${e.amount.toFixed(2)}</small></div><button class="btn-mini-ghost" style="color:var(--danger); border-color:rgba(239, 68, 68, 0.3); background:rgba(239, 68, 68, 0.1);" onclick="eliminarGastoFijo('${e.id}')"><i class="fas fa-trash"></i></button>`;
             listRec.appendChild(row);
         });
     }
@@ -1933,12 +1992,12 @@
         ws['!cols'] = cols; const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "Reporte"); XLSX.writeFile(wb, filename); showToast("Excel Descargado");
     }
 
-    function descargarBackup() { showToast("Preparando Respaldo...", "success"); const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify({ exportDate: new Date().toISOString(), movements, units: unitInfo, config: appConfig, version: "v100-Pro" }, null, 2)], { type: 'application/json' })); a.download = `Respaldo_${new Date().toISOString().split('T')[0]}.json`; a.click(); URL.revokeObjectURL(a.href); }
+    function descargarBackup() { showToast("Preparando Respaldo...", "success"); const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify({ exportDate: new Date().toISOString(), movements, units: unitInfo, config: appConfig, version: "v99-Pro" }, null, 2)], { type: 'application/json' })); a.download = `Respaldo_${new Date().toISOString().split('T')[0]}.json`; a.click(); URL.revokeObjectURL(a.href); }
     function procesarArchivoBackup(e) { const f = e.target.files[0]; if (!f) return; const r = new FileReader(); r.onload = (ev) => { try { const d = JSON.parse(ev.target.result); if (d.movements) movements = d.movements; if (d.units) unitInfo = d.units; if (d.config) appConfig = d.config; sincronizarNube(); renderAll(); showToast("Restaurado"); } catch (err) { showToast("JSON Inválido", "danger"); } }; r.readAsText(f); }
 
     document.addEventListener('DOMContentLoaded', () => { if (localStorage.getItem('isLoggedIn') === 'true') { document.getElementById('login-screen').style.display = 'none'; document.getElementById('app-wrapper').style.display = 'block'; cargarDatos(); } });
 
-    // Gestos Deslizar
+    // Swipe para navegación lateral
     let touchStartX = 0;
     let touchStartY = 0;
     
@@ -1948,7 +2007,9 @@
     }, {passive: true});
 
     document.addEventListener('touchend', e => {
-        if (document.querySelector('.modal-overlay.active') || document.getElementById('modalConfirm').style.display === 'flex') return;
+        // Ignorar si hay modales abiertos
+        if (document.querySelector('.modal-overlay.active') || 
+            document.getElementById('modalConfirm').style.display === 'flex') return;
         
         let touchEndX = e.changedTouches[0].screenX;
         let touchEndY = e.changedTouches[0].screenY;
@@ -1956,13 +2017,19 @@
         let diffX = touchEndX - touchStartX;
         let diffY = touchEndY - touchStartY;
 
-        if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
-            const tabs = ['home', 'receipts', 'expenses', 'alerts', 'settings'];
+        // Validar que sea un swipe horizontal dominante y superior al umbral
+        if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 60) {
+            const tabs = ['home', 'receipts', 'expenses', 'alerts'];
             const currentIdx = tabs.indexOf(vistaActual);
             
             if (currentIdx !== -1) {
-                if (diffX < 0 && currentIdx < tabs.length - 1) cambiarVista(tabs[currentIdx + 1], 'right');
-                else if (diffX > 0 && currentIdx > 0) cambiarVista(tabs[currentIdx - 1], 'left');
+                if (diffX < 0 && currentIdx < tabs.length - 1) {
+                    // Swipe hacia Izquierda -> Avanza Pestaña
+                    cambiarVista(tabs[currentIdx + 1], 'right');
+                } else if (diffX > 0 && currentIdx > 0) {
+                    // Swipe hacia Derecha -> Retrocede Pestaña
+                    cambiarVista(tabs[currentIdx - 1], 'left');
+                }
             }
         }
     }, {passive: true});
