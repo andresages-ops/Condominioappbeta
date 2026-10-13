@@ -112,22 +112,8 @@
         .input-row-equal { display: flex; gap: 12px; width: 100%; }
         .input-row-equal > * { flex: 1; }
 
-        /* HACK CSS PARA FECHAS: Esto hace que toda el área del input abra el calendario en móviles */
-        input[type="date"] {
-            position: relative;
-        }
-        input[type="date"]::-webkit-calendar-picker-indicator {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            width: auto;
-            height: auto;
-            color: transparent;
-            background: transparent;
-            cursor: pointer;
-        }
+        input[type="date"] { position: relative; }
+        input[type="date"]::-webkit-calendar-picker-indicator { position: absolute; top: 0; left: 0; right: 0; bottom: 0; width: auto; height: auto; color: transparent; background: transparent; cursor: pointer; }
 
         .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; padding-top: env(safe-area-inset-top); }
         .profile-btn { width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, var(--bg-card), var(--bg-input)); border: 2px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 1.2rem; color: var(--primary); cursor: pointer; transition: transform 0.2s var(--bounce-easing); box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
@@ -364,7 +350,7 @@
                         <small id="sync-status" style="color:var(--warning); font-weight:800">↻ Conectando...</small>
                     </div>
                 </div>
-                <span class="badge-version">v107 FB+ST</span>
+                <span class="badge-version">v108</span>
             </div>
 
             <div id="main-balance-card" class="balance-card">
@@ -501,13 +487,6 @@
                     <h2 style="font-size:1.45rem; font-weight:800; margin:0;">Configuración</h2>
                 </div>
             </div>
-
-            <!-- BOTÓN DE RESCATE (Google Sheets a Firebase) -->
-            <div style="background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-lg); padding:20px; margin-bottom:16px;" id="migracion-box">
-                <h4 style="margin-bottom:14px; color:var(--info); font-size:1.1rem;"><i class="fas fa-cloud-download-alt"></i> Recuperar Datos</h4>
-                <p style="color:var(--text-sec); font-size:0.85rem; margin-bottom:16px;">Presiona este botón por única vez para traer todo tu historial de la base de datos anterior (Google Sheets) a tu nuevo proyecto de Firebase.</p>
-                <button class="btn" style="background:linear-gradient(135deg, var(--info), #1d4ed8); color:white; box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);" onclick="migrarDesdeGoogleSheets()"><i class="fas fa-sync"></i> Recuperar desde Google Sheets</button>
-            </div>
             
             <div style="background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-lg); padding:20px; margin-bottom:16px;">
                 <h4 style="margin-bottom:14px; color:var(--primary); font-size:1.1rem;"><i class="fas fa-sliders-h"></i> Parámetros Financieros</h4>
@@ -518,7 +497,6 @@
                 <button class="btn btn-primary" onclick="guardarConfiguracion()"><i class="fas fa-save"></i> Guardar Cambios</button>
             </div>
 
-            <!-- PROYECCIÓN Y VIABILIDAD -->
             <div style="background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-lg); padding:20px; margin-bottom:16px;">
                 <h4 style="margin-bottom:14px; color:var(--info); font-size:1.1rem;"><i class="fas fa-chart-line"></i> Proyección de Proyectos</h4>
                 <p style="color:var(--text-sec); font-size:0.85rem; margin-bottom:16px;">Calcula la viabilidad financiera para nuevos proyectos en base a historial de ingresos y gastos.</p>
@@ -629,7 +607,6 @@
             
             <div style="background:rgba(30, 41, 59, 0.3); padding:20px; border-radius:var(--radius-lg); border:1px solid var(--border); margin-bottom:16px;">
                 <label style="font-size:0.85rem; font-weight:700; color:var(--text-sec)">Fecha del Movimiento (Mes que paga):</label>
-                <!-- Hack JS añadido para forzar mostrar el calendario en click general -->
                 <input type="date" id="rent-date" onclick="try{this.showPicker()}catch(e){}"> 
 
                 <label style="font-size:0.85rem; font-weight:700; color:var(--text-sec)">Tipo de Cuota:</label>
@@ -669,16 +646,17 @@
                 <label style="font-size:0.85rem; font-weight:700; color:var(--text-sec)">Nota general del Pago:</label>
                 <input type="text" id="rent-note" placeholder="Ej. Anticipo anual o comentario">
                 
-                <!-- NUEVO: Soporte para foto/comprobante en el pago -->
                 <label style="font-size:0.85rem; font-weight:700; color:var(--text-sec); margin-top:10px; display:block;">Comprobante de Transferencia (Opcional):</label>
-                <input type="file" id="rent-photo" accept="image/*" style="padding:14px; margin-bottom:8px; border: 1.5px dashed var(--border); background: rgba(30, 41, 59, 0.2); font-size: 0.85rem;" onchange="previsualizarFoto(event, 'rent-photo-preview', 'rent-photo-container', 'btn-view-full-rent-photo')">
+                <label for="rent-photo" style="display:flex; justify-content:center; align-items:center; gap:8px; padding:14px; margin-bottom:8px; border: 1.5px dashed var(--primary); background: rgba(139, 92, 246, 0.1); color: var(--primary); font-size: 0.9rem; font-weight: 700; border-radius: var(--radius-md); cursor: pointer; transition: all 0.2s;">
+                    <i class="fas fa-cloud-upload-alt" style="font-size:1.2rem;"></i> Seleccionar Imagen
+                </label>
+                <input type="file" id="rent-photo" accept="image/*" style="display:none;" onchange="previsualizarFoto(event, 'rent-photo-preview', 'rent-photo-container', 'btn-view-full-rent-photo')">
                 
                 <div id="rent-photo-container" style="display:none; margin-bottom:16px; position:relative; width: 100%; text-align: center;">
                     <img id="rent-photo-preview" src="" style="max-width: 100%; max-height: 300px; border-radius:12px; border:1px solid var(--border); background: var(--bg-input); object-fit: contain;">
                     <button class="btn-mini-ghost" style="position:absolute; top:10px; right:10px; background:rgba(0,0,0,0.8); color:white; border:1px solid rgba(255,255,255,0.2);" onclick="quitarFoto(event, 'rent-photo', 'rent-photo-preview', 'rent-photo-container')"><i class="fas fa-times"></i></button>
                     <button class="btn-action-small btn-action-pay" style="margin-top: 8px;" id="btn-view-full-rent-photo" onclick="verFotoCompleta(event, 'rent-photo-preview')"><i class="fas fa-external-link-alt"></i> Ver original</button>
                 </div>
-                <!-- FIN NUEVO -->
 
                 <input type="hidden" id="rent-type-val" value="regular">
                 <input type="hidden" id="rent-method-val" value="Transferencia">
@@ -722,7 +700,6 @@
             <label style="font-size:0.85rem; font-weight:700; color:var(--text-sec)">Monto por Departamento ($):</label>
             <input type="number" id="new-extra-amount" placeholder="Ej. 1500.00" step="any">
             <label style="font-size:0.85rem; font-weight:700; color:var(--text-sec)">Fecha de Emisión / Inicio:</label>
-            <!-- Hack JS añadido para forzar mostrar el calendario en click general -->
             <input type="date" id="new-extra-date" onclick="try{this.showPicker()}catch(e){}">
             <button class="btn btn-primary" onclick="guardarNuevaCuotaExtra()" style="background:linear-gradient(135deg, var(--accent), var(--accent-dark)); margin-top:10px;"><i class="fas fa-save"></i> Crear Cuota</button>
             <button class="btn btn-cancel" onclick="cerrarModales()" style="margin-top:12px">Cancelar</button>
@@ -734,7 +711,6 @@
             <div class="modal-drag-handle"></div>
             <h2 id="modal-expense-title" style="margin-bottom:16px; font-size:1.5rem; font-weight:800;">Nuevo Gasto</h2>
             <label style="font-size:0.85rem; font-weight:700; color:var(--text-sec)">Fecha:</label>
-            <!-- Hack JS añadido para forzar mostrar el calendario en click general -->
             <input type="date" id="exp-date" onclick="try{this.showPicker()}catch(e){}">
             <label style="font-size:0.85rem; font-weight:700; color:var(--text-sec)">Concepto del Gasto:</label>
             <input type="text" id="exp-desc" placeholder="Ej. Reparación de bomba de agua">
@@ -750,16 +726,17 @@
                 <option value="Otro">Otro</option>
             </select>
 
-            <!-- Soporte para foto/comprobante en Gastos -->
             <label style="font-size:0.85rem; font-weight:700; color:var(--text-sec); margin-top:10px; display:block;">Comprobante / Ticket (Opcional):</label>
-            <input type="file" id="exp-photo" accept="image/*" capture="environment" style="padding:14px; margin-bottom:8px; border: 1.5px dashed var(--border); background: rgba(30, 41, 59, 0.2); font-size: 0.85rem;" onchange="previsualizarFoto(event, 'exp-photo-preview', 'photo-preview-container', 'btn-view-full-photo')">
+            <label for="exp-photo" style="display:flex; justify-content:center; align-items:center; gap:8px; padding:14px; margin-bottom:8px; border: 1.5px dashed var(--danger); background: rgba(239, 68, 68, 0.1); color: var(--danger); font-size: 0.9rem; font-weight: 700; border-radius: var(--radius-md); cursor: pointer; transition: all 0.2s;">
+                <i class="fas fa-cloud-upload-alt" style="font-size:1.2rem;"></i> Seleccionar Imagen
+            </label>
+            <input type="file" id="exp-photo" accept="image/*" capture="environment" style="display:none;" onchange="previsualizarFoto(event, 'exp-photo-preview', 'photo-preview-container', 'btn-view-full-photo')">
             
             <div id="photo-preview-container" style="display:none; margin-bottom:16px; position:relative; width: 100%; text-align: center;">
                 <img id="exp-photo-preview" src="" style="max-width: 100%; max-height: 300px; border-radius:12px; border:1px solid var(--border); background: var(--bg-input); object-fit: contain;">
                 <button class="btn-mini-ghost" style="position:absolute; top:10px; right:10px; background:rgba(0,0,0,0.8); color:white; border:1px solid rgba(255,255,255,0.2);" onclick="quitarFoto(event, 'exp-photo', 'exp-photo-preview', 'photo-preview-container')"><i class="fas fa-times"></i></button>
                 <button class="btn-action-small btn-action-pay" style="margin-top: 8px;" id="btn-view-full-photo" onclick="verFotoCompleta(event, 'exp-photo-preview')"><i class="fas fa-external-link-alt"></i> Ver original</button>
             </div>
-            <!-- FIN Soporte fotos -->
 
             <button id="btn-save-expense" class="btn btn-danger" onclick="guardarGasto()" style="margin-top:10px;"><i class="fas fa-save"></i> Guardar Gasto</button>
             <button id="btn-delete-expense" class="btn btn-outline-danger hidden" style="margin-top:12px" onclick="solicitarEliminacion()"><i class="fas fa-trash"></i> Eliminar Gasto</button>
@@ -786,6 +763,9 @@
                 <div id="qrcode"></div>
                 <div style="text-align:center; font-size:0.75rem; color:#64748b; margin-top:18px; font-weight:600;">Comprobante digital verificado.<br>Administración Condominio</div>
             </div>
+
+            <!-- Botón dinámico para ver adjunto -->
+            <button id="btn-ver-adjunto-recibo" class="btn btn-dark" style="margin-bottom:12px; display:none; border-color:var(--primary); color:var(--primary);"><i class="fas fa-paperclip"></i> Ver Comprobante Adjunto</button>
 
             <button class="btn btn-primary" onclick="descargarPDF()"><i class="fas fa-file-pdf"></i> Descargar Ticket PDF</button>
             <button class="btn btn-success" style="margin-top:12px; background: #25D366; box-shadow: 0 8px 20px rgba(37, 211, 102, 0.4);" onclick="compartirReciboWhatsApp()"><i class="fab fa-whatsapp"></i> Compartir por WhatsApp</button>
@@ -983,7 +963,6 @@
     const TOTAL_UNITS = 16;
     const NOMBRES_MESES = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
 
-    // Variables globales
     window.appConfig = { initialBalance: 0, rentPrice: 600, extraFees: [], recurringExpenses: [] };
     window.movements = [];
     window.unitInfo = {};
@@ -1008,15 +987,16 @@
             item.className = 'list-item';
             item.onclick = onClick;
             
+            let safePrefix = prefix || '';
             let amountHtml = '';
-            // Si el elemento incluye rightIcon (como el clip de fotos) lo muestra
+            // Si el elemento incluye rightIcon (como el clip de fotos) lo muestra de forma elegante
             if (rightIcon) {
                 amountHtml = `<div class="card-amount-section" style="color:${amountColor}; display:flex; align-items:center; gap:8px;">
-                                <i class="fas ${rightIcon}" style="font-size:0.9rem; color:var(--text-sec)"></i>
-                                ${prefix}$${amount.toFixed(2)}
+                                ${safePrefix}$${amount.toFixed(2)}
+                                <i class="fas ${rightIcon}" style="font-size:1.1rem; color:var(--text-sec)"></i>
                               </div>`;
             } else {
-                amountHtml = `<div class="card-amount-section" style="color:${amountColor}">${prefix}$${amount.toFixed(2)}</div>`;
+                amountHtml = `<div class="card-amount-section" style="color:${amountColor}">${safePrefix}$${amount.toFixed(2)}</div>`;
             }
 
             item.innerHTML = `
@@ -1094,7 +1074,6 @@
         }
     };
 
-    // FIREBASE INITIALIZATION (COMPAT SDK)
     const firebaseConfig = {
         apiKey: "AIzaSyBw3OAsURi1SNqGlErd8e55uCvpPtgwimo",
         authDomain: "condominio-master-v2.firebaseapp.com",
@@ -1104,17 +1083,15 @@
         appId: "1:141887091717:web:05b76b3fb7bec869df186c"
     };
 
-    // Inicializar Firebase de forma síncrona
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
-    const storage = firebase.storage(); // INICIALIZACIÓN DE STORAGE
+    const storage = firebase.storage();
     const stateDocRef = db.doc('artifacts/condominio-master-v2/public/data/appState/main');
 
     async function cargarDatos() {
         const loader = document.getElementById('loader');
         loader.style.display = 'flex';
         
-        // 1. Intentar cargar desde caché local primero para rapidez
         const cached = localStorage.getItem('condo_cache_data_v100');
         if (cached) {
             try {
@@ -1128,7 +1105,6 @@
             } catch (e) {}
         }
 
-        // 2. Conectar a Firestore usando el Listener en Tiempo Real
         try {
             stateDocRef.onSnapshot((docSnap) => {
                 if (docSnap.exists) {
@@ -1137,7 +1113,6 @@
                     window.unitInfo = data.units || {};
                     window.appConfig = data.config || window.appConfig;
                     
-                    // Script de Migración Automática
                     let migrated = false;
                     window.movements.forEach(m => {
                         if (m.type === 'expense' && m.category === 'Mantenimiento' && m.description.toLowerCase().includes('victor')) {
@@ -1151,7 +1126,6 @@
                     document.getElementById('sync-status').innerText = "● En línea"; document.getElementById('sync-status').style.color = "var(--success)";
                     renderAll();
                 } else {
-                    // Si el documento en Firebase no existe, subimos nuestro local (Migración Inicial)
                     sincronizarNube();
                 }
                 loader.style.display = 'none';
@@ -1167,7 +1141,6 @@
         }
     }
 
-    // Funciones genéricas parametrizadas para poder usarlas en Gastos e Ingresos
     function previsualizarFoto(event, imgId, containerId, btnFullId) {
         const file = event.target.files[0];
         if (file) {
@@ -1193,41 +1166,6 @@
         if(e) e.preventDefault();
         const url = document.getElementById(imgId).src;
         if(url && url.startsWith('http')) window.open(url, '_blank');
-    }
-
-    // BOTON DE RESCATE (Google Sheets)
-    async function migrarDesdeGoogleSheets() {
-        const loader = document.getElementById('loader');
-        const text = document.getElementById('loader-text');
-        text.innerText = "Descargando de Google Sheets...";
-        loader.style.display = 'flex';
-        
-        try {
-            const resp = await fetch("https://script.google.com/macros/s/AKfycbzALet7rSENpTKfyqOH75JkD-s0GaSI-6c7JwV7aQ7ZIqiT1aSPncx68ZbooGC5rgp_/exec");
-            const data = await resp.json();
-            
-            window.movements = data.movements || []; 
-            window.unitInfo = data.units || {};
-            
-            if (data.config) {
-                window.appConfig = { ...window.appConfig, ...data.config };
-                if (!window.appConfig.extraFees || window.appConfig.extraFees.length === 0) {
-                    window.appConfig.extraFees = [{ id: "extra_init", name: "Cuota Extraordinaria", amount: data.config.extraFeeAmount || 1000, date: "2026-01-01" }];
-                }
-                if (!window.appConfig.recurringExpenses) window.appConfig.recurringExpenses = [];
-            }
-
-            await sincronizarNube(); // Subir a Firebase
-            renderAll();
-            showToast("¡Datos recuperados con éxito!");
-            document.getElementById('migracion-box').style.display = 'none'; 
-        } catch (e) {
-            console.error(e);
-            showToast("Error al recuperar datos", "danger");
-        } finally {
-            loader.style.display = 'none';
-            text.innerText = "Conectando a Firebase...";
-        }
     }
 
     async function sincronizarNube() {
@@ -1741,7 +1679,6 @@
         setPaymentType('regular', document.querySelector('#seg-type .seg-btn:first-child'));
         setPaymentMethod('Transferencia', document.querySelector('#seg-method .seg-btn:first-child'));
         
-        // Limpiamos comprobante previo si existiera
         quitarFoto(null, 'rent-photo', 'rent-photo-preview', 'rent-photo-container');
         
         poblarSelectorMesesAtrasados(id);
@@ -1864,7 +1801,6 @@
             let photoUrl = null;
             const photoFile = document.getElementById('rent-photo').files[0];
             
-            // Si estamos editando y la foto antigua sigue mostrándose, la conservamos
             if (editingPaymentId) {
                 const previo = window.movements.find(m => m.id === editingPaymentId);
                 if (document.getElementById('rent-photo-container').style.display === 'block' && document.getElementById('rent-photo-preview').src.startsWith('http')) {
@@ -1872,7 +1808,6 @@
                 }
             }
             
-            // Subir nueva foto si se seleccionó una
             if (photoFile) {
                 const fileName = `comprobantes/ingreso_${Date.now()}_${photoFile.name}`;
                 const fileRef = storage.ref().child(fileName);
@@ -1946,7 +1881,8 @@
                 subtitle: `${h.date} • ${h.paymentType === 'extra' ? 'Extra' : 'Reg'}`,
                 amount: h.amount,
                 amountColor: 'var(--success)',
-                rightIcon: h.photoUrl ? 'fa-paperclip' : 'fa-chevron-right', // Icono de clip si tiene foto
+                prefix: '+',
+                rightIcon: h.photoUrl ? 'fa-paperclip' : null, 
                 onClick: () => verRecibo(h.id)
             }));
         });
@@ -2095,7 +2031,7 @@
                     amount: e.amount,
                     amountColor: 'var(--danger)',
                     prefix: '-',
-                    rightIcon: e.photoUrl ? 'fa-paperclip' : undefined, // Muestra un clip si hay foto
+                    rightIcon: e.photoUrl ? 'fa-paperclip' : undefined,
                     onClick: () => prepararEdicionGasto(e.id)
                 }));
             });
@@ -2137,7 +2073,7 @@
                     amount: m.amount,
                     amountColor: isEx ? 'var(--accent)' : 'var(--success)',
                     prefix: '+',
-                    rightIcon: m.photoUrl ? 'fa-paperclip' : undefined, // Muestra un clip si hay foto
+                    rightIcon: m.photoUrl ? 'fa-paperclip' : undefined,
                     onClick: () => verRecibo(m.id)
                 }));
             });
@@ -2160,7 +2096,7 @@
         document.getElementById('exp-date').value = new Date().toISOString().split('T')[0];
         document.getElementById('btn-save-expense').innerHTML = '<i class="fas fa-save"></i> Guardar Gasto'; 
         document.getElementById('btn-delete-expense').classList.add('hidden');
-        quitarFoto(null, 'exp-photo', 'exp-photo-preview', 'photo-preview-container'); // Limpiar foto
+        quitarFoto(null, 'exp-photo', 'exp-photo-preview', 'photo-preview-container'); 
         abrirModal('modalExpense', fromMenu);
     }
 
@@ -2269,8 +2205,18 @@
         document.getElementById('rcpt-id').innerText = `F-${fol}`; document.getElementById('rcpt-date').innerText = m.date; document.getElementById('rcpt-unit').innerText = `Depto ${m.unitId}`; document.getElementById('rcpt-name').innerText = window.unitInfo[m.unitId]?.name || 'Propietario'; document.getElementById('rcpt-type').innerText = m.paymentType === 'extra' ? 'Cuota Extra' : 'Mantenimiento'; document.getElementById('rcpt-method').innerText = m.method; document.getElementById('rcpt-amount').innerText = `$${m.amount.toFixed(2)}`;
         if (m.note) { document.getElementById('rcpt-note').innerText = m.note; document.getElementById('rcpt-row-note').style.display = 'flex'; } else document.getElementById('rcpt-row-note').style.display = 'none';
         document.getElementById('qrcode').innerHTML = ''; new QRCode(document.getElementById('qrcode'), { text: `FOLIO:${fol}|DEPTO:${m.unitId}|TOTAL:${m.amount}`, width: 100, height: 100 });
+        
+        const btnAdjunto = document.getElementById('btn-ver-adjunto-recibo');
+        if (m.photoUrl) {
+            btnAdjunto.style.display = 'flex';
+            btnAdjunto.onclick = () => window.open(m.photoUrl, '_blank');
+        } else {
+            btnAdjunto.style.display = 'none';
+        }
+
         abrirModal('modalReceipt');
     }
+    
     function descargarPDF() {
         const el = document.getElementById('printable-receipt'), depto = document.getElementById('rcpt-unit').innerText.replace(/\s+/g, '_').replace('Depto_', ''), date = document.getElementById('rcpt-date').innerText;
         html2pdf().set({ margin: 3, filename: `Recibo_Depto${depto}_${date}.pdf`, image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2.5 }, jsPDF: { unit: 'mm', format: [90, 150], orientation: 'portrait' } }).from(el).save();
@@ -2283,7 +2229,6 @@
         setPaymentType(m.paymentType || 'regular', document.querySelector(`#seg-type .seg-btn[onclick*="${m.paymentType || 'regular'}"]`)); setPaymentMethod(m.method || 'Transferencia', document.querySelector(`#seg-method .seg-btn[onclick*="${m.method || 'Transferencia'}"]`));
         document.getElementById('btn-save-payment').innerHTML = '<i class="fas fa-sync"></i> Actualizar'; document.getElementById('btn-cancel-edit').classList.remove('hidden');
         
-        // Manejar foto si el pago ya tenía una
         quitarFoto(null, 'rent-photo', 'rent-photo-preview', 'rent-photo-container');
         if (m.photoUrl) {
             document.getElementById('rent-photo-preview').src = m.photoUrl;
@@ -2602,7 +2547,7 @@
     function descargarBackup() { 
         showToast("Preparando Respaldo...", "success"); 
         const a = document.createElement('a'); 
-        const url = URL.createObjectURL(new Blob([JSON.stringify({ exportDate: new Date().toISOString(), movements: window.movements, units: window.unitInfo, config: window.appConfig, version: "v107-Firebase-Storage" }, null, 2)], { type: 'application/json' }));
+        const url = URL.createObjectURL(new Blob([JSON.stringify({ exportDate: new Date().toISOString(), movements: window.movements, units: window.unitInfo, config: window.appConfig, version: "v108-Firebase-Storage" }, null, 2)], { type: 'application/json' }));
         a.href = url;
         a.download = `Respaldo_${new Date().toISOString().split('T')[0]}.json`; 
         a.click(); 
