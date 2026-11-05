@@ -2662,6 +2662,20 @@
         setTimeout(() => abrirModal('modalAccountStatement'), 400);
     }
 
+    function descargarEstadoCuentaPDF() {
+        const el = document.getElementById('printable-account-statement');
+        const hoy = new Date();
+        const fechaStr = `${hoy.getFullYear()}-${String(hoy.getMonth() + 1).padStart(2, '0')}-${String(hoy.getDate()).padStart(2, '0')}`;
+        const opcionesPDF = {
+            margin: 5,
+            filename: `Estado_Cuenta_Depto_${currentUnitId || ''}_${fechaStr}.pdf`,
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2.5 },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+        html2pdf().set(opcionesPDF).from(el).save().then(() => showToast("Estado de Cuenta descargado"));
+    }
+
     function verEstadoCuentaAlerta(unitId) {
         currentUnitId = unitId;
         prepararEstadoCuenta();
@@ -2687,4 +2701,4 @@
 
 </script>
 </body>
-</html>
+</html>x
