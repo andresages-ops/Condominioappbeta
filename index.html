@@ -350,7 +350,7 @@
                         <small id="sync-status" style="color:var(--warning); font-weight:800">↻ Conectando...</small>
                     </div>
                 </div>
-                <span class="badge-version">v108</span>
+                <span class="badge-version">v1.1.0</span>
             </div>
 
             <div id="main-balance-card" class="balance-card">
@@ -665,7 +665,7 @@
                 <button id="btn-cancel-edit" class="btn btn-dark hidden" style="margin-top:10px" onclick="cancelarEdicion()"><i class="fas fa-times"></i> Cancelar Edición</button>
             </div>
             
-            <button class="btn btn-dark" style="margin-bottom: 16px; border-color: var(--primary); color: var(--primary);" onclick="prepararEstadoCuenta()"><i class="fas fa-file-invoice-dollar"></i> Generar Estado de Cuenta Mensual</button>
+            <button class="btn btn-dark" style="margin-bottom: 16px; border-color: var(--primary); color: var(--primary);" onclick="prepararEstadoCuenta('current')"><i class="fas fa-file-invoice-dollar"></i> Generar Estado de Cuenta Mensual</button>
             <button class="btn btn-cancel" onclick="cerrarModales()">Cerrar</button>
             <div id="unit-history-container" style="margin-top:24px"></div>
         </div>
@@ -780,6 +780,13 @@
     <div class="modal-overlay" id="modalAccountStatement">
         <div class="modal-content" style="max-width: 500px;">
             <div class="modal-drag-handle"></div>
+            
+            <label style="font-size:0.8rem; font-weight:700; color:var(--text-sec); display:block; text-align:center;">Fecha de Corte del Estado de Cuenta:</label>
+            <div class="seg-control full-width" id="seg-as-cutoff" style="margin-top:6px; margin-bottom:16px;">
+                <button class="seg-btn active" onclick="cambiarCorteEstadoCuenta('current', this)">Al Día de Hoy</button>
+                <button class="seg-btn" onclick="cambiarCorteEstadoCuenta('last_month', this)">Fin Mes Pasado</button>
+            </div>
+
             <div class="account-statement-container" id="printable-account-statement">
                 <div class="as-header">
                     <div class="as-title">ESTADO DE CUENTA</div>
@@ -796,7 +803,7 @@
                     <span id="as-status-badge" style="font-weight: 900; padding: 6px 12px; border-radius: 8px; font-size: 0.85rem;">AL DÍA</span>
                 </div>
                 <div id="as-debt-details-container" style="display: none; margin-bottom: 20px;"></div>
-                <div class="as-section-title">Pagos Registrados (Año Actual)</div>
+                <div class="as-section-title" id="as-history-section-title">Pagos Registrados (Año Actual)</div>
                 <div id="as-history-list" style="margin-bottom: 24px;"></div>
                 <div style="text-align: center; border-top: 2px dashed #cbd5e1; padding-top: 16px; margin-top: 24px;">
                     <div style="font-size: 0.85rem; font-weight:700; color: #64748b; margin-bottom: 4px;">Agradecemos su puntualidad.</div>
@@ -978,6 +985,7 @@
     let vistaActual = 'home';
     let currentModal = null;
     let previousModal = null;
+    let currentStatementCutoff = 'current';
 
     let paginationLimits = { receipts: 25, expenses: 25, alerts: 25, directory: 25 };
 
@@ -1329,7 +1337,7 @@
         return (parseFloat(window.appConfig.initialBalance) || 0) + totInc - totExp;
     }
 
-    function auditarDepartamentoCompleto(unitId) {
+    function auditarDepartamentoCompleto(unitId, targetDate = null) {
         const info = window.unitInfo[unitId] || { name: '', phone: '', empty: false, manualDebt: 0, forcedStatus: 'auto' };
         const manualDebt = parseFloat(info.manualDebt) || 0;
         
@@ -1338,7 +1346,7 @@
         }
 
         const cuotaRegular = window.appConfig.rentPrice || 600;
-        const now = new Date();
+        const now = targetDate ? new Date(targetDate) : new Date();
         const currentYear = now.getFullYear(), currentMonth = now.getMonth();
         
         let minYear = currentYear; 
@@ -1375,6 +1383,7 @@
 
         const cuotasExtraFaltantes = [];
         (window.appConfig.extraFees || []).forEach(extra => {
+            if (targetDate && extra.date && new Date(extra.date + 'T00:00') > now) return;
             const pagadoExtra = unitIncomes.filter(m => m.paymentType === 'extra' && (m.extraFeeId === extra.id || (m.note && m.note.toLowerCase().includes(extra.name.toLowerCase())))).reduce((sum, m) => sum + m.amount, 0);
             if (pagadoExtra < extra.amount) cuotasExtraFaltantes.push({ id: extra.id, name: extra.name, amount: extra.amount, faltante: extra.amount - pagadoExtra, date: extra.date });
         });
@@ -2586,11 +2595,36 @@
         window.open(`https://wa.me/${telefonoFinal}`, '_blank');
     }
 
-    function prepararEstadoCuenta() {
+    function cambiarCorteEstadoCuenta(cutoff, btn) {
+        currentStatementCutoff = cutoff;
+        document.querySelectorAll('#seg-as-cutoff .seg-btn').forEach(b => b.classList.remove('active'));
+        if (btn) btn.classList.add('active');
+        renderizarDatosEstadoCuenta();
+    }
+
+    function prepararEstadoCuenta(cutoff = 'current') {
         if (!currentUnitId) return;
-        const aud = auditarDepartamentoCompleto(currentUnitId);
+        currentStatementCutoff = cutoff;
+        document.querySelectorAll('#seg-as-cutoff .seg-btn').forEach((b, i) => {
+            b.classList.toggle('active', (cutoff === 'current' && i === 0) || (cutoff === 'last_month' && i === 1));
+        });
+        renderizarDatosEstadoCuenta();
+        cerrarModales();
+        setTimeout(() => abrirModal('modalAccountStatement'), 400);
+    }
+
+    function renderizarDatosEstadoCuenta() {
+        if (!currentUnitId) return;
         const hoy = new Date();
-        document.getElementById('as-current-date').innerText = `Al ${hoy.getDate()} de ${NOMBRES_MESES[hoy.getMonth()]} de ${hoy.getFullYear()}`;
+        let targetDate = hoy;
+        
+        if (currentStatementCutoff === 'last_month') {
+            targetDate = new Date(hoy.getFullYear(), hoy.getMonth(), 0, 23, 59, 59);
+        }
+
+        const aud = auditarDepartamentoCompleto(currentUnitId, targetDate);
+        
+        document.getElementById('as-current-date').innerText = `Al ${targetDate.getDate()} de ${NOMBRES_MESES[targetDate.getMonth()]} de ${targetDate.getFullYear()}`;
         document.getElementById('as-unit-title').innerText = `Departamento ${currentUnitId}`;
         document.getElementById('as-tenant-name').innerText = aud.nombre;
         
@@ -2598,10 +2632,34 @@
         const detailsContainer = document.getElementById('as-debt-details-container');
         detailsContainer.innerHTML = '';
         
+        const soloPendienteMesActual = (
+            currentStatementCutoff === 'current' &&
+            aud.mesesFaltantes.length === 1 &&
+            aud.mesesFaltantes[0].mes === hoy.getMonth() &&
+            aud.mesesFaltantes[0].anio === hoy.getFullYear() &&
+            aud.cuotasExtraFaltantes.length === 0 &&
+            aud.manualDebt === 0
+        );
+
         if (aud.estado === 'al_dia') {
             badge.innerText = 'AL CORRIENTE';
             badge.style.background = '#d1fae5'; badge.style.color = '#059669';
             detailsContainer.style.display = 'none';
+        } else if (soloPendienteMesActual) {
+            badge.innerText = 'PENDIENTE';
+            badge.style.background = '#fef3c7'; badge.style.color = '#d97706';
+            detailsContainer.style.display = 'block';
+            
+            let htmlDetalles = '<div style="font-weight:800; font-size:0.85rem; color:#d97706; margin-bottom:8px;">Detalle de saldo pendiente:</div>';
+            htmlDetalles += `<div style="display:flex; justify-content:space-between; margin-bottom:4px; font-size:0.85rem;">
+                <span style="color:#475569;">Mes en curso (${aud.mesesFaltantes[0].nombreMes})</span>
+                <span style="font-weight:800;">$${aud.adeudoRegular.toLocaleString('en-US', {minimumFractionDigits:2})}</span>
+            </div>`;
+            htmlDetalles += `<div style="display:flex; justify-content:space-between; margin-top:8px; padding-top:8px; border-top:1px dashed #cbd5e1; font-weight:900; font-size:1rem; color:#d97706;">
+                <span>TOTAL PENDIENTE:</span>
+                <span>$${aud.adeudoTotal.toLocaleString('en-US', {minimumFractionDigits:2})}</span>
+            </div>`;
+            detailsContainer.innerHTML = htmlDetalles;
         } else {
             badge.innerText = 'CON ADEUDO';
             badge.style.background = '#fee2e2'; badge.style.color = '#dc2626';
@@ -2609,8 +2667,13 @@
             
             let htmlDetalles = '<div style="font-weight:800; font-size:0.85rem; color:#dc2626; margin-bottom:8px;">Detalle de la deuda:</div>';
             if (aud.mesesFaltantes.length > 0) {
+                const tieneMesActual = (currentStatementCutoff === 'current' && aud.mesesFaltantes.some(m => m.mes === hoy.getMonth() && m.anio === hoy.getFullYear()));
+                const labelMeses = (aud.mesesFaltantes.length === 1 && tieneMesActual) 
+                    ? `Mes pendiente (${aud.mesesFaltantes[0].nombreMes})` 
+                    : `Meses atrasados (${aud.mesesFaltantes.length})`;
+
                 htmlDetalles += `<div style="display:flex; justify-content:space-between; margin-bottom:4px; font-size:0.85rem;">
-                    <span style="color:#475569;">Meses atrasados (${aud.mesesFaltantes.length})</span>
+                    <span style="color:#475569;">${labelMeses}</span>
                     <span style="font-weight:800;">$${aud.adeudoRegular.toLocaleString('en-US', {minimumFractionDigits:2})}</span>
                 </div>`;
             }
@@ -2638,11 +2701,18 @@
         const historyList = document.getElementById('as-history-list');
         historyList.innerHTML = '';
         
-        const currentYear = new Date().getFullYear();
-        const yearMovements = window.movements.filter(m => m.type === 'income' && m.unitId === currentUnitId && new Date(m.date + 'T00:00').getFullYear() === currentYear).sort((a,b) => new Date(b.date) - new Date(a.date));
+        const targetYear = targetDate.getFullYear();
+        const titleEl = document.getElementById('as-history-section-title');
+        if (titleEl) titleEl.innerText = `Pagos Registrados (${targetYear})`;
+
+        const yearMovements = window.movements.filter(m => {
+            if (m.type !== 'income' || m.unitId !== currentUnitId || !m.date) return false;
+            const mDate = new Date(m.date + 'T00:00');
+            return mDate.getFullYear() === targetYear && mDate <= targetDate;
+        }).sort((a,b) => new Date(b.date) - new Date(a.date));
         
         if (yearMovements.length === 0) {
-            historyList.innerHTML = '<div style="text-align:center; color:#94a3b8; font-size:0.85rem;">No hay pagos registrados este año.</div>';
+            historyList.innerHTML = '<div style="text-align:center; color:#94a3b8; font-size:0.85rem;">No hay pagos registrados en este período.</div>';
         } else {
             yearMovements.forEach(m => {
                 const label = m.paymentType === 'extra' ? 'Cuota Extra' : 'Mantenimiento';
@@ -2657,28 +2727,33 @@
                 `;
             });
         }
-        
-        cerrarModales();
-        setTimeout(() => abrirModal('modalAccountStatement'), 400);
     }
 
     function descargarEstadoCuentaPDF() {
         const el = document.getElementById('printable-account-statement');
         const hoy = new Date();
-        const fechaStr = `${hoy.getFullYear()}-${String(hoy.getMonth() + 1).padStart(2, '0')}-${String(hoy.getDate()).padStart(2, '0')}`;
+        let targetDate = hoy;
+        if (currentStatementCutoff === 'last_month') {
+            targetDate = new Date(hoy.getFullYear(), hoy.getMonth(), 0);
+        }
+        const fechaStr = `${targetDate.getFullYear()}-${String(targetDate.getMonth() + 1).padStart(2, '0')}-${String(targetDate.getDate()).padStart(2, '0')}`;
+        
+        const widthMm = 100;
+        const heightMm = Math.max(140, Math.ceil((el.offsetHeight * widthMm) / el.offsetWidth) + 6);
+
         const opcionesPDF = {
-            margin: 5,
+            margin: 3,
             filename: `Estado_Cuenta_Depto_${currentUnitId || ''}_${fechaStr}.pdf`,
             image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { scale: 2.5 },
-            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            html2canvas: { scale: 2.5, useCORS: true },
+            jsPDF: { unit: 'mm', format: [widthMm, heightMm], orientation: 'portrait' }
         };
         html2pdf().set(opcionesPDF).from(el).save().then(() => showToast("Estado de Cuenta descargado"));
     }
 
     function verEstadoCuentaAlerta(unitId) {
         currentUnitId = unitId;
-        prepararEstadoCuenta();
+        prepararEstadoCuenta('current');
     }
 
     let touchStartX = 0; let touchStartY = 0;
@@ -2701,4 +2776,4 @@
 
 </script>
 </body>
-</html>x
+</html>
